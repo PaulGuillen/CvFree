@@ -73,11 +73,10 @@ object ResumePdfExporter {
                 val red = Color.red(color)
                 val green = Color.green(color)
                 val blue = Color.blue(color)
-                val background = if (x < width * 0.28f) {
+                val whiteBackground = red >= 245 && green >= 245 && blue >= 245
+                val classicSidebarBackground = x < width * 0.28f &&
                     abs(red - 65) <= 18 && abs(green - 65) <= 18 && abs(blue - 67) <= 18
-                } else {
-                    red >= 245 && green >= 245 && blue >= 245
-                }
+                val background = whiteBackground || classicSidebarBackground
                 if (!background) score++
             }
         }

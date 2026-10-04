@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,7 @@ import com.devpaul.core.designsystem.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
+import com.devpaul.features.templates.ResumeTemplateRenderer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -199,7 +201,7 @@ private fun ResumeCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ResumeThumbnail(sidebar = resume.templateName.contains("Sidebar", ignoreCase = true))
+                ResumeThumbnail(renderer = ResumeTemplateCatalog.find(resume.templateName).renderer)
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Surface(
@@ -262,14 +264,14 @@ private fun ResumeCard(
 }
 
 @Composable
-private fun ResumeThumbnail(sidebar: Boolean) {
+private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
     Surface(
         modifier = Modifier.size(width = 96.dp, height = 124.dp),
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Row(modifier = Modifier.padding(14.dp)) {
-            if (sidebar) {
+            if (renderer == ResumeTemplateRenderer.ClassicSidebar) {
                 Box(
                     modifier = Modifier
                         .width(18.dp)
@@ -294,6 +296,18 @@ private fun ResumeThumbnail(sidebar: Boolean) {
                             ),
                     )
                     Spacer(modifier = Modifier.height(7.dp))
+                }
+                if (renderer == ResumeTemplateRenderer.EditorialLine) {
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        Box(Modifier.weight(0.3f).fillMaxHeight())
+                        Box(
+                            Modifier
+                                .width(1.dp)
+                                .fillMaxHeight()
+                                .background(androidx.compose.ui.graphics.Color(0xFF414143)),
+                        )
+                        Box(Modifier.weight(0.7f).fillMaxHeight())
+                    }
                 }
             }
         }

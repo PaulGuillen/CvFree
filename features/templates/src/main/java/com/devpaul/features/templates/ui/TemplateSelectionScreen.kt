@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -42,6 +43,7 @@ import com.devpaul.core.designsystem.theme.CvFreeTheme
 import com.devpaul.core.designsystem.theme.SetStatusBarColor
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateDefinition
+import com.devpaul.features.templates.ResumeTemplateRenderer
 
 @Composable
 fun TemplateSelectionScreen(
@@ -165,27 +167,79 @@ private fun TemplateThumbnail(
         color = Color.White,
         border = BorderStroke(1.dp, Color(0xFFD8DEE8)),
     ) {
-        Row {
-            if (template.hasSidebar) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.28f)
-                        .background(Color(0xFF414143)),
-                )
+        when (template.renderer) {
+            ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarThumbnail()
+            ResumeTemplateRenderer.EditorialLine -> EditorialLineThumbnail()
+        }
+    }
+}
+
+@Composable
+private fun ClassicSidebarThumbnail() {
+    Row {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(0.28f)
+                .background(Color(0xFF414143)),
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(0.72f)
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Box(Modifier.fillMaxWidth(0.7f).height(12.dp).background(Color(0xFF414143)))
+            Box(Modifier.fillMaxWidth(0.45f).height(5.dp).background(Color(0xFF9CA3AF)))
+            Spacer(modifier = Modifier.height(12.dp))
+            repeat(4) {
+                Box(Modifier.fillMaxWidth().height(4.dp).background(Color(0xFFD1D5DB)))
             }
+        }
+    }
+}
+
+@Composable
+private fun EditorialLineThumbnail() {
+    Column(modifier = Modifier.padding(14.dp)) {
+        Box(Modifier.fillMaxWidth(0.62f).height(12.dp).background(Color(0xFF242424)))
+        Spacer(Modifier.height(6.dp))
+        Box(Modifier.fillMaxWidth(0.38f).height(4.dp).background(Color(0xFF9CA3AF)))
+        Spacer(Modifier.height(18.dp))
+        Row(modifier = Modifier.weight(1f)) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.72f)
-                    .padding(14.dp),
+                    .weight(0.3f)
+                    .fillMaxHeight()
+                    .padding(end = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Box(Modifier.fillMaxWidth(0.7f).height(12.dp).background(Color(0xFF414143)))
-                Box(Modifier.fillMaxWidth(0.45f).height(5.dp).background(Color(0xFF9CA3AF)))
-                Spacer(modifier = Modifier.height(12.dp))
-                repeat(4) {
-                    Box(Modifier.fillMaxWidth().height(4.dp).background(Color(0xFFD1D5DB)))
+                repeat(5) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 2 == 0) 0.86f else 0.64f)
+                            .height(if (index == 0) 5.dp else 3.dp)
+                            .background(if (index == 0) Color(0xFF242424) else Color(0xFFC4C7CC)),
+                    )
+                }
+            }
+            Box(Modifier.width(1.dp).fillMaxHeight().background(Color(0xFF242424)))
+            Column(
+                modifier = Modifier
+                    .weight(0.7f)
+                    .fillMaxHeight()
+                    .padding(start = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF242424)))
+                repeat(7) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 3 == 0) 0.7f else 1f)
+                            .height(if (index % 3 == 0) 4.dp else 3.dp)
+                            .background(if (index % 3 == 0) Color(0xFF242424) else Color(0xFFC4C7CC)),
+                    )
                 }
             }
         }

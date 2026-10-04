@@ -10,10 +10,12 @@ data class ResumeTemplateDefinition(
 
 enum class ResumeTemplateRenderer {
     ClassicSidebar,
+    EditorialLine,
 }
 
 object ResumeTemplateCatalog {
     const val CLASSIC_SIDEBAR_ID = "classic_sidebar"
+    const val EDITORIAL_LINE_ID = "editorial_line"
 
     val templates: List<ResumeTemplateDefinition> = listOf(
         ResumeTemplateDefinition(
@@ -22,6 +24,13 @@ object ResumeTemplateCatalog {
             description = "Diseño profesional de dos columnas con títulos en mayúsculas.",
             hasSidebar = true,
             renderer = ResumeTemplateRenderer.ClassicSidebar,
+        ),
+        ResumeTemplateDefinition(
+            id = EDITORIAL_LINE_ID,
+            displayName = "Editorial Line",
+            description = "Estilo editorial en blanco y negro con columnas y divisores finos.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.EditorialLine,
         ),
     )
 
