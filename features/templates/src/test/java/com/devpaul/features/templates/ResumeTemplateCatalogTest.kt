@@ -9,31 +9,42 @@ import org.junit.Test
 class ResumeTemplateCatalogTest {
 
     @Test
-    fun `resolves stable id and legacy display name`() {
+    fun `resolves Budapest by current and legacy identifiers`() {
+        assertEquals(ResumeTemplateCatalog.BUDAPEST_ID, ResumeDocument().templateName)
         assertEquals(
-            ResumeTemplateCatalog.CLASSIC_SIDEBAR_ID,
-            ResumeTemplateCatalog.find(ResumeTemplateCatalog.CLASSIC_SIDEBAR_ID).id,
+            ResumeTemplateCatalog.BUDAPEST_ID,
+            ResumeTemplateCatalog.find(ResumeTemplateCatalog.BUDAPEST_ID).id,
         )
         assertEquals(
-            ResumeTemplateCatalog.CLASSIC_SIDEBAR_ID,
+            ResumeTemplateCatalog.BUDAPEST_ID,
+            ResumeTemplateCatalog.find("classic_sidebar").id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.BUDAPEST_ID,
             ResumeTemplateCatalog.find("Clásico Sidebar").id,
         )
+        assertEquals(ResumeTemplateCatalog.BUDAPEST_ID, ResumeTemplateCatalog.find("Budapest").id)
     }
 
     @Test
-    fun `resolves editorial line by id and display name`() {
+    fun `resolves Riga by current and legacy identifiers`() {
         assertEquals(
-            ResumeTemplateCatalog.EDITORIAL_LINE_ID,
-            ResumeTemplateCatalog.find(ResumeTemplateCatalog.EDITORIAL_LINE_ID).id,
+            ResumeTemplateCatalog.RIGA_ID,
+            ResumeTemplateCatalog.find(ResumeTemplateCatalog.RIGA_ID).id,
         )
         assertEquals(
-            ResumeTemplateCatalog.EDITORIAL_LINE_ID,
+            ResumeTemplateCatalog.RIGA_ID,
+            ResumeTemplateCatalog.find("editorial_line").id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.RIGA_ID,
             ResumeTemplateCatalog.find("Editorial Line").id,
         )
         assertEquals(
-            ResumeTemplateCatalog.EDITORIAL_LINE_ID,
+            ResumeTemplateCatalog.RIGA_ID,
             ResumeTemplateCatalog.find("Línea editorial").id,
         )
+        assertEquals(ResumeTemplateCatalog.RIGA_ID, ResumeTemplateCatalog.find("Riga").id)
     }
 
     @Test

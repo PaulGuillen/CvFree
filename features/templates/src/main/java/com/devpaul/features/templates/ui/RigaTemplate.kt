@@ -36,7 +36,7 @@ private val EditorialMuted = Color(0xFF777A80)
 private val EditorialTrack = Color(0xFFC7C7C7)
 
 @Composable
-internal fun EditorialLineTemplate(resume: ResumeDocument) {
+internal fun RigaTemplate(resume: ResumeDocument) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -425,11 +425,11 @@ private fun editorialInitials(name: String, lastName: String): String =
         .take(2)
         .ifBlank { "CV" }
 
-@Preview(name = "Editorial Line", showBackground = true)
+@Preview(name = "Riga", showBackground = true)
 @Composable
-private fun EditorialLineTemplatePreview() {
+private fun RigaTemplatePreview() {
     ResumeTemplateDocument(
-        resume = previewDocument().copy(templateName = ResumeTemplateCatalog.EDITORIAL_LINE_ID),
+        resume = previewDocument().copy(templateName = ResumeTemplateCatalog.RIGA_ID),
         modifier = Modifier.fillMaxWidth(),
     )
 }

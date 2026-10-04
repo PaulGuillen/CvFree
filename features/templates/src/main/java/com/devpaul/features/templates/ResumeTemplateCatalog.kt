@@ -6,38 +6,38 @@ data class ResumeTemplateDefinition(
     val description: String,
     val hasSidebar: Boolean,
     val renderer: ResumeTemplateRenderer,
-    val legacyNames: Set<String> = emptySet(),
+    val legacyIdentifiers: Set<String> = emptySet(),
 )
 
 enum class ResumeTemplateRenderer {
-    ClassicSidebar,
-    EditorialLine,
+    Budapest,
+    Riga,
     PragueEditorial,
     TokyoCompact,
 }
 
 object ResumeTemplateCatalog {
-    const val CLASSIC_SIDEBAR_ID = "classic_sidebar"
-    const val EDITORIAL_LINE_ID = "editorial_line"
+    const val BUDAPEST_ID = "budapest"
+    const val RIGA_ID = "riga"
     const val PRAGUE_EDITORIAL_ID = "prague_editorial"
     const val TOKYO_COMPACT_ID = "tokyo_compact"
 
     val templates: List<ResumeTemplateDefinition> = listOf(
         ResumeTemplateDefinition(
-            id = CLASSIC_SIDEBAR_ID,
-            displayName = "Clásico con barra lateral",
+            id = BUDAPEST_ID,
+            displayName = "Budapest",
             description = "Diseño profesional de dos columnas con títulos en mayúsculas.",
             hasSidebar = true,
-            renderer = ResumeTemplateRenderer.ClassicSidebar,
-            legacyNames = setOf("Clásico Sidebar"),
+            renderer = ResumeTemplateRenderer.Budapest,
+            legacyIdentifiers = setOf("classic_sidebar", "Clásico Sidebar", "Clásico con barra lateral"),
         ),
         ResumeTemplateDefinition(
-            id = EDITORIAL_LINE_ID,
-            displayName = "Línea editorial",
+            id = RIGA_ID,
+            displayName = "Riga",
             description = "Estilo editorial en blanco y negro con columnas y divisores finos.",
             hasSidebar = false,
-            renderer = ResumeTemplateRenderer.EditorialLine,
-            legacyNames = setOf("Editorial Line"),
+            renderer = ResumeTemplateRenderer.Riga,
+            legacyIdentifiers = setOf("editorial_line", "Editorial Line", "Línea editorial"),
         ),
         ResumeTemplateDefinition(
             id = PRAGUE_EDITORIAL_ID,
@@ -45,7 +45,7 @@ object ResumeTemplateCatalog {
             description = "Diseño sobrio con encabezado dividido y secciones estructuradas.",
             hasSidebar = false,
             renderer = ResumeTemplateRenderer.PragueEditorial,
-            legacyNames = setOf("Prague"),
+            legacyIdentifiers = setOf("Prague"),
         ),
         ResumeTemplateDefinition(
             id = TOKYO_COMPACT_ID,
@@ -53,7 +53,7 @@ object ResumeTemplateCatalog {
             description = "Formato compacto de una columna con secciones resaltadas en azul claro.",
             hasSidebar = false,
             renderer = ResumeTemplateRenderer.TokyoCompact,
-            legacyNames = setOf("Tokyo"),
+            legacyIdentifiers = setOf("Tokyo"),
         ),
     )
 
@@ -62,6 +62,6 @@ object ResumeTemplateCatalog {
     fun find(idOrLegacyName: String): ResumeTemplateDefinition = templates.firstOrNull { template ->
         template.id == idOrLegacyName ||
             template.displayName.equals(idOrLegacyName, ignoreCase = true) ||
-            template.legacyNames.any { it.equals(idOrLegacyName, ignoreCase = true) }
+            template.legacyIdentifiers.any { it.equals(idOrLegacyName, ignoreCase = true) }
     } ?: default
 }

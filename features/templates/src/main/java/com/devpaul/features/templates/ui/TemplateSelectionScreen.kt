@@ -54,7 +54,7 @@ fun TemplateSelectionScreen(
     onBack: () -> Unit,
     onContinue: (String) -> Unit,
     modifier: Modifier = Modifier,
-    initialTemplate: String = ResumeTemplateCatalog.CLASSIC_SIDEBAR_ID,
+    initialTemplate: String = ResumeTemplateCatalog.BUDAPEST_ID,
 ) {
     var selectedId by rememberSaveable(initialTemplate) {
         mutableStateOf(ResumeTemplateCatalog.find(initialTemplate).id)
@@ -187,8 +187,8 @@ private fun TemplateThumbnail(
         border = BorderStroke(1.dp, Color(0xFFD8DEE8)),
     ) {
         when (template.renderer) {
-            ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarThumbnail()
-            ResumeTemplateRenderer.EditorialLine -> EditorialLineThumbnail()
+            ResumeTemplateRenderer.Budapest -> BudapestThumbnail()
+            ResumeTemplateRenderer.Riga -> RigaThumbnail()
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialThumbnail()
             ResumeTemplateRenderer.TokyoCompact -> TokyoCompactThumbnail()
         }
@@ -196,7 +196,7 @@ private fun TemplateThumbnail(
 }
 
 @Composable
-private fun ClassicSidebarThumbnail() {
+private fun BudapestThumbnail() {
     Row {
         Box(
             modifier = Modifier
@@ -222,7 +222,7 @@ private fun ClassicSidebarThumbnail() {
 }
 
 @Composable
-private fun EditorialLineThumbnail() {
+private fun RigaThumbnail() {
     Column(modifier = Modifier.padding(14.dp)) {
         Box(Modifier.fillMaxWidth(0.62f).height(12.dp).background(Color(0xFF242424)))
         Spacer(Modifier.height(6.dp))

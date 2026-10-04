@@ -102,7 +102,7 @@ data class ResumeReference(
 data class ResumeDocument(
     val id: String = "",
     val updatedAt: Long = 0L,
-    val templateName: String = "classic_sidebar",
+    val templateName: String = "budapest",
     val optionalSections: Set<ResumeOptionalSection> = emptySet(),
     val contact: ResumeContact = ResumeContact(),
     val experiences: List<ResumeExperience> = emptyList(),

@@ -276,7 +276,7 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
             PragueResumeThumbnail()
         } else {
             Row(modifier = Modifier.padding(14.dp)) {
-                if (renderer == ResumeTemplateRenderer.ClassicSidebar) {
+                if (renderer == ResumeTemplateRenderer.Budapest) {
                     Box(
                         modifier = Modifier
                             .width(18.dp)
@@ -302,7 +302,7 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                     }
-                    if (renderer == ResumeTemplateRenderer.EditorialLine) {
+                    if (renderer == ResumeTemplateRenderer.Riga) {
                         Row(modifier = Modifier.fillMaxSize()) {
                             Box(Modifier.weight(0.3f).fillMaxHeight())
                             Box(

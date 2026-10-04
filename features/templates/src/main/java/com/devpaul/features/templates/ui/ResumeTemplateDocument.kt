@@ -73,8 +73,8 @@ fun ResumeTemplateDocument(
         border = BorderStroke(1.dp, Color(0xFFD5D8DE)),
     ) {
         when (ResumeTemplateCatalog.find(resume.templateName).renderer) {
-            ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarTemplate(resume)
-            ResumeTemplateRenderer.EditorialLine -> EditorialLineTemplate(resume)
+            ResumeTemplateRenderer.Budapest -> BudapestTemplate(resume)
+            ResumeTemplateRenderer.Riga -> RigaTemplate(resume)
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialTemplate(resume)
             ResumeTemplateRenderer.TokyoCompact -> TokyoCompactTemplate(resume)
         }
@@ -82,13 +82,13 @@ fun ResumeTemplateDocument(
 }
 
 @Composable
-private fun ClassicSidebarTemplate(resume: ResumeDocument) {
+private fun BudapestTemplate(resume: ResumeDocument) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
     ) {
-        ClassicSidebar(
+        BudapestSidebar(
             resume = resume,
             modifier = Modifier
                 .fillMaxHeight()
@@ -103,7 +103,7 @@ private fun ClassicSidebarTemplate(resume: ResumeDocument) {
 }
 
 @Composable
-private fun ClassicSidebar(
+private fun BudapestSidebar(
     resume: ResumeDocument,
     modifier: Modifier = Modifier,
 ) {
