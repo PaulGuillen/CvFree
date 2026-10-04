@@ -53,6 +53,22 @@ class ResumeTemplateCatalogTest {
     }
 
     @Test
+    fun `resolves tokyo template by id and names`() {
+        assertEquals(
+            ResumeTemplateCatalog.TOKYO_COMPACT_ID,
+            ResumeTemplateCatalog.find(ResumeTemplateCatalog.TOKYO_COMPACT_ID).id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.TOKYO_COMPACT_ID,
+            ResumeTemplateCatalog.find("Tokyo").id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.TOKYO_COMPACT_ID,
+            ResumeTemplateCatalog.find("Tokio").id,
+        )
+    }
+
+    @Test
     fun `creates a portable pdf file name`() {
         val resume = ResumeDocument(
             contact = ResumeContact(name = "Paúl", lastName = "Acuña Ramos"),

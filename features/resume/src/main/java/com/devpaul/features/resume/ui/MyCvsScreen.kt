@@ -270,7 +270,9 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
-        if (renderer == ResumeTemplateRenderer.PragueEditorial) {
+        if (renderer == ResumeTemplateRenderer.TokyoCompact) {
+            TokyoResumeThumbnail()
+        } else if (renderer == ResumeTemplateRenderer.PragueEditorial) {
             PragueResumeThumbnail()
         } else {
             Row(modifier = Modifier.padding(14.dp)) {
@@ -313,6 +315,39 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TokyoResumeThumbnail() {
+    val ink = androidx.compose.ui.graphics.Color(0xFF30333A)
+    val muted = androidx.compose.ui.graphics.Color(0xFFCBD5E1)
+    val section = androidx.compose.ui.graphics.Color(0xFFEAF2FF)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(14.dp)
+            .background(androidx.compose.ui.graphics.Color.White)
+            .padding(horizontal = 8.dp, vertical = 9.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(Modifier.fillMaxWidth(0.65f).height(6.dp).background(ink))
+        Spacer(Modifier.height(3.dp))
+        Box(Modifier.fillMaxWidth(0.38f).height(3.dp).background(muted))
+        Spacer(Modifier.height(5.dp))
+        repeat(2) { index ->
+            Box(Modifier.fillMaxWidth().height(7.dp).background(section))
+            Spacer(Modifier.height(4.dp))
+            repeat(if (index == 1) 3 else 2) { line ->
+                Box(
+                    Modifier
+                        .fillMaxWidth(if (line == 0) 1f else 0.8f)
+                        .height(if (line == 0) 2.5.dp else 2.dp)
+                        .background(if (line == 0) ink else muted),
+                )
+                Spacer(Modifier.height(3.dp))
             }
         }
     }

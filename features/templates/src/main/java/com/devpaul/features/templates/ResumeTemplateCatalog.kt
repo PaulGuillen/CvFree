@@ -13,12 +13,14 @@ enum class ResumeTemplateRenderer {
     ClassicSidebar,
     EditorialLine,
     PragueEditorial,
+    TokyoCompact,
 }
 
 object ResumeTemplateCatalog {
     const val CLASSIC_SIDEBAR_ID = "classic_sidebar"
     const val EDITORIAL_LINE_ID = "editorial_line"
     const val PRAGUE_EDITORIAL_ID = "prague_editorial"
+    const val TOKYO_COMPACT_ID = "tokyo_compact"
 
     val templates: List<ResumeTemplateDefinition> = listOf(
         ResumeTemplateDefinition(
@@ -44,6 +46,14 @@ object ResumeTemplateCatalog {
             hasSidebar = false,
             renderer = ResumeTemplateRenderer.PragueEditorial,
             legacyNames = setOf("Prague"),
+        ),
+        ResumeTemplateDefinition(
+            id = TOKYO_COMPACT_ID,
+            displayName = "Tokio",
+            description = "Formato compacto de una columna con secciones resaltadas en azul claro.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.TokyoCompact,
+            legacyNames = setOf("Tokyo"),
         ),
     )
 

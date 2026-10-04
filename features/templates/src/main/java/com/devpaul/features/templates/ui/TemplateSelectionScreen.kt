@@ -171,6 +171,7 @@ private fun TemplateThumbnail(
             ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarThumbnail()
             ResumeTemplateRenderer.EditorialLine -> EditorialLineThumbnail()
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialThumbnail()
+            ResumeTemplateRenderer.TokyoCompact -> TokyoCompactThumbnail()
         }
     }
 }
@@ -325,6 +326,49 @@ private fun PragueEditorialThumbnail() {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TokyoCompactThumbnail() {
+    val ink = Color(0xFF30333A)
+    val muted = Color(0xFFB9BEC8)
+    val section = Color(0xFFEAF2FF)
+    Column(
+        modifier = Modifier.padding(horizontal = 14.dp, vertical = 15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(Modifier.fillMaxWidth(0.62f).height(11.dp).background(ink))
+        Spacer(Modifier.height(5.dp))
+        Box(Modifier.fillMaxWidth(0.36f).height(4.dp).background(Color(0xFF777B84)))
+        Spacer(Modifier.height(6.dp))
+        Box(Modifier.fillMaxWidth(0.74f).height(3.dp).background(muted))
+        Spacer(Modifier.height(7.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+            repeat(2) {
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .height(10.dp)
+                        .background(section),
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        repeat(4) { sectionIndex ->
+            Box(Modifier.fillMaxWidth().height(12.dp).background(section))
+            Spacer(Modifier.height(7.dp))
+            repeat(if (sectionIndex == 1) 4 else 2) { lineIndex ->
+                Box(
+                    Modifier
+                        .fillMaxWidth(if (lineIndex % 3 == 0) 1f else 0.82f)
+                        .height(if (lineIndex == 0) 3.dp else 2.dp)
+                        .background(if (lineIndex == 0) ink else muted),
+                )
+                Spacer(Modifier.height(4.dp))
+            }
+            Spacer(Modifier.height(3.dp))
         }
     }
 }

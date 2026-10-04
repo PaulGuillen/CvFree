@@ -76,6 +76,7 @@ fun ResumeTemplateDocument(
             ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarTemplate(resume)
             ResumeTemplateRenderer.EditorialLine -> EditorialLineTemplate(resume)
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialTemplate(resume)
+            ResumeTemplateRenderer.TokyoCompact -> TokyoCompactTemplate(resume)
         }
     }
 }
