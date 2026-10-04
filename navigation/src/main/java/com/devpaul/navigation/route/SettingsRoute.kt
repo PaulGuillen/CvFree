@@ -1,0 +1,12 @@
+package com.devpaul.navigation.route
+
+import kotlinx.serialization.Serializable
+
+sealed interface SettingsRoute : AppRoute {
+
+    @Serializable
+    data object Graph : SettingsRoute, GraphRoute
+
+    @Serializable
+    data object Settings : SettingsRoute, DestinationRoute
+}

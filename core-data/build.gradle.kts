@@ -1,0 +1,21 @@
+import dependence.*
+
+plugins {
+    id("plugin.android.lib")
+    id("org.jetbrains.kotlin.plugin.serialization")
+}
+
+android {
+    namespace = "com.devpaul.core.data"
+}
+
+dependencies {
+    implementation(project(":core-domain"))
+    implementation(project(":session"))
+    implementation(libs.kotlinx.serialization.json)
+    retrofitImplementation()
+    koinImplementation()
+    datastoreImplementation()
+    firebaseImplementation()
+    chuckerImplementation()
+}

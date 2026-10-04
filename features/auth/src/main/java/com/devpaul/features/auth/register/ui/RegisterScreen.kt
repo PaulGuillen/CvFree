@@ -1,0 +1,152 @@
+package com.devpaul.features.auth.register.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.devpaul.core.designsystem.theme.CvFreeTheme
+import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.features.auth.components.AccountPrompt
+import com.devpaul.features.auth.components.AuthPanel
+import com.devpaul.features.auth.components.AuthTextField
+import com.devpaul.features.auth.components.PrimaryAuthButton
+
+@Composable
+fun RegisterScreen(
+    onRegister: (name: String, email: String, password: String) -> Unit,
+    onNavigateToLogin: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    val background = MaterialTheme.colorScheme.background
+
+    SetStatusBarColor(color = background, darkIcons = !isSystemInDarkTheme())
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 620.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Crear cuenta",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Empieza gratis y crea tu primer currículum profesional.",
+                modifier = Modifier.widthIn(max = 480.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(28.dp))
+
+            AuthPanel(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp)) {
+                    AuthTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = "Nombre completo",
+                        placeholder = "Paul Guillén",
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words,
+                        ),
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AuthTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = "Correo electrónico",
+                        placeholder = "ejemplo@correo.com",
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AuthTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = "Contraseña",
+                        placeholder = "Mínimo 8 caracteres",
+                        isPassword = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    )
+                    Spacer(modifier = Modifier.height(26.dp))
+                    PrimaryAuthButton(
+                        text = "Registrarme",
+                        onClick = { onRegister(name.trim(), email.trim(), password) },
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    AccountPrompt(
+                        message = "¿Ya tienes cuenta?",
+                        action = "Iniciar sesión",
+                        onClick = onNavigateToLogin,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Preview(name = "Register Light", showBackground = true, heightDp = 850)
+@Composable
+private fun RegisterLightPreview() {
+    CvFreeTheme(darkTheme = false) {
+        RegisterScreen(
+            onRegister = { _, _, _ -> },
+            onNavigateToLogin = {},
+        )
+    }
+}
+
+@Preview(name = "Register Dark", showBackground = true, heightDp = 850)
+@Composable
+private fun RegisterDarkPreview() {
+    CvFreeTheme(darkTheme = true) {
+        RegisterScreen(
+            onRegister = { _, _, _ -> },
+            onNavigateToLogin = {},
+        )
+    }
+}
