@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.theme.CvFreeTheme
 import com.devpaul.core.designsystem.theme.SetStatusBarColor
@@ -146,7 +147,7 @@ private fun TemplateOption(
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = template.displayName,
-                modifier = Modifier.heightIn(min = 44.dp),
+                modifier = Modifier.heightIn(min = 20.dp),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 2,
@@ -223,11 +224,38 @@ private fun BudapestThumbnail() {
 
 @Composable
 private fun RigaThumbnail() {
-    Column(modifier = Modifier.padding(14.dp)) {
-        Box(Modifier.fillMaxWidth(0.62f).height(12.dp).background(Color(0xFF242424)))
-        Spacer(Modifier.height(6.dp))
-        Box(Modifier.fillMaxWidth(0.38f).height(4.dp).background(Color(0xFF9CA3AF)))
-        Spacer(Modifier.height(18.dp))
+    val ink = Color(0xFF242424)
+    val muted = Color(0xFFC4C7CC)
+    Column(modifier = Modifier.padding(horizontal = 14.dp)) {
+        RigaThumbnailVerticalLine(height = 18.dp, color = ink)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(38.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(0.72f)) {
+                Box(Modifier.fillMaxWidth(0.82f).height(9.dp).background(ink))
+                Spacer(Modifier.height(5.dp))
+                Box(Modifier.fillMaxWidth(0.52f).height(3.dp).background(Color(0xFF9CA3AF)))
+            }
+            Box(
+                modifier = Modifier
+                    .weight(0.28f)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .width(28.dp)
+                        .height(28.dp),
+                    shape = RoundedCornerShape(50),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, ink),
+                ) {}
+            }
+        }
+        RigaThumbnailVerticalLine(height = 16.dp, color = ink)
         Row(modifier = Modifier.weight(1f)) {
             Column(
                 modifier = Modifier
@@ -241,11 +269,11 @@ private fun RigaThumbnail() {
                         Modifier
                             .fillMaxWidth(if (index % 2 == 0) 0.86f else 0.64f)
                             .height(if (index == 0) 5.dp else 3.dp)
-                            .background(if (index == 0) Color(0xFF242424) else Color(0xFFC4C7CC)),
+                            .background(if (index == 0) ink else muted),
                     )
                 }
             }
-            Box(Modifier.width(1.dp).fillMaxHeight().background(Color(0xFF242424)))
+            Box(Modifier.width(1.dp).fillMaxHeight().background(ink))
             Column(
                 modifier = Modifier
                     .weight(0.7f)
@@ -253,17 +281,30 @@ private fun RigaThumbnail() {
                     .padding(start = 9.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp),
             ) {
-                Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF242424)))
+                Box(Modifier.fillMaxWidth().height(1.dp).background(ink))
                 repeat(7) { index ->
                     Box(
                         Modifier
                             .fillMaxWidth(if (index % 3 == 0) 0.7f else 1f)
                             .height(if (index % 3 == 0) 4.dp else 3.dp)
-                            .background(if (index % 3 == 0) Color(0xFF242424) else Color(0xFFC4C7CC)),
+                            .background(if (index % 3 == 0) ink else muted),
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RigaThumbnailVerticalLine(height: Dp, color: Color) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height),
+    ) {
+        Box(Modifier.weight(0.3f).fillMaxHeight())
+        Box(Modifier.width(1.dp).fillMaxHeight().background(color))
+        Box(Modifier.weight(0.7f).fillMaxHeight())
     }
 }
 

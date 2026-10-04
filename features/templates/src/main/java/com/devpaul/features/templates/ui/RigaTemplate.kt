@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.core.domain.resume.ResumeDocument
@@ -41,10 +42,9 @@ internal fun RigaTemplate(resume: ResumeDocument) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(start = 40.dp, top = 34.dp, end = 40.dp, bottom = 34.dp),
+            .padding(start = 40.dp, end = 40.dp, bottom = 34.dp),
     ) {
-        EditorialHeader(resume)
-        Spacer(Modifier.height(26.dp))
+        RigaHeader(resume)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,64 +73,82 @@ internal fun RigaTemplate(resume: ResumeDocument) {
 }
 
 @Composable
-private fun EditorialHeader(resume: ResumeDocument) {
+private fun RigaHeader(resume: ResumeDocument) {
     val contact = resume.contact
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = listOf(contact.name, contact.lastName)
-                    .filter(String::isNotBlank)
-                    .joinToString(" ")
-                    .ifBlank { "TU NOMBRE" }
-                    .uppercase(),
-                color = EditorialInk,
-                fontSize = 24.sp,
-                lineHeight = 27.sp,
-                fontWeight = FontWeight.Light,
-            )
-            if (contact.professionalTitle.isNotBlank()) {
-                Spacer(Modifier.height(7.dp))
-                Text(
-                    text = contact.professionalTitle.uppercase(),
-                    color = EditorialMuted,
-                    fontSize = 8.5.sp,
-                    lineHeight = 10.sp,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-        Box(
-            modifier = Modifier
-                .height(58.dp)
-                .width(0.8.dp)
-                .background(EditorialInk),
-        )
-        Box(
-            modifier = Modifier
-                .weight(0.34f)
-                .padding(start = 28.dp),
-            contentAlignment = Alignment.Center,
+    Column(modifier = Modifier.fillMaxWidth()) {
+        RigaHeaderVerticalLine(height = 36.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Surface(
-                modifier = Modifier.size(58.dp),
-                shape = CircleShape,
-                color = Color.White,
-                border = androidx.compose.foundation.BorderStroke(0.8.dp, EditorialInk),
+            Column(
+                modifier = Modifier
+                    .weight(0.72f)
+                    .padding(end = 24.dp),
             ) {
-                Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = listOf(contact.name, contact.lastName)
+                        .filter(String::isNotBlank)
+                        .joinToString(" ")
+                        .ifBlank { "TU NOMBRE" }
+                        .uppercase(),
+                    color = EditorialInk,
+                    fontSize = 24.sp,
+                    lineHeight = 27.sp,
+                    fontWeight = FontWeight.Light,
+                )
+                if (contact.professionalTitle.isNotBlank()) {
+                    Spacer(Modifier.height(7.dp))
                     Text(
-                        text = editorialInitials(contact.name, contact.lastName),
+                        text = contact.professionalTitle.uppercase(),
                         color = EditorialMuted,
-                        fontSize = 13.sp,
-                        lineHeight = 14.sp,
-                        fontWeight = FontWeight.Light,
+                        fontSize = 8.5.sp,
+                        lineHeight = 10.sp,
+                        fontWeight = FontWeight.Normal,
                     )
                 }
             }
+            Box(
+                modifier = Modifier.weight(0.28f),
+                contentAlignment = Alignment.Center,
+            ) {
+                Surface(
+                    modifier = Modifier.size(58.dp),
+                    shape = CircleShape,
+                    color = Color.White,
+                    border = androidx.compose.foundation.BorderStroke(0.8.dp, EditorialInk),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = editorialInitials(contact.name, contact.lastName),
+                            color = EditorialMuted,
+                            fontSize = 13.sp,
+                            lineHeight = 14.sp,
+                            fontWeight = FontWeight.Light,
+                        )
+                    }
+                }
+            }
         }
+        RigaHeaderVerticalLine(height = 30.dp)
+    }
+}
+
+@Composable
+private fun RigaHeaderVerticalLine(height: Dp) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height),
+    ) {
+        Spacer(Modifier.weight(0.29f))
+        Box(
+            modifier = Modifier
+                .width(0.8.dp)
+                .fillMaxHeight()
+                .background(EditorialInk),
+        )
+        Spacer(Modifier.weight(0.71f))
     }
 }
 
