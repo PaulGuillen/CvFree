@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.theme.CvFreeTheme
@@ -80,9 +84,14 @@ fun TemplateSelectionScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(18.dp))
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 18.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(
                     items = ResumeTemplateCatalog.templates,
@@ -92,6 +101,7 @@ fun TemplateSelectionScreen(
                         template = template,
                         selected = template.id == selectedId,
                         onClick = { selectedId = template.id },
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -114,10 +124,11 @@ private fun TemplateOption(
     template: ResumeTemplateDefinition,
     selected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(220.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(
@@ -130,27 +141,35 @@ private fun TemplateOption(
                 template = template,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp),
+                    .aspectRatio(0.72f),
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = template.displayName,
+                modifier = Modifier.heightIn(min = 44.dp),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = template.description,
+                modifier = Modifier.heightIn(min = 38.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
-            if (selected) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = "Seleccionada",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                )
+            Spacer(modifier = Modifier.height(6.dp))
+            Box(modifier = Modifier.height(20.dp)) {
+                if (selected) {
+                    Text(
+                        text = "Seleccionada",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    )
+                }
             }
         }
     }
