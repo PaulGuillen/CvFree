@@ -37,6 +37,22 @@ class ResumeTemplateCatalogTest {
     }
 
     @Test
+    fun `resolves prague template by id and names`() {
+        assertEquals(
+            ResumeTemplateCatalog.PRAGUE_EDITORIAL_ID,
+            ResumeTemplateCatalog.find(ResumeTemplateCatalog.PRAGUE_EDITORIAL_ID).id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.PRAGUE_EDITORIAL_ID,
+            ResumeTemplateCatalog.find("Prague").id,
+        )
+        assertEquals(
+            ResumeTemplateCatalog.PRAGUE_EDITORIAL_ID,
+            ResumeTemplateCatalog.find("Praga").id,
+        )
+    }
+
+    @Test
     fun `creates a portable pdf file name`() {
         val resume = ResumeDocument(
             contact = ResumeContact(name = "Paúl", lastName = "Acuña Ramos"),

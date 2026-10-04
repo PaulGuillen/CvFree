@@ -170,6 +170,7 @@ private fun TemplateThumbnail(
         when (template.renderer) {
             ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarThumbnail()
             ResumeTemplateRenderer.EditorialLine -> EditorialLineThumbnail()
+            ResumeTemplateRenderer.PragueEditorial -> PragueEditorialThumbnail()
         }
     }
 }
@@ -239,6 +240,88 @@ private fun EditorialLineThumbnail() {
                             .fillMaxWidth(if (index % 3 == 0) 0.7f else 1f)
                             .height(if (index % 3 == 0) 4.dp else 3.dp)
                             .background(if (index % 3 == 0) Color(0xFF242424) else Color(0xFFC4C7CC)),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PragueEditorialThumbnail() {
+    Column(modifier = Modifier.padding(horizontal = 13.dp, vertical = 15.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(0.43f)
+                    .fillMaxHeight()
+                    .padding(end = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                Box(Modifier.fillMaxWidth().height(9.dp).background(Color(0xFF353535)))
+                Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF555555)))
+                Box(Modifier.fillMaxWidth(0.68f).height(3.dp).background(Color(0xFF777777)))
+                Spacer(Modifier.height(3.dp))
+                repeat(2) {
+                    Box(Modifier.fillMaxWidth(0.8f).height(2.dp).background(Color(0xFFB8B8B8)))
+                }
+            }
+            Box(Modifier.width(1.dp).fillMaxHeight().background(Color(0xFF555555)))
+            Column(
+                modifier = Modifier
+                    .weight(0.57f)
+                    .padding(start = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                Box(Modifier.fillMaxWidth(0.45f).height(5.dp).background(Color(0xFF353535)))
+                repeat(4) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index == 3) 0.72f else 1f)
+                            .height(2.dp)
+                            .background(Color(0xFFB8B8B8)),
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFF555555)))
+        Spacer(Modifier.height(12.dp))
+        Row(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(0.29f)
+                    .fillMaxHeight()
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                repeat(7) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 3 == 0) 1f else 0.78f)
+                            .height(if (index % 3 == 0) 4.dp else 2.dp)
+                            .background(if (index % 3 == 0) Color(0xFF353535) else Color(0xFFB8B8B8)),
+                    )
+                }
+            }
+            Box(Modifier.width(1.dp).fillMaxHeight().background(Color(0xFF555555)))
+            Column(
+                modifier = Modifier
+                    .weight(0.71f)
+                    .fillMaxHeight()
+                    .padding(start = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                repeat(10) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 4 == 0) 0.68f else 1f)
+                            .height(if (index % 4 == 0) 4.dp else 2.dp)
+                            .background(if (index % 4 == 0) Color(0xFF353535) else Color(0xFFB8B8B8)),
                     )
                 }
             }

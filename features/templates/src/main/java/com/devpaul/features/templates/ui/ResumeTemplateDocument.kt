@@ -75,6 +75,7 @@ fun ResumeTemplateDocument(
         when (ResumeTemplateCatalog.find(resume.templateName).renderer) {
             ResumeTemplateRenderer.ClassicSidebar -> ClassicSidebarTemplate(resume)
             ResumeTemplateRenderer.EditorialLine -> EditorialLineTemplate(resume)
+            ResumeTemplateRenderer.PragueEditorial -> PragueEditorialTemplate(resume)
         }
     }
 }

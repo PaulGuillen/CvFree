@@ -270,44 +270,124 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
         shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
-        Row(modifier = Modifier.padding(14.dp)) {
-            if (renderer == ResumeTemplateRenderer.ClassicSidebar) {
-                Box(
-                    modifier = Modifier
-                        .width(18.dp)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primary),
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(androidx.compose.ui.graphics.Color.White)
-                    .padding(9.dp),
-            ) {
-                repeat(4) { index ->
+        if (renderer == ResumeTemplateRenderer.PragueEditorial) {
+            PragueResumeThumbnail()
+        } else {
+            Row(modifier = Modifier.padding(14.dp)) {
+                if (renderer == ResumeTemplateRenderer.ClassicSidebar) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(if (index == 0) 0.55f else 1f)
-                            .height(if (index == 0) 8.dp else 4.dp)
-                            .background(
-                                if (index == 0) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color(0xFFCBD5E1),
-                                CircleShape,
-                            ),
+                            .width(18.dp)
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primary),
                     )
-                    Spacer(modifier = Modifier.height(7.dp))
                 }
-                if (renderer == ResumeTemplateRenderer.EditorialLine) {
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        Box(Modifier.weight(0.3f).fillMaxHeight())
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(androidx.compose.ui.graphics.Color.White)
+                        .padding(9.dp),
+                ) {
+                    repeat(4) { index ->
                         Box(
-                            Modifier
-                                .width(1.dp)
-                                .fillMaxHeight()
-                                .background(androidx.compose.ui.graphics.Color(0xFF414143)),
+                            modifier = Modifier
+                                .fillMaxWidth(if (index == 0) 0.55f else 1f)
+                                .height(if (index == 0) 8.dp else 4.dp)
+                                .background(
+                                    if (index == 0) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color(0xFFCBD5E1),
+                                    CircleShape,
+                                ),
                         )
-                        Box(Modifier.weight(0.7f).fillMaxHeight())
+                        Spacer(modifier = Modifier.height(7.dp))
                     }
+                    if (renderer == ResumeTemplateRenderer.EditorialLine) {
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Box(Modifier.weight(0.3f).fillMaxHeight())
+                            Box(
+                                Modifier
+                                    .width(1.dp)
+                                    .fillMaxHeight()
+                                    .background(androidx.compose.ui.graphics.Color(0xFF414143)),
+                            )
+                            Box(Modifier.weight(0.7f).fillMaxHeight())
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PragueResumeThumbnail() {
+    val ink = androidx.compose.ui.graphics.Color(0xFF414143)
+    val muted = androidx.compose.ui.graphics.Color(0xFFCBD5E1)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(14.dp)
+            .background(androidx.compose.ui.graphics.Color.White)
+            .padding(8.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(0.43f)
+                    .padding(end = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Box(Modifier.fillMaxWidth().height(5.dp).background(ink))
+                Box(Modifier.fillMaxWidth().height(1.dp).background(ink))
+                Box(Modifier.fillMaxWidth(0.7f).height(2.dp).background(muted))
+            }
+            Box(Modifier.width(1.dp).fillMaxHeight().background(ink))
+            Column(
+                modifier = Modifier
+                    .weight(0.57f)
+                    .padding(start = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Box(Modifier.fillMaxWidth(0.5f).height(3.dp).background(ink))
+                repeat(3) { Box(Modifier.fillMaxWidth().height(2.dp).background(muted)) }
+            }
+        }
+        Spacer(Modifier.height(5.dp))
+        Box(Modifier.fillMaxWidth().height(1.dp).background(ink))
+        Spacer(Modifier.height(5.dp))
+        Row(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(0.29f)
+                    .padding(end = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                repeat(5) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 2 == 0) 1f else 0.72f)
+                            .height(if (index % 2 == 0) 3.dp else 2.dp)
+                            .background(if (index % 2 == 0) ink else muted),
+                    )
+                }
+            }
+            Box(Modifier.width(1.dp).fillMaxHeight().background(ink))
+            Column(
+                modifier = Modifier
+                    .weight(0.71f)
+                    .padding(start = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                repeat(6) { index ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth(if (index % 3 == 0) 0.72f else 1f)
+                            .height(if (index % 3 == 0) 3.dp else 2.dp)
+                            .background(if (index % 3 == 0) ink else muted),
+                    )
                 }
             }
         }
