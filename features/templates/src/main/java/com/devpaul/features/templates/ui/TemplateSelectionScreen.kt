@@ -104,7 +104,7 @@ fun TemplateSelectionScreen(
                 .height(54.dp),
             shape = RoundedCornerShape(12.dp),
         ) {
-            Text("Continuar al preview", style = MaterialTheme.typography.labelLarge)
+            Text("Continuar a la vista previa", style = MaterialTheme.typography.labelLarge)
         }
     }
 }

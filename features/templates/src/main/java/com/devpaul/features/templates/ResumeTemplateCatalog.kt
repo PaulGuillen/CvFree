@@ -6,6 +6,7 @@ data class ResumeTemplateDefinition(
     val description: String,
     val hasSidebar: Boolean,
     val renderer: ResumeTemplateRenderer,
+    val legacyNames: Set<String> = emptySet(),
 )
 
 enum class ResumeTemplateRenderer {
@@ -20,23 +21,27 @@ object ResumeTemplateCatalog {
     val templates: List<ResumeTemplateDefinition> = listOf(
         ResumeTemplateDefinition(
             id = CLASSIC_SIDEBAR_ID,
-            displayName = "Clásico Sidebar",
+            displayName = "Clásico con barra lateral",
             description = "Diseño profesional de dos columnas con títulos en mayúsculas.",
             hasSidebar = true,
             renderer = ResumeTemplateRenderer.ClassicSidebar,
+            legacyNames = setOf("Clásico Sidebar"),
         ),
         ResumeTemplateDefinition(
             id = EDITORIAL_LINE_ID,
-            displayName = "Editorial Line",
+            displayName = "Línea editorial",
             description = "Estilo editorial en blanco y negro con columnas y divisores finos.",
             hasSidebar = false,
             renderer = ResumeTemplateRenderer.EditorialLine,
+            legacyNames = setOf("Editorial Line"),
         ),
     )
 
     val default: ResumeTemplateDefinition = templates.first()
 
     fun find(idOrLegacyName: String): ResumeTemplateDefinition = templates.firstOrNull { template ->
-        template.id == idOrLegacyName || template.displayName.equals(idOrLegacyName, ignoreCase = true)
+        template.id == idOrLegacyName ||
+            template.displayName.equals(idOrLegacyName, ignoreCase = true) ||
+            template.legacyNames.any { it.equals(idOrLegacyName, ignoreCase = true) }
     } ?: default
 }

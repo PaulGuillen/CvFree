@@ -198,7 +198,7 @@ private fun ReferenceEditor(
         value = company,
         onValueChange = onCompanyChange,
         label = "Empresa y cargo",
-        placeholder = "Ej. Tech Labs · Engineering Manager",
+        placeholder = "Ej. Tecnología Andina · Gerente de Ingeniería",
     )
     Spacer(Modifier.height(16.dp))
     val missingContact = showErrors && phone.isBlank() && email.isBlank()

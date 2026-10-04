@@ -211,7 +211,7 @@ private fun EditorialSidebar(
                 )
                 EditorialSmallText(reference.company)
                 EditorialSmallText(reference.phone, "T:")
-                EditorialSmallText(reference.email, "E:")
+                EditorialSmallText(reference.email, "C:")
                 if (index != resume.references.lastIndex) Spacer(Modifier.height(11.dp))
             }
         }

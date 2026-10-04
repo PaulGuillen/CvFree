@@ -46,19 +46,19 @@ private data class BottomNavigationItem(
 private val bottomNavigationItems = listOf(
     BottomNavigationItem(
         destination = CvMainDestination.Home,
-        label = "Home",
+        label = "Inicio",
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
     ),
     BottomNavigationItem(
         destination = CvMainDestination.MyCvs,
-        label = "My CVs",
+        label = "Mis CV",
         selectedIcon = Icons.Filled.Description,
         unselectedIcon = Icons.Outlined.Description,
     ),
     BottomNavigationItem(
         destination = CvMainDestination.Settings,
-        label = "Settings",
+        label = "Ajustes",
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
     ),

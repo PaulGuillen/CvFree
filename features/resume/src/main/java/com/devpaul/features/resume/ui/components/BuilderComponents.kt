@@ -111,7 +111,7 @@ fun BuilderPage(
 fun BuilderTopBar(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "CV Builder",
+    title: String = "Creador de CV",
 ) {
     Row(
         modifier = modifier

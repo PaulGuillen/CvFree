@@ -184,7 +184,7 @@ private fun ForceUpdateBody(
         Spacer(Modifier.height(6.dp))
 
         Text(
-            text = "Esta versión ya no está soportada. Descarga la más reciente para seguir usando la app.",
+            text = "Esta versión ya no es compatible. Descarga la más reciente para seguir usando la aplicación.",
             style = MaterialTheme.typography.bodySmall,
             color = colors.description,
             textAlign = TextAlign.Center
@@ -223,7 +223,7 @@ private fun ForceUpdateBody(
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = "La app no funcionará sin actualizar",
+            text = "La aplicación no funcionará sin actualizar",
             style = MaterialTheme.typography.labelSmall,
             color = colors.caption,
             textAlign = TextAlign.Center

@@ -38,7 +38,7 @@ import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
 
 private const val MaxSkillLength = 40
-private val suggestedSkills = listOf("Docker", "GraphQL", "Agile", "Git", "Figma")
+private val suggestedSkills = listOf("Docker", "GraphQL", "Metodologías ágiles", "Git", "Figma")
 
 @Composable
 fun SkillsScreen(

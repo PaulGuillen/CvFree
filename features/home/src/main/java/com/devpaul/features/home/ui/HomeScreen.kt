@@ -320,7 +320,7 @@ private fun RecentActivityCard() {
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "CV Desarrollador Senior",
+                    text = "CV de desarrollador sénior",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.onSurface,

@@ -30,6 +30,10 @@ class ResumeTemplateCatalogTest {
             ResumeTemplateCatalog.EDITORIAL_LINE_ID,
             ResumeTemplateCatalog.find("Editorial Line").id,
         )
+        assertEquals(
+            ResumeTemplateCatalog.EDITORIAL_LINE_ID,
+            ResumeTemplateCatalog.find("Línea editorial").id,
+        )
     }
 
     @Test

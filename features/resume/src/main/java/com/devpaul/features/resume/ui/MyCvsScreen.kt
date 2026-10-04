@@ -126,7 +126,7 @@ fun MyCvsScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "My CVs",
+                        text = "Mis CV",
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.headlineLarge,
                     )

@@ -49,7 +49,7 @@ fun SummaryScreen(
             RichTextEditor(
                 state = editor,
                 label = "Acerca de mí",
-                placeholder = "Ej. Desarrollador Android Senior con experiencia en Kotlin, Compose y arquitectura limpia...",
+                placeholder = "Ej. Desarrollador Android sénior con experiencia en Kotlin, Compose y arquitectura limpia...",
                 minLines = 5,
             )
             Spacer(Modifier.height(8.dp))

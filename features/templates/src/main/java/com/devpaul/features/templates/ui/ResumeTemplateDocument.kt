@@ -185,7 +185,7 @@ private fun ClassicSidebar(
                 )
                 CompactSidebarText(reference.company)
                 CompactSidebarText(reference.phone, prefix = "T:")
-                CompactSidebarText(reference.email, prefix = "E:")
+                CompactSidebarText(reference.email, prefix = "C:")
                 if (index != resume.references.lastIndex) Spacer(Modifier.height(12.dp))
             }
         }

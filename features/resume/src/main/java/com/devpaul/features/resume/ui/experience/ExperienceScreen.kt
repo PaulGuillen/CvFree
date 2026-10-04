@@ -232,7 +232,7 @@ private fun ExperienceEditor(
         value = position,
         onValueChange = onPositionChange,
         label = "Puesto",
-        placeholder = "Ej. Android Developer",
+        placeholder = "Ej. Desarrollador Android",
         isError = showErrors && position.isBlank(),
         supportingText = if (showErrors && position.isBlank()) "El puesto es obligatorio" else null,
     )

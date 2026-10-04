@@ -29,7 +29,7 @@ fun ContactScreen(
     initialData: ResumeContact = ResumeContact(
         name = "Paul",
         lastName = "Guillen Acuña",
-        professionalTitle = "Senior Mobile Developer",
+        professionalTitle = "Desarrollador móvil sénior",
         email = "paul@ejemplo.com",
         phone = "+51 987 654 321",
         city = "Lima",
@@ -91,7 +91,7 @@ fun ContactScreen(
                 value = professionalTitle,
                 onValueChange = { professionalTitle = it },
                 label = "Título profesional",
-                placeholder = "Ej. Android Developer",
+                placeholder = "Ej. Desarrollador Android",
                 isError = showErrors && professionalTitle.isBlank(),
                 supportingText = if (showErrors && professionalTitle.isBlank()) "El título es obligatorio" else null,
             )
@@ -99,7 +99,7 @@ fun ContactScreen(
             BuilderTextField(
                 email,
                 { email = it },
-                "Email",
+                "Correo electrónico",
                 "correo@ejemplo.com",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = showErrors && (email.isBlank() && phone.isBlank() || !email.isValidEmailOrBlank()),
