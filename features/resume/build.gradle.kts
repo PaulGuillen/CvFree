@@ -8,4 +8,5 @@ android {
 
 dependencies {
     implementation(project(":features:templates"))
+     implementation(libs.mlkit.text.recognition)
 }

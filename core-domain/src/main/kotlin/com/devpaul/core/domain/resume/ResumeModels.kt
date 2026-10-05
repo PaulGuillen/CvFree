@@ -1,9 +1,11 @@
 package com.devpaul.core.domain.resume
 
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 fun newResumeEntryId(): String = UUID.randomUUID().toString()
 
+@Serializable
 enum class ResumeOptionalSection {
     Courses,
     Links,
@@ -11,6 +13,7 @@ enum class ResumeOptionalSection {
     References,
 }
 
+@Serializable
 enum class ResumeTextAlignment {
     Start,
     Center,
@@ -18,6 +21,7 @@ enum class ResumeTextAlignment {
     Justify,
 }
 
+@Serializable
 data class ResumeTextSpan(
     val start: Int,
     val end: Int,
@@ -30,17 +34,20 @@ data class ResumeTextSpan(
     val url: String? = null,
 )
 
+@Serializable
 data class ResumeParagraphStyle(
     val start: Int,
     val end: Int,
     val alignment: ResumeTextAlignment = ResumeTextAlignment.Start,
 )
 
+@Serializable
 data class ResumeTextFormatting(
     val spans: List<ResumeTextSpan> = emptyList(),
     val paragraphs: List<ResumeParagraphStyle> = emptyList(),
 )
 
+@Serializable
 data class ResumeContact(
     val name: String = "",
     val lastName: String = "",
@@ -51,17 +58,28 @@ data class ResumeContact(
     val address: String = "",
 )
 
+@Serializable
 data class ResumeExperience(
     val position: String = "",
     val company: String = "",
     val city: String = "",
     val startYear: String = "",
     val endYear: String = "",
+    val isCurrent: Boolean = false,
     val achievements: String = "",
     val achievementsFormatting: ResumeTextFormatting = ResumeTextFormatting(),
     val id: String = newResumeEntryId(),
-)
+) {
+    val isOngoing: Boolean
+        get() = isCurrent || endYear.trim().lowercase() in currentExperienceLabels
 
+    val displayEndYear: String
+        get() = if (isOngoing) "Actualidad" else endYear
+}
+
+private val currentExperienceLabels = setOf("actualidad", "actual", "presente", "present", "current")
+
+@Serializable
 data class ResumeEducation(
     val institution: String = "",
     val degree: String = "",
@@ -71,6 +89,7 @@ data class ResumeEducation(
     val id: String = newResumeEntryId(),
 )
 
+@Serializable
 data class ResumeCourse(
     val name: String = "",
     val institution: String = "",
@@ -79,18 +98,21 @@ data class ResumeCourse(
     val id: String = newResumeEntryId(),
 )
 
+@Serializable
 data class ResumeLink(
     val name: String = "",
     val url: String = "",
     val id: String = newResumeEntryId(),
 )
 
+@Serializable
 data class ResumeLanguage(
     val language: String = "",
     val level: String = "",
     val id: String = newResumeEntryId(),
 )
 
+@Serializable
 data class ResumeReference(
     val name: String = "",
     val company: String = "",
@@ -99,6 +121,7 @@ data class ResumeReference(
     val id: String = newResumeEntryId(),
 )
 
+@Serializable
 data class ResumeDocument(
     val id: String = "",
     val updatedAt: Long = 0L,

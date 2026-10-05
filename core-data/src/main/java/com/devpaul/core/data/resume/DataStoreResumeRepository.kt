@@ -52,6 +52,13 @@ class DataStoreResumeRepository(
         }
     }
 
+    override suspend fun delete(resumeId: String) {
+        context.resumeDataStore.edit { preferences ->
+            val updated = decode(preferences[resumesKey]).filterNot { it.id == resumeId }
+            preferences[resumesKey] = json.encodeToString(updated.map(StoredResume::fromDomain))
+        }
+    }
+
     private fun decode(value: String?): List<ResumeDocument> =
         if (value.isNullOrBlank()) {
             emptyList()
@@ -215,31 +222,34 @@ private data class StoredExperience(
     val city: String,
     val startYear: String,
     val endYear: String,
+    val isCurrent: Boolean = false,
     val achievements: String,
     val achievementsFormatting: StoredTextFormatting = StoredTextFormatting(),
     val id: String = "",
 ) {
     fun toDomain() = ResumeExperience(
-        position,
-        company,
-        city,
-        startYear,
-        endYear,
-        achievements,
-        achievementsFormatting.toDomain(),
-        id.ifBlank(::newResumeEntryId),
+        position = position,
+        company = company,
+        city = city,
+        startYear = startYear,
+        endYear = endYear,
+        isCurrent = isCurrent,
+        achievements = achievements,
+        achievementsFormatting = achievementsFormatting.toDomain(),
+        id = id.ifBlank(::newResumeEntryId),
     )
 
     companion object {
         fun fromDomain(value: ResumeExperience) = StoredExperience(
-            value.position,
-            value.company,
-            value.city,
-            value.startYear,
-            value.endYear,
-            value.achievements,
-            StoredTextFormatting.fromDomain(value.achievementsFormatting),
-            value.id,
+            position = value.position,
+            company = value.company,
+            city = value.city,
+            startYear = value.startYear,
+            endYear = value.endYear,
+            isCurrent = value.isOngoing,
+            achievements = value.achievements,
+            achievementsFormatting = StoredTextFormatting.fromDomain(value.achievementsFormatting),
+            id = value.id,
         )
     }
 }

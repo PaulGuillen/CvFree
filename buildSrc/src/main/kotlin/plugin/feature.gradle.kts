@@ -20,4 +20,5 @@ dependencies {
     implementation(project(":navigation"))
     koinImplementation()
     composeImplementation()
+    pdfBoxImplementation()
 }

@@ -37,6 +37,8 @@ composeBom = "2026.02.01"
 androidx-fragment = "1.9.0"
 appUpdateKtx = "2.1.0"
 kotlinxCoroutines = "1.11.0"
+pdfBoxAndroid = "2.0.27.0"
+mlKitTextRecognition = "16.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,9 +81,12 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 # Kotlinx
 datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+pdfbox-android = { group = "com.tom-roush", name = "pdfbox-android", version.ref = "pdfBoxAndroid" }
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlKitTextRecognition" }
 
 # Koin
 koin = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-core-annotations = { group = "io.insert-koin", name = "koin-core-annotations", version.ref = "koin" }
 koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinAnnotations" }
 koin-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinCompiler" }
 koin-navigation = { group = "io.insert-koin", name = "koin-androidx-navigation", version.ref = "koin" }

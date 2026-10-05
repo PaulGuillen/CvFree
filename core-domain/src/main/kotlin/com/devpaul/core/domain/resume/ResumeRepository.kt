@@ -6,4 +6,6 @@ interface ResumeRepository {
     val resumes: Flow<List<ResumeDocument>>
 
     suspend fun save(resume: ResumeDocument)
+
+    suspend fun delete(resumeId: String)
 }

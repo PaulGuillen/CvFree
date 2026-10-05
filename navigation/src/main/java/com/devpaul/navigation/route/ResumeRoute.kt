@@ -11,6 +11,9 @@ sealed interface ResumeRoute : AppRoute {
     data object ResumeList : ResumeRoute, DestinationRoute
 
     @Serializable
+    data class Importing(val uri: String) : ResumeRoute, DestinationRoute
+
+    @Serializable
     data object SectionSelection : ResumeRoute, DestinationRoute
 
     @Serializable

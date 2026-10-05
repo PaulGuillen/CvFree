@@ -89,7 +89,7 @@ fun ResumePreviewScreen(
         scope.launch {
             val exportResult = runCatching {
                 val bitmap = checkNotNull(pendingPreview) { "No se pudo capturar la vista previa" }
-                ResumePdfExporter.export(context, destination, bitmap)
+                ResumePdfExporter.export(context, destination, bitmap, resume)
             }
             pendingPreview = null
             isExporting = false
@@ -213,7 +213,7 @@ private fun ScaledResumeDocument(
     captureLayer: GraphicsLayer,
     modifier: Modifier = Modifier,
 ) {
-    val designWidth = with(LocalDensity.current) { 700.dp.roundToPx() }
+    val designWidth = with(LocalDensity.current) { RESUME_DESIGN_WIDTH_DP.dp.roundToPx() }
     Layout(
         modifier = modifier,
         content = {

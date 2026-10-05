@@ -2,10 +2,12 @@ package com.devpaul.features.resume
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.features.resume.ui.MyCvsScreen
@@ -13,6 +15,7 @@ import com.devpaul.features.resume.ui.contact.ContactScreen
 import com.devpaul.features.resume.ui.courses.CoursesScreen
 import com.devpaul.features.resume.ui.education.EducationScreen
 import com.devpaul.features.resume.ui.experience.ExperienceScreen
+import com.devpaul.features.resume.ui.importing.ResumeImportScreen
 import com.devpaul.features.resume.ui.languages.LanguagesScreen
 import com.devpaul.features.resume.ui.links.LinksScreen
 import com.devpaul.features.resume.ui.references.ReferencesScreen
@@ -22,6 +25,7 @@ import com.devpaul.features.resume.ui.summary.SummaryScreen
 import com.devpaul.features.templates.ui.ResumePreviewScreen
 import com.devpaul.features.templates.ui.TemplateSelectionScreen
 import com.devpaul.navigation.route.ResumeRoute
+import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.resumeGraph(
     navController: NavHostController,
@@ -62,12 +66,16 @@ fun NavGraphBuilder.resumeGraph(
     ) {
         composable<ResumeRoute.ResumeList> {
         val resumes by repository.resumes.collectAsState(initial = emptyList())
+        val coroutineScope = rememberCoroutineScope()
 
         MyCvsScreen(
             resumes = resumes,
             onCreateCv = {
                 draftState.startNew(emptySet())
                 navController.navigate(ResumeRoute.SectionSelection)
+            },
+            onImportPdf = { uri ->
+                navController.navigate(ResumeRoute.Importing(uri.toString()))
             },
             onEditResume = { resume ->
                 draftState.load(resume)
@@ -77,8 +85,25 @@ fun NavGraphBuilder.resumeGraph(
                 draftState.load(resume)
                 navController.navigate(ResumeRoute.Preview)
             },
+            onDeleteResume = { resume ->
+                coroutineScope.launch { repository.delete(resume.id) }
+            },
             onNavigateToHome = onNavigateToHome,
             onNavigateToSettings = onNavigateToSettings,
+        )
+        }
+
+        composable<ResumeRoute.Importing> { backStackEntry ->
+        val route = backStackEntry.toRoute<ResumeRoute.Importing>()
+        ResumeImportScreen(
+            documentUri = android.net.Uri.parse(route.uri),
+            onBack = { navController.popBackStack() },
+            onComplete = { importedResume ->
+                draftState.load(importedResume)
+                navController.navigate(ResumeRoute.SectionSelection) {
+                    popUpTo(ResumeRoute.ResumeList) { inclusive = false }
+                }
+            },
         )
         }
 

@@ -43,6 +43,7 @@ fun Project.koinImplementation() {
     val libs = getLibs()
     dependencies {
         "implementation"(libs["koin"])
+        "implementation"(libs["koin-core-annotations"])
         "implementation"(libs["koin-annotations"])
         "ksp"(libs["koin-compiler"])
     }
@@ -109,6 +110,13 @@ fun Project.retrofitImplementation() {
         "implementation"(libs["retrofit-gson-converter"])
         "implementation"(libs["converter-simplexml"])
         "implementation"(libs["okhttp3-loggin-interceptor"])
+    }
+}
+
+fun Project.pdfBoxImplementation() {
+    val libs = getLibs()
+    dependencies {
+        "implementation"(libs["pdfbox-android"])
     }
 }
 
