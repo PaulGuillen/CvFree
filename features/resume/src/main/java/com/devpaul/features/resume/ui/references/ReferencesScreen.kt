@@ -82,7 +82,7 @@ fun ReferencesScreen(
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onReferencesChange(
-            if (currentId == NewEntryId) references + value
+            if (currentId == NewEntryId) listOf(value) + references
             else references.replaceById(value.id, ResumeReference::id, value),
         )
         editingId = null
@@ -113,6 +113,28 @@ fun ReferencesScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nueva referencia",
+                    bringIntoView = references.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    ReferenceEditor(
+                        name = name,
+                        onNameChange = { name = it },
+                        company = company,
+                        onCompanyChange = { company = it },
+                        phone = phone,
+                        onPhoneChange = { phone = it },
+                        email = email,
+                        onEmailChange = { email = it },
+                        showErrors = showErrors,
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             references.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
@@ -147,24 +169,7 @@ fun ReferencesScreen(
                     } else null,
                 )
             }
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nueva referencia") {
-                    Spacer(Modifier.height(16.dp))
-                    ReferenceEditor(
-                        name = name,
-                        onNameChange = { name = it },
-                        company = company,
-                        onCompanyChange = { company = it },
-                        phone = phone,
-                        onPhoneChange = { phone = it },
-                        email = email,
-                        onEmailChange = { email = it },
-                        showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir referencia", onClick = ::startNew)
             }
         }

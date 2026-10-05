@@ -1,12 +1,16 @@
 package com.devpaul.features.resume.ui.experience
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +54,7 @@ fun ExperienceScreen(
     var city by rememberSaveable { mutableStateOf("") }
     var startYear by rememberSaveable { mutableStateOf("") }
     var endYear by rememberSaveable { mutableStateOf("") }
+    var isCurrent by rememberSaveable { mutableStateOf(false) }
     var achievementsSeed by remember { mutableStateOf("") }
     var formattingSeed by remember { mutableStateOf(ResumeTextFormatting()) }
     var showErrors by rememberSaveable { mutableStateOf(false) }
@@ -61,6 +68,7 @@ fun ExperienceScreen(
         city = ""
         startYear = ""
         endYear = ""
+        isCurrent = false
         achievementsSeed = ""
         formattingSeed = ResumeTextFormatting()
         showErrors = false
@@ -76,7 +84,8 @@ fun ExperienceScreen(
         company = item.company
         city = item.city
         startYear = item.startYear
-        endYear = item.endYear
+        endYear = item.endYear.takeUnless { item.isOngoing }.orEmpty()
+        isCurrent = item.isOngoing
         achievementsSeed = item.achievements
         formattingSeed = item.achievementsFormatting
         showErrors = false
@@ -90,12 +99,12 @@ fun ExperienceScreen(
         startYear,
         endYear,
         achievementsEditor.value.text,
-    ).any(String::isNotBlank)
+    ).any(String::isNotBlank) || isCurrent
 
     fun saveEditor(): Boolean {
         showErrors = true
         if (position.isBlank() || company.isBlank() ||
-            !startYear.isValidYearOrBlank() || !endYear.isValidYearOrBlank()
+            !startYear.isValidYearOrBlank() || (!isCurrent && !endYear.isValidYearOrBlank())
         ) {
             return false
         }
@@ -105,13 +114,14 @@ fun ExperienceScreen(
             company = company.trim(),
             city = city.trim(),
             startYear = startYear.trim(),
-            endYear = endYear.trim(),
+            endYear = endYear.trim().takeUnless { isCurrent }.orEmpty(),
+            isCurrent = isCurrent,
             achievements = achievementsEditor.value.text.trim(),
             achievementsFormatting = achievementsEditor.formatting,
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onExperiencesChange(
-            if (currentId == NewEntryId) experiences + value
+            if (currentId == NewEntryId) listOf(value) + experiences
             else experiences.replaceById(value.id, ResumeExperience::id, value),
         )
         editingId = null
@@ -142,12 +152,39 @@ fun ExperienceScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nueva experiencia",
+                    bringIntoView = experiences.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    ExperienceEditor(
+                        position = position,
+                        onPositionChange = { position = it },
+                        company = company,
+                        onCompanyChange = { company = it },
+                        city = city,
+                        onCityChange = { city = it },
+                        startYear = startYear,
+                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                        endYear = endYear,
+                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                        isCurrent = isCurrent,
+                        onIsCurrentChange = { isCurrent = it },
+                        achievementsEditor = achievementsEditor,
+                        showErrors = showErrors,
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             experiences.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
                     title = item.position,
                     subtitle = item.company,
-                    supportingText = listOf(item.city, dateRange(item.startYear, item.endYear))
+                    supportingText = listOf(item.city, dateRange(item.startYear, item.displayEndYear))
                         .filter(String::isNotBlank)
                         .joinToString(" · "),
                     expanded = expanded,
@@ -174,6 +211,8 @@ fun ExperienceScreen(
                                 onStartYearChange = { startYear = it.filter(Char::isDigit) },
                                 endYear = endYear,
                                 onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                                isCurrent = isCurrent,
+                                onIsCurrentChange = { isCurrent = it },
                                 achievementsEditor = achievementsEditor,
                                 showErrors = showErrors,
                                 onCancel = { editingId = null; resetEditor() },
@@ -184,27 +223,7 @@ fun ExperienceScreen(
                 )
             }
 
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nueva experiencia") {
-                    Spacer(Modifier.height(16.dp))
-                    ExperienceEditor(
-                        position = position,
-                        onPositionChange = { position = it },
-                        company = company,
-                        onCompanyChange = { company = it },
-                        city = city,
-                        onCityChange = { city = it },
-                        startYear = startYear,
-                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
-                        endYear = endYear,
-                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
-                        achievementsEditor = achievementsEditor,
-                        showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir empleo", onClick = ::startNew)
             }
         }
@@ -223,6 +242,8 @@ private fun ExperienceEditor(
     onStartYearChange: (String) -> Unit,
     endYear: String,
     onEndYearChange: (String) -> Unit,
+    isCurrent: Boolean,
+    onIsCurrentChange: (Boolean) -> Unit,
     achievementsEditor: RichTextEditorState,
     showErrors: Boolean,
     onCancel: () -> Unit,
@@ -264,16 +285,30 @@ private fun ExperienceEditor(
             supportingText = if (showErrors && !startYear.isValidYearOrBlank()) "Usa AAAA" else null,
         )
         BuilderTextField(
-            value = endYear,
+            value = if (isCurrent) "Actualidad" else endYear,
             onValueChange = onEndYearChange,
             label = "Hasta",
-            placeholder = "2026",
+            placeholder = if (isCurrent) "Actualidad" else "2026",
             modifier = Modifier.weight(1f),
             maxLength = 4,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = showErrors && !endYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !endYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            isError = showErrors && !isCurrent && !endYear.isValidYearOrBlank(),
+            supportingText = if (showErrors && !isCurrent && !endYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            enabled = !isCurrent,
         )
+    }
+    Spacer(Modifier.height(16.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onIsCurrentChange(!isCurrent) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = isCurrent,
+            onCheckedChange = null,
+        )
+        Text(modifier = Modifier.padding(horizontal = 6.dp), text = "Trabajo actualmente aquí")
     }
     Spacer(Modifier.height(16.dp))
     RichTextEditor(

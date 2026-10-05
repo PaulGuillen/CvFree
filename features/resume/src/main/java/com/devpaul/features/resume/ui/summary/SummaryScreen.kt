@@ -16,7 +16,7 @@ import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
 
-private const val SummaryMaxLength = 500
+private const val SummaryMaxLength = 1_000
 
 @Composable
 fun SummaryScreen(

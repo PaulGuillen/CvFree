@@ -95,7 +95,7 @@ fun LanguagesScreen(
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onLanguagesChange(
-            if (currentId == NewEntryId) selectedLanguages + value
+            if (currentId == NewEntryId) listOf(value) + selectedLanguages
             else selectedLanguages.replaceById(value.id, ResumeLanguage::id, value),
         )
         editingId = null
@@ -126,6 +126,32 @@ fun LanguagesScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nuevo idioma",
+                    bringIntoView = selectedLanguages.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    LanguageEditor(
+                        selectedLanguage = selectedLanguage,
+                        onLanguageChange = {
+                            selectedLanguage = it
+                            editorTouched = true
+                        },
+                        selectedLevel = selectedLevel,
+                        onLevelChange = {
+                            selectedLevel = it
+                            editorTouched = true
+                        },
+                        duplicate = showErrors && selectedLanguages.any {
+                            it.language.equals(selectedLanguage, ignoreCase = true)
+                        },
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             selectedLanguages.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
@@ -163,28 +189,7 @@ fun LanguagesScreen(
                     } else null,
                 )
             }
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nuevo idioma") {
-                    Spacer(Modifier.height(16.dp))
-                    LanguageEditor(
-                        selectedLanguage = selectedLanguage,
-                        onLanguageChange = {
-                            selectedLanguage = it
-                            editorTouched = true
-                        },
-                        selectedLevel = selectedLevel,
-                        onLevelChange = {
-                            selectedLevel = it
-                            editorTouched = true
-                        },
-                        duplicate = showErrors && selectedLanguages.any {
-                            it.language.equals(selectedLanguage, ignoreCase = true)
-                        },
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir idioma", onClick = ::startNew)
             }
         }

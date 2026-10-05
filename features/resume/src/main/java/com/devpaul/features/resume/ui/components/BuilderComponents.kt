@@ -202,6 +202,7 @@ fun BuilderTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
     isError: Boolean = false,
     supportingText: String? = null,
+    enabled: Boolean = true,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -225,6 +226,7 @@ fun BuilderTextField(
             singleLine = singleLine,
             minLines = minLines,
             keyboardOptions = keyboardOptions,
+            enabled = enabled,
             isError = isError,
             supportingText = supportingText?.let { message ->
                 {

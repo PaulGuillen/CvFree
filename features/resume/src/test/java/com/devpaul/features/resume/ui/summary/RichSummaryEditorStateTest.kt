@@ -48,4 +48,36 @@ class RichTextEditorStateTest {
         state.toggleList(numbered = true)
         assertEquals("Primero\nSegundo", state.value.text)
     }
+
+    @Test
+    fun bulletedList_onEmptyEditor_insertsMarkerBeforeTyping() {
+        val state = RichTextEditorState("", ResumeTextFormatting())
+
+        state.toggleList(numbered = false)
+
+        assertEquals("• ", state.value.text)
+        assertEquals(TextRange(2), state.value.selection)
+    }
+
+    @Test
+    fun numberedList_onEmptyParagraph_insertsMarkerAtCursor() {
+        val state = RichTextEditorState("Primera línea\n", ResumeTextFormatting())
+        state.onValueChange(TextFieldValue(state.value.text, TextRange(state.value.text.length)))
+
+        state.toggleList(numbered = true)
+
+        assertEquals("Primera línea\n1. ", state.value.text)
+        assertEquals(TextRange(state.value.text.length), state.value.selection)
+    }
+
+    @Test
+    fun collapsedListToggle_keepsCursorAfterInsertedMarker() {
+        val state = RichTextEditorState("Elemento", ResumeTextFormatting())
+        state.onValueChange(TextFieldValue(state.value.text, TextRange(4)))
+
+        state.toggleList(numbered = false)
+
+        assertEquals("• Elemento", state.value.text)
+        assertEquals(TextRange(6), state.value.selection)
+    }
 }

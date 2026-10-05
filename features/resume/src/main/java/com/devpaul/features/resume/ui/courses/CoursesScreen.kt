@@ -83,7 +83,7 @@ fun CoursesScreen(
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onCoursesChange(
-            if (currentId == NewEntryId) courses + value
+            if (currentId == NewEntryId) listOf(value) + courses
             else courses.replaceById(value.id, ResumeCourse::id, value),
         )
         editingId = null
@@ -114,6 +114,28 @@ fun CoursesScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nuevo curso o certificación",
+                    bringIntoView = courses.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    CourseEditor(
+                        courseName = courseName,
+                        onCourseNameChange = { courseName = it },
+                        institution = institution,
+                        onInstitutionChange = { institution = it },
+                        startDate = startDate,
+                        onStartDateChange = { startDate = it },
+                        endDate = endDate,
+                        onEndDateChange = { endDate = it },
+                        showErrors = showErrors,
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             courses.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
@@ -148,24 +170,7 @@ fun CoursesScreen(
                     } else null,
                 )
             }
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nuevo curso o certificación") {
-                    Spacer(Modifier.height(16.dp))
-                    CourseEditor(
-                        courseName = courseName,
-                        onCourseNameChange = { courseName = it },
-                        institution = institution,
-                        onInstitutionChange = { institution = it },
-                        startDate = startDate,
-                        onStartDateChange = { startDate = it },
-                        endDate = endDate,
-                        onEndDateChange = { endDate = it },
-                        showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir curso", onClick = ::startNew)
             }
         }

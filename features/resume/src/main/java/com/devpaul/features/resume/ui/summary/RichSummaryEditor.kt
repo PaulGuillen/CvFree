@@ -156,9 +156,19 @@ internal class RichTextEditorState(
 
     fun toggleList(numbered: Boolean) {
         val selected = paragraphRange(value.text, value.selection)
-        val lines = value.text.substring(selected.start, selected.end).split('\n')
+        val selectedText = value.text.substring(selected.start, selected.end)
         val numberPattern = Regex("^\\d+\\.\\s+")
         val bulletPattern = Regex("^•\\s+")
+        val marker = if (numbered) "1. " else "• "
+
+        if (selectedText.isBlank()) {
+            val newText = value.text.replaceRange(selected.start, selected.end, marker)
+            val cursor = selected.start + marker.length
+            onValueChange(TextFieldValue(newText, TextRange(cursor)))
+            return
+        }
+
+        val lines = selectedText.split('\n')
         val applied = lines.filter(String::isNotBlank).all {
             if (numbered) numberPattern.containsMatchIn(it) else bulletPattern.containsMatchIn(it)
         }
@@ -172,7 +182,18 @@ internal class RichTextEditorState(
             }
         }.joinToString("\n")
         val newText = value.text.replaceRange(selected.start, selected.end, replacement)
-        onValueChange(TextFieldValue(newText, TextRange(selected.start, selected.start + replacement.length)))
+        val newSelection = if (value.selection.collapsed) {
+            val previousPrefixLength = numberPattern.find(selectedText)?.value?.length
+                ?: bulletPattern.find(selectedText)?.value?.length
+                ?: 0
+            val nextPrefixLength = if (applied) 0 else marker.length
+            val cursor = (value.selection.start + nextPrefixLength - previousPrefixLength)
+                .coerceIn(selected.start, selected.start + replacement.length)
+            TextRange(cursor)
+        } else {
+            TextRange(selected.start, selected.start + replacement.length)
+        }
+        onValueChange(TextFieldValue(newText, newSelection))
     }
 
     private fun applyToSelectionOrTyping(transform: CharacterStyle.() -> CharacterStyle) {

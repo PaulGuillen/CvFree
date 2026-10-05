@@ -61,7 +61,7 @@ fun SkillsScreen(
             skills.any { it.equals(skill, ignoreCase = true) } -> "Esta habilidad ya fue agregada"
             else -> null
         }
-        return if (inputError == null) skills + skill else null
+        return if (inputError == null) listOf(skill) + skills else null
     }
 
     fun addPendingSkill() {
@@ -154,7 +154,7 @@ fun SkillsScreen(
                 suggestedSkills.filterNot { suggestion ->
                     skills.any { it.equals(suggestion, ignoreCase = true) }
                 }.forEach { skill ->
-                    SuggestedSkillChip(skill) { skills = skills + skill }
+                    SuggestedSkillChip(skill) { skills = listOf(skill) + skills }
                 }
             }
         }

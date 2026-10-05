@@ -89,7 +89,7 @@ fun LinksScreen(
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onLinksChange(
-            if (currentId == NewEntryId) links + value
+            if (currentId == NewEntryId) listOf(value) + links
             else links.replaceById(value.id, ResumeLink::id, value),
         )
         editingId = null
@@ -120,6 +120,29 @@ fun LinksScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nuevo enlace",
+                    bringIntoView = links.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    LinkEditor(
+                        linkName = linkName,
+                        onLinkNameChange = { linkName = it },
+                        url = url,
+                        onUrlChange = { url = it },
+                        showErrors = showErrors,
+                        duplicateUrl = links.any { it.url.equals(url.trim(), ignoreCase = true) },
+                        onPreset = { preset ->
+                            linkName = preset.name
+                            url = preset.url
+                        },
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             links.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
@@ -156,25 +179,7 @@ fun LinksScreen(
                     } else null,
                 )
             }
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nuevo enlace") {
-                    Spacer(Modifier.height(16.dp))
-                    LinkEditor(
-                        linkName = linkName,
-                        onLinkNameChange = { linkName = it },
-                        url = url,
-                        onUrlChange = { url = it },
-                        showErrors = showErrors,
-                        duplicateUrl = links.any { it.url.equals(url.trim(), ignoreCase = true) },
-                        onPreset = { preset ->
-                            linkName = preset.name
-                            url = preset.url
-                        },
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir enlace", onClick = ::startNew)
             }
         }

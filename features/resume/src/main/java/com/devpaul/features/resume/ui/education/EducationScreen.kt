@@ -89,7 +89,7 @@ fun EducationScreen(
             id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
         )
         onEducationChange(
-            if (currentId == NewEntryId) education + value
+            if (currentId == NewEntryId) listOf(value) + education
             else education.replaceById(value.id, ResumeEducation::id, value),
         )
         editingId = null
@@ -120,6 +120,30 @@ fun EducationScreen(
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (editingId == NewEntryId) {
+                BuilderNewEntryCard(
+                    title = "Nueva educación",
+                    bringIntoView = education.isNotEmpty(),
+                ) {
+                    Spacer(Modifier.height(16.dp))
+                    EducationEditor(
+                        institution = institution,
+                        onInstitutionChange = { institution = it },
+                        degree = degree,
+                        onDegreeChange = { degree = it },
+                        city = city,
+                        onCityChange = { city = it },
+                        startYear = startYear,
+                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                        endYear = endYear,
+                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                        showErrors = showErrors,
+                        onCancel = { editingId = null; resetEditor() },
+                        onSave = ::saveEditor,
+                    )
+                }
+            }
+
             education.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
@@ -159,26 +183,7 @@ fun EducationScreen(
                 )
             }
 
-            if (editingId == NewEntryId) {
-                BuilderNewEntryCard(title = "Nueva educación") {
-                    Spacer(Modifier.height(16.dp))
-                    EducationEditor(
-                        institution = institution,
-                        onInstitutionChange = { institution = it },
-                        degree = degree,
-                        onDegreeChange = { degree = it },
-                        city = city,
-                        onCityChange = { city = it },
-                        startYear = startYear,
-                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
-                        endYear = endYear,
-                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
-                        showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
-                        onSave = ::saveEditor,
-                    )
-                }
-            } else if (editingId == null) {
+            if (editingId == null) {
                 BuilderAddButton(text = "Añadir educación", onClick = ::startNew)
             }
         }
