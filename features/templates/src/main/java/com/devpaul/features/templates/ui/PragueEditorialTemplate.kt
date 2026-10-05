@@ -71,7 +71,7 @@ internal fun PragueEditorialTemplate(resume: ResumeDocument) {
             PragueSidebar(
                 resume = resume,
                 modifier = Modifier
-                    .weight(0.29f)
+                    .weight(0.33f)
                     .padding(end = 20.dp),
             )
             Box(
@@ -83,7 +83,7 @@ internal fun PragueEditorialTemplate(resume: ResumeDocument) {
             PragueMainContent(
                 resume = resume,
                 modifier = Modifier
-                    .weight(0.71f)
+                    .weight(0.67f)
                     .padding(start = 24.dp),
             )
         }
@@ -190,17 +190,8 @@ private fun PragueSidebar(resume: ResumeDocument, modifier: Modifier = Modifier)
             }
         }
 
-        if (resume.skills.isNotEmpty()) {
-            if (resume.education.isNotEmpty()) PragueSideSectionGap()
-            PragueSectionTitle("HABILIDADES")
-            resume.skills.forEachIndexed { index, skill ->
-                PragueProgressBar(skill.uppercase(), 1f)
-                if (index != resume.skills.lastIndex) Spacer(Modifier.height(8.dp))
-            }
-        }
-
         if (showLinks) {
-            if (resume.education.isNotEmpty() || resume.skills.isNotEmpty()) PragueSideSectionGap()
+            if (resume.education.isNotEmpty()) PragueSideSectionGap()
             PragueSectionTitle("ENLACES")
             resume.links.forEachIndexed { index, link ->
                 Text(
@@ -224,7 +215,7 @@ private fun PragueSidebar(resume: ResumeDocument, modifier: Modifier = Modifier)
         }
 
         if (showLanguages) {
-            if (resume.education.isNotEmpty() || resume.skills.isNotEmpty() || showLinks) {
+            if (resume.education.isNotEmpty() || showLinks) {
                 PragueSideSectionGap()
             }
             PragueSectionTitle("IDIOMAS")
@@ -256,7 +247,7 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = pragueDate(experience.startYear, experience.endYear),
+                    date = pragueDate(experience.startYear, experience.displayEndYear),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -264,8 +255,29 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
             }
         }
 
-        if (showCourses) {
+        if (resume.skills.isNotEmpty()) {
             if (resume.experiences.isNotEmpty()) PragueMainSectionGap()
+            PragueSectionTitle("HABILIDADES")
+            resume.skills.chunked(2).forEachIndexed { rowIndex, skills ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(18.dp),
+                ) {
+                    skills.forEach { skill ->
+                        PragueProgressBar(
+                            label = skill.uppercase(),
+                            progress = 1f,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    if (skills.size == 1) Spacer(Modifier.weight(1f))
+                }
+                if (rowIndex != resume.skills.chunked(2).lastIndex) Spacer(Modifier.height(8.dp))
+            }
+        }
+
+        if (showCourses) {
+            if (resume.experiences.isNotEmpty() || resume.skills.isNotEmpty()) PragueMainSectionGap()
             PragueSectionTitle("CURSOS")
             resume.courses.forEachIndexed { index, course ->
                 PragueMainEntry(
@@ -279,7 +291,9 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
         }
 
         if (showReferences) {
-            if (resume.experiences.isNotEmpty() || showCourses) PragueMainSectionGap()
+            if (resume.experiences.isNotEmpty() || resume.skills.isNotEmpty() || showCourses) {
+                PragueMainSectionGap()
+            }
             PragueSectionTitle("REFERENCIAS")
             resume.references.chunked(2).forEachIndexed { rowIndex, references ->
                 Row(
@@ -337,8 +351,10 @@ private fun PragueMainEntry(
     )
     if (description.isNotBlank()) {
         Spacer(Modifier.height(5.dp))
-        Text(
-            text = formattedText(description, descriptionFormatting),
+        ExperienceDescription(
+            text = description,
+            formatting = descriptionFormatting,
+            modifier = Modifier.fillMaxWidth(),
             color = PragueMuted,
             fontSize = 6.7.sp,
             lineHeight = 9.7.sp,
@@ -439,16 +455,22 @@ private fun PragueSectionTitle(text: String) {
 }
 
 @Composable
-private fun PragueProgressBar(label: String, progress: Float) {
-    Text(label, color = PragueMuted, fontSize = 6.5.sp, lineHeight = 8.sp)
-    Spacer(Modifier.height(2.5.dp))
-    Box(Modifier.fillMaxWidth().height(2.5.dp).background(PragueTrack)) {
-        Box(
-            Modifier
-                .fillMaxWidth(progress)
-                .fillMaxHeight()
-                .background(PragueInk),
-        )
+private fun PragueProgressBar(
+    label: String,
+    progress: Float,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(label, color = PragueMuted, fontSize = 6.5.sp, lineHeight = 8.sp)
+        Spacer(Modifier.height(2.5.dp))
+        Box(Modifier.fillMaxWidth().height(2.5.dp).background(PragueTrack)) {
+            Box(
+                Modifier
+                    .fillMaxWidth(progress)
+                    .fillMaxHeight()
+                    .background(PragueInk),
+            )
+        }
     }
 }
 

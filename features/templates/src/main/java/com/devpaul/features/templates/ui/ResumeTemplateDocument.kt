@@ -52,6 +52,7 @@ import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeReference
 import com.devpaul.core.domain.resume.ResumeTextAlignment
 import com.devpaul.core.domain.resume.ResumeTextFormatting
+import com.devpaul.core.domain.resume.reflowSoftLineBreaks
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
 
@@ -61,13 +62,17 @@ private val DocumentLine = Color(0xFF515154)
 private val SidebarBackground = Color(0xFF414143)
 private val SidebarText = Color(0xFFF8F8F8)
 
+internal const val RESUME_DESIGN_WIDTH_DP = 490
+private val BudapestSidebarWidth = 180.dp
+private val BudapestMainWidth = 310.dp
+
 @Composable
 fun ResumeTemplateDocument(
     resume: ResumeDocument,
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         color = Color.White,
         border = BorderStroke(1.dp, Color(0xFFD5D8DE)),
@@ -92,12 +97,11 @@ private fun BudapestTemplate(resume: ResumeDocument) {
             resume = resume,
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.28f),
+                .width(BudapestSidebarWidth),
         )
         ClassicMainContent(
             resume = resume,
-            modifier = Modifier
-                .weight(0.72f),
+            modifier = Modifier.width(BudapestMainWidth),
         )
     }
 }
@@ -213,7 +217,7 @@ private fun ClassicMainContent(
                 TimelineEntry(
                     organization = experience.company.uppercase(),
                     location = experience.city,
-                    date = compactDate(experience.startYear, experience.endYear),
+                    date = compactDate(experience.startYear, experience.displayEndYear),
                     title = experience.position,
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
@@ -379,8 +383,9 @@ private fun TimelineEntry(
             Text(title, color = DocumentInk, fontSize = 7.sp, lineHeight = 8.5.sp, fontWeight = FontWeight.Bold)
             if (description.isNotBlank()) {
                 Spacer(Modifier.height(3.dp))
-                Text(
-                    text = formattedText(description, descriptionFormatting),
+                ExperienceDescription(
+                    text = description,
+                    formatting = descriptionFormatting,
                     modifier = Modifier.fillMaxWidth(),
                     color = DocumentMuted,
                     fontSize = 6.2.sp,
@@ -446,12 +451,17 @@ private fun languageProgress(level: String): Float = when (level.lowercase()) {
     else -> 0.4f
 }
 
-internal fun formattedText(text: String, formatting: ResumeTextFormatting): AnnotatedString =
-    buildAnnotatedString {
-        append(text)
+internal fun formattedText(text: String, formatting: ResumeTextFormatting): AnnotatedString {
+    val displayText = if (formatting.spans.isEmpty() && formatting.paragraphs.isEmpty()) {
+        reflowSoftLineBreaks(text)
+    } else {
+        text
+    }
+    return buildAnnotatedString {
+        append(displayText)
         formatting.spans.forEach { span ->
-            val start = span.start.coerceIn(0, text.length)
-            val end = span.end.coerceIn(start, text.length)
+            val start = span.start.coerceIn(0, displayText.length)
+            val end = span.end.coerceIn(start, displayText.length)
             if (start == end) return@forEach
             addStyle(
                 SpanStyle(
@@ -473,8 +483,8 @@ internal fun formattedText(text: String, formatting: ResumeTextFormatting): Anno
             )
         }
         formatting.paragraphs.forEach { paragraph ->
-            val start = paragraph.start.coerceIn(0, text.length)
-            val end = paragraph.end.coerceIn(start, text.length)
+            val start = paragraph.start.coerceIn(0, displayText.length)
+            val end = paragraph.end.coerceIn(start, displayText.length)
             if (start < end) {
                 addStyle(
                     ParagraphStyle(
@@ -491,6 +501,7 @@ internal fun formattedText(text: String, formatting: ResumeTextFormatting): Anno
             }
         }
     }
+}
 
 @Preview(
     name = "Currículum completo",

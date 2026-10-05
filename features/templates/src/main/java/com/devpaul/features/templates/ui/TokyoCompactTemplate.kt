@@ -69,7 +69,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = tokyoDate(experience.startYear, experience.endYear),
+                    date = tokyoDate(experience.startYear, experience.displayEndYear),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -287,7 +287,13 @@ private fun TokyoEntry(
     )
     if (description.isNotBlank()) {
         Spacer(Modifier.height(4.dp))
-        TokyoFormattedBody(description, descriptionFormatting)
+        ExperienceDescription(
+            text = description,
+            formatting = descriptionFormatting,
+            color = TokyoInk,
+            fontSize = 6.6.sp,
+            lineHeight = 9.2.sp,
+        )
     }
 }
 
@@ -295,6 +301,7 @@ private fun TokyoEntry(
 private fun TokyoFormattedBody(text: String, formatting: ResumeTextFormatting) {
     Text(
         text = formattedText(text, formatting),
+        modifier = Modifier.fillMaxWidth(),
         color = TokyoInk,
         fontSize = 6.6.sp,
         lineHeight = 9.2.sp,

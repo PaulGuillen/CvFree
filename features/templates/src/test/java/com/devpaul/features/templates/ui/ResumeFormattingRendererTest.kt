@@ -46,4 +46,33 @@ class ResumeFormattingRendererTest {
         assertTrue(span.textDecoration!!.contains(TextDecoration.LineThrough))
         assertEquals(TextAlign.Justify, rendered.paragraphStyles.single().item.textAlign)
     }
+
+    @Test
+    fun `separates bullets into readable experience blocks`() {
+        val blocks = experienceDescriptionBlocks(
+            text = "• Primera responsabilidad\n• Segunda responsabilidad",
+            formatting = ResumeTextFormatting(),
+        )
+
+        assertEquals(2, blocks.size)
+        assertEquals(listOf("•", "•"), blocks.map { it.marker })
+        assertEquals(
+            listOf("Primera responsabilidad", "Segunda responsabilidad"),
+            blocks.map { it.content.text },
+        )
+    }
+
+    @Test
+    fun `supports numbered experience blocks`() {
+        val blocks = experienceDescriptionBlocks(
+            text = "1. Analizar requerimientos\n2. Implementar soluciones",
+            formatting = ResumeTextFormatting(),
+        )
+
+        assertEquals(listOf("1.", "2."), blocks.map { it.marker })
+        assertEquals(
+            listOf("Analizar requerimientos", "Implementar soluciones"),
+            blocks.map { it.content.text },
+        )
+    }
 }

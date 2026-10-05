@@ -53,7 +53,7 @@ internal fun RigaTemplate(resume: ResumeDocument) {
             EditorialSidebar(
                 resume = resume,
                 modifier = Modifier
-                    .weight(0.29f)
+                    .weight(0.33f)
                     .padding(end = 20.dp),
             )
             Box(
@@ -65,7 +65,7 @@ internal fun RigaTemplate(resume: ResumeDocument) {
             EditorialMainContent(
                 resume = resume,
                 modifier = Modifier
-                    .weight(0.71f)
+                    .weight(0.67f)
                     .padding(start = 25.dp),
             )
         }
@@ -141,14 +141,14 @@ private fun RigaHeaderVerticalLine(height: Dp) {
             .fillMaxWidth()
             .height(height),
     ) {
-        Spacer(Modifier.weight(0.29f))
+        Spacer(Modifier.weight(0.33f))
         Box(
             modifier = Modifier
                 .width(0.8.dp)
                 .fillMaxHeight()
                 .background(EditorialInk),
         )
-        Spacer(Modifier.weight(0.71f))
+        Spacer(Modifier.weight(0.67f))
     }
 }
 
@@ -241,6 +241,8 @@ private fun EditorialMainContent(
     resume: ResumeDocument,
     modifier: Modifier = Modifier,
 ) {
+    val showCourses = ResumeOptionalSection.Courses in resume.optionalSections && resume.courses.isNotEmpty()
+
     Column(modifier = modifier) {
         if (resume.experiences.isNotEmpty()) {
             EditorialMainTitle("EXPERIENCIA LABORAL")
@@ -249,7 +251,7 @@ private fun EditorialMainContent(
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = editorialDate(experience.startYear, experience.endYear),
+                    date = editorialDate(experience.startYear, experience.displayEndYear),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -257,22 +259,8 @@ private fun EditorialMainContent(
             }
         }
 
-        if (ResumeOptionalSection.Courses in resume.optionalSections && resume.courses.isNotEmpty()) {
-            EditorialMainGap()
-            EditorialMainTitle("CURSOS")
-            resume.courses.forEachIndexed { index, course ->
-                EditorialEntry(
-                    title = course.name,
-                    organization = course.institution,
-                    location = "",
-                    date = editorialDate(course.startDate, course.endDate),
-                )
-                if (index != resume.courses.lastIndex) Spacer(Modifier.height(9.dp))
-            }
-        }
-
         if (resume.education.isNotEmpty()) {
-            EditorialMainGap()
+            if (resume.experiences.isNotEmpty()) EditorialMainGap()
             EditorialMainTitle("EDUCACION")
             resume.education.forEachIndexed { index, education ->
                 EditorialEntry(
@@ -286,9 +274,10 @@ private fun EditorialMainContent(
         }
 
         if (resume.skills.isNotEmpty()) {
-            EditorialMainGap()
+            if (resume.experiences.isNotEmpty() || resume.education.isNotEmpty()) EditorialMainGap()
             EditorialMainTitle("HABILIDADES")
-            resume.skills.chunked(2).forEachIndexed { rowIndex, skills ->
+            val skillRows = resume.skills.chunked(2)
+            skillRows.forEachIndexed { rowIndex, skills ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -298,7 +287,27 @@ private fun EditorialMainContent(
                     }
                     if (skills.size == 1) Spacer(Modifier.weight(1f))
                 }
-                if (rowIndex != resume.skills.chunked(2).lastIndex) Spacer(Modifier.height(8.dp))
+                if (rowIndex != skillRows.lastIndex) Spacer(Modifier.height(8.dp))
+            }
+        }
+
+        if (showCourses) {
+            if (
+                resume.experiences.isNotEmpty() ||
+                resume.education.isNotEmpty() ||
+                resume.skills.isNotEmpty()
+            ) {
+                EditorialMainGap()
+            }
+            EditorialMainTitle("CURSOS")
+            resume.courses.forEachIndexed { index, course ->
+                EditorialEntry(
+                    title = course.name,
+                    organization = course.institution,
+                    location = "",
+                    date = editorialDate(course.startDate, course.endDate),
+                )
+                if (index != resume.courses.lastIndex) Spacer(Modifier.height(9.dp))
             }
         }
     }
@@ -330,8 +339,10 @@ private fun EditorialEntry(
     }
     if (description.isNotBlank()) {
         Spacer(Modifier.height(4.dp))
-        Text(
-            text = formattedText(description, descriptionFormatting),
+        ExperienceDescription(
+            text = description,
+            formatting = descriptionFormatting,
+            modifier = Modifier.fillMaxWidth(),
             color = EditorialMuted,
             fontSize = 6.6.sp,
             lineHeight = 9.sp,
