@@ -78,6 +78,7 @@ fun MainGraph(
             },
         )
         homeGraph(
+            repository = resumeRepository,
             onNavigateToMyCvs = {
                 navController.navigateToMainDestination(ResumeRoute.Graph)
             },
@@ -89,6 +90,10 @@ fun MainGraph(
             },
             onNavigateBack = {
                 navController.popBackStack()
+            },
+            onContinueResume = { resume ->
+                resumeDraftState.load(resume)
+                navController.navigate(ResumeRoute.SectionSelection)
             },
         )
         resumeGraph(
