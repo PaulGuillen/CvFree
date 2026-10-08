@@ -177,15 +177,18 @@ private fun TemplateOption(
 }
 
 @Composable
-private fun TemplateThumbnail(
+fun TemplateThumbnail(
     template: ResumeTemplateDefinition,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    shadowElevation: Dp = 0.dp,
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(4.dp),
+        shape = shape,
         color = Color.White,
         border = BorderStroke(1.dp, Color(0xFFD8DEE8)),
+        shadowElevation = shadowElevation,
     ) {
         when (template.renderer) {
             ResumeTemplateRenderer.Budapest -> BudapestThumbnail()

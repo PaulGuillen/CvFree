@@ -84,6 +84,12 @@ fun MainGraph(
             onNavigateToSettings = {
                 navController.navigateToMainDestination(SettingsRoute.Graph)
             },
+            onNavigateToTemplates = {
+                navController.navigate(HomeRoute.Templates)
+            },
+            onNavigateBack = {
+                navController.popBackStack()
+            },
         )
         resumeGraph(
             navController = navController,

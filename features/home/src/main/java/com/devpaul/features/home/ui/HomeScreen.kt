@@ -46,16 +46,18 @@ import com.devpaul.core.designsystem.component.CvBottomNavigation
 import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.designsystem.theme.CvFreeTheme
 import com.devpaul.core.designsystem.theme.SetStatusBarColor
-import com.devpaul.features.home.ui.data.featuredTemplates
-import com.devpaul.features.home.ui.model.CvTemplateUiModel
+import com.devpaul.features.templates.ResumeTemplateCatalog
+import com.devpaul.features.templates.ResumeTemplateDefinition
+import com.devpaul.features.templates.ui.TemplateThumbnail
 
 @Composable
 fun HomeScreen(
     onNavigateToMyCvs: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToTemplates: () -> Unit,
     modifier: Modifier = Modifier,
     userName: String = "Paul",
-    templates: List<CvTemplateUiModel> = featuredTemplates,
+    templates: List<ResumeTemplateDefinition> = ResumeTemplateCatalog.templates.take(3),
 ) {
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
@@ -90,7 +92,12 @@ fun HomeScreen(
         ) {
             item { HomeHeader(userName = userName) }
             item { AchievementBanner() }
-            item { FeaturedTemplatesSection(templates = templates) }
+            item {
+                FeaturedTemplatesSection(
+                    templates = templates,
+                    onViewAll = onNavigateToTemplates,
+                )
+            }
             item { RecentActivityCard() }
         }
     }
@@ -186,7 +193,10 @@ private fun AchievementBanner() {
 }
 
 @Composable
-private fun FeaturedTemplatesSection(templates: List<CvTemplateUiModel>) {
+private fun FeaturedTemplatesSection(
+    templates: List<ResumeTemplateDefinition>,
+    onViewAll: () -> Unit,
+) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -198,7 +208,7 @@ private fun FeaturedTemplatesSection(templates: List<CvTemplateUiModel>) {
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = {}) {
+            TextButton(onClick = onViewAll) {
                 Text("Ver todas", style = MaterialTheme.typography.labelLarge)
             }
         }
@@ -214,22 +224,19 @@ private fun FeaturedTemplatesSection(templates: List<CvTemplateUiModel>) {
 }
 
 @Composable
-private fun TemplateCard(template: CvTemplateUiModel) {
+private fun TemplateCard(template: ResumeTemplateDefinition) {
     Column(modifier = Modifier.width(210.dp)) {
-        Surface(
+        TemplateThumbnail(
+            template = template,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(268.dp),
             shape = RoundedCornerShape(10.dp),
-            color = Color.White,
-            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             shadowElevation = 4.dp,
-        ) {
-            ResumeTemplatePreview(template = template)
-        }
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = template.name,
+            text = template.displayName,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
@@ -238,51 +245,6 @@ private fun TemplateCard(template: CvTemplateUiModel) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-    }
-}
-
-@Composable
-private fun ResumeTemplatePreview(template: CvTemplateUiModel) {
-    Row(modifier = Modifier.padding(16.dp)) {
-        if (template.sidebar) {
-            Box(
-                modifier = Modifier
-                    .width(62.dp)
-                    .height(236.dp)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(template.accent),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .size(34.dp)
-                        .background(Color.White, CircleShape),
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            repeat(3) { section ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(if (section == 0) 0.62f else 0.48f)
-                        .height(7.dp)
-                        .background(template.accent, CircleShape),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                repeat(3) { line ->
-                    Box(
-                        modifier = Modifier
-                            .padding(bottom = 5.dp)
-                            .fillMaxWidth(if (line == 2) 0.68f else 1f)
-                            .height(4.dp)
-                            .background(Color(0xFFD5DDE8), CircleShape),
-                    )
-                }
-                Spacer(modifier = Modifier.height(18.dp))
-            }
-        }
     }
 }
 
@@ -394,7 +356,7 @@ private fun RecentActivityCard() {
 @Composable
 private fun HomeLightPreview() {
     CvFreeTheme(darkTheme = false) {
-        HomeScreen({}, {})
+        HomeScreen({}, {}, {})
     }
 }
 
@@ -402,6 +364,6 @@ private fun HomeLightPreview() {
 @Composable
 private fun HomeDarkPreview() {
     CvFreeTheme(darkTheme = true) {
-        HomeScreen({}, {})
+        HomeScreen({}, {}, {})
     }
 }

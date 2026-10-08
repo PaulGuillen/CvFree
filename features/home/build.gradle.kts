@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.devpaul.features.home"
 }
+
+dependencies {
+    implementation(project(":features:templates"))
+}
