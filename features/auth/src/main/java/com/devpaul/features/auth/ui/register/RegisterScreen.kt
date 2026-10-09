@@ -1,4 +1,4 @@
-package com.devpaul.features.auth.register.ui
+package com.devpaul.features.auth.ui.register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,17 +30,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
-import com.devpaul.features.auth.components.AccountPrompt
-import com.devpaul.features.auth.components.AuthPanel
-import com.devpaul.features.auth.components.AuthTextField
-import com.devpaul.features.auth.components.PrimaryAuthButton
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.ui.components.AccountPrompt
+import com.devpaul.features.auth.ui.components.AuthErrorMessage
+import com.devpaul.features.auth.ui.components.AuthPanel
+import com.devpaul.features.auth.ui.components.AuthTextField
+import com.devpaul.features.auth.ui.components.PrimaryAuthButton
 
 @Composable
 fun RegisterScreen(
     onRegister: (name: String, email: String, password: String) -> Unit,
     onNavigateToLogin: () -> Unit,
+    uiState: RegisterUiState = RegisterUiState(),
+    onInputChanged: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var name by rememberSaveable { mutableStateOf("") }
@@ -87,7 +90,10 @@ fun RegisterScreen(
                 Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp)) {
                     AuthTextField(
                         value = name,
-                        onValueChange = { name = it },
+                        onValueChange = {
+                            name = it
+                            onInputChanged()
+                        },
                         label = "Nombre completo",
                         placeholder = "Paul Guillén",
                         keyboardOptions = KeyboardOptions(
@@ -97,7 +103,10 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.height(18.dp))
                     AuthTextField(
                         value = email,
-                        onValueChange = { email = it },
+                        onValueChange = {
+                            email = it
+                            onInputChanged()
+                        },
                         label = "Correo electrónico",
                         placeholder = "ejemplo@correo.com",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -105,16 +114,24 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.height(18.dp))
                     AuthTextField(
                         value = password,
-                        onValueChange = { password = it },
+                        onValueChange = {
+                            password = it
+                            onInputChanged()
+                        },
                         label = "Contraseña",
                         placeholder = "Mínimo 8 caracteres",
                         isPassword = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     )
+                    uiState.errorMessage?.let { error ->
+                        Spacer(modifier = Modifier.height(18.dp))
+                        AuthErrorMessage(message = error)
+                    }
                     Spacer(modifier = Modifier.height(26.dp))
                     PrimaryAuthButton(
                         text = "Registrarme",
                         onClick = { onRegister(name.trim(), email.trim(), password) },
+                        isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     AccountPrompt(

@@ -1,4 +1,4 @@
-package com.devpaul.features.auth.login.ui
+package com.devpaul.features.auth.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -36,22 +36,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
-import com.devpaul.features.auth.components.AccountPrompt
-import com.devpaul.features.auth.components.AuthBrandHeader
-import com.devpaul.features.auth.components.AuthPanel
-import com.devpaul.features.auth.components.AuthTextField
-import com.devpaul.features.auth.components.GoogleSignInButton
-import com.devpaul.features.auth.components.OrDivider
-import com.devpaul.features.auth.components.PrimaryAuthButton
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.ui.components.AccountPrompt
+import com.devpaul.features.auth.ui.components.AuthBrandHeader
+import com.devpaul.features.auth.ui.components.AuthErrorMessage
+import com.devpaul.features.auth.ui.components.AuthPanel
+import com.devpaul.features.auth.ui.components.AuthTextField
+import com.devpaul.features.auth.ui.components.PrimaryAuthButton
 
 @Composable
 fun LoginScreen(
     onLogin: (email: String, password: String) -> Unit,
-    onGoogleSignIn: () -> Unit,
     onForgotPassword: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    uiState: LoginUiState = LoginUiState(),
+    onInputChanged: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -92,7 +92,10 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(28.dp))
                     AuthTextField(
                         value = email,
-                        onValueChange = { email = it },
+                        onValueChange = {
+                            email = it
+                            onInputChanged()
+                        },
                         label = "Correo electrónico",
                         placeholder = "ejemplo@correo.com",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -112,21 +115,25 @@ fun LoginScreen(
                     }
                     AuthTextField(
                         value = password,
-                        onValueChange = { password = it },
+                        onValueChange = {
+                            password = it
+                            onInputChanged()
+                        },
                         label = "Contraseña",
                         placeholder = "••••••••",
                         isPassword = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     )
+                    uiState.errorMessage?.let { error ->
+                        Spacer(modifier = Modifier.height(18.dp))
+                        AuthErrorMessage(message = error)
+                    }
                     Spacer(modifier = Modifier.height(24.dp))
                     PrimaryAuthButton(
                         text = "Iniciar sesión",
                         onClick = { onLogin(email.trim(), password) },
+                        isLoading = uiState.isLoading,
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    OrDivider()
-                    Spacer(modifier = Modifier.height(20.dp))
-                    GoogleSignInButton(onClick = onGoogleSignIn)
                     Spacer(modifier = Modifier.height(20.dp))
                     AccountPrompt(
                         message = "¿No tienes una cuenta?",
@@ -177,7 +184,6 @@ private fun LoginLightPreview() {
     CvFreeTheme(darkTheme = false) {
         LoginScreen(
             onLogin = { _, _ -> },
-            onGoogleSignIn = {},
             onForgotPassword = {},
             onNavigateToRegister = {},
         )
@@ -190,7 +196,6 @@ private fun LoginDarkPreview() {
     CvFreeTheme(darkTheme = true) {
         LoginScreen(
             onLogin = { _, _ -> },
-            onGoogleSignIn = {},
             onForgotPassword = {},
             onNavigateToRegister = {},
         )

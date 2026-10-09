@@ -12,4 +12,10 @@ sealed interface AuthRoute : AppRoute {
 
     @Serializable
     data object Register : AuthRoute, DestinationRoute
+
+    @Serializable
+    data object ForgotPassword : AuthRoute, DestinationRoute
+
+    @Serializable
+    data class PasswordResetSent(val email: String) : AuthRoute, DestinationRoute
 }
