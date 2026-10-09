@@ -42,7 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.SetStatusBarColor
 
 @Composable
 fun BuilderPage(

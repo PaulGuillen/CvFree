@@ -49,16 +49,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.devpaul.core.designsystem.theme.BrandAccent
-import com.devpaul.core.designsystem.theme.BrickRed
-import com.devpaul.core.designsystem.theme.ColorHorizontalDivider
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.GrayBlack
-import com.devpaul.core.designsystem.theme.GreenDark
-import com.devpaul.core.designsystem.theme.SlateGray
-import com.devpaul.core.designsystem.theme.Taupe
-import com.devpaul.core.designsystem.theme.TextSecondary
-import com.devpaul.core.designsystem.theme.White
+import com.devpaul.core.platform.theme.BrandAccent
+import com.devpaul.core.platform.theme.BrickRed
+import com.devpaul.core.platform.theme.ColorHorizontalDivider
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.GrayBlack
+import com.devpaul.core.platform.theme.GreenDark
+import com.devpaul.core.platform.theme.SlateGray
+import com.devpaul.core.platform.theme.Taupe
+import com.devpaul.core.platform.theme.TextSecondary
+import com.devpaul.core.platform.theme.White
 
 @Composable
 fun ForceUpdateScreen(onOpenStore: () -> Unit) {

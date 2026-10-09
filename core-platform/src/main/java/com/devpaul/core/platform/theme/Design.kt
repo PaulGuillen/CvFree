@@ -1,4 +1,4 @@
-package com.devpaul.core.designsystem.theme
+package com.devpaul.core.platform.theme
 
 import android.app.Activity
 import android.view.Window

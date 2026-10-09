@@ -27,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import kotlinx.coroutines.delay
 
 private const val SplashDurationMillis = 1_600L

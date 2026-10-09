@@ -48,8 +48,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.features.resume.ui.components.BuilderTopBar
 

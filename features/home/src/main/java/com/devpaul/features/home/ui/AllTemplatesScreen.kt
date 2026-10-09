@@ -30,8 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateDefinition
 import com.devpaul.features.templates.ui.TemplateThumbnail

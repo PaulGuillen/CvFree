@@ -53,8 +53,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import android.util.Log
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeContact
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeEducation

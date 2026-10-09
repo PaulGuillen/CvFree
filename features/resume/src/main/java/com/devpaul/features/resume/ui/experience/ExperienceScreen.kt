@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.designsystem.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeExperience
 import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.core.domain.resume.newResumeEntryId

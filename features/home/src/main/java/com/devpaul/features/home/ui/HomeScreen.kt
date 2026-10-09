@@ -52,8 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
 import com.devpaul.core.designsystem.component.CvMainDestination
-import com.devpaul.core.designsystem.theme.CvFreeTheme
-import com.devpaul.core.designsystem.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.features.home.ui.model.resumeProgress
 import com.devpaul.features.templates.ResumeTemplateCatalog
