@@ -1,6 +1,5 @@
 package com.devpaul.features.auth.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +21,9 @@ import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -48,30 +45,27 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AuthBrandHeader(
     modifier: Modifier = Modifier,
-    compact: Boolean = false,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (!compact) {
-            Surface(
-                modifier = Modifier.size(68.dp),
-                shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.primary,
-                shadowElevation = 8.dp,
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Outlined.Description,
-                        contentDescription = null,
-                        modifier = Modifier.size(38.dp),
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
+        Surface(
+            modifier = Modifier.size(68.dp),
+            shape = RoundedCornerShape(18.dp),
+            color = MaterialTheme.colorScheme.primary,
+            shadowElevation = 8.dp,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Outlined.Description,
+                    contentDescription = null,
+                    modifier = Modifier.size(38.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
             }
-            Spacer(modifier = Modifier.height(12.dp))
         }
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "CV Free",
             color = MaterialTheme.colorScheme.primary,
@@ -230,58 +224,6 @@ fun AuthErrorMessage(
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.onErrorContainer,
             style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
-
-@Composable
-fun OrDivider(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
-        Text(
-            text = "o continúa con",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-        )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
-    }
-}
-
-@Composable
-fun GoogleSignInButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(58.dp),
-        shape = RoundedCornerShape(18.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
-        Surface(
-            modifier = Modifier.size(30.dp),
-            shape = RoundedCornerShape(4.dp),
-            color = MaterialTheme.colorScheme.secondary,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = "G",
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.size(12.dp))
-        Text(
-            text = "Entrar con Google",
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelLarge,
         )
     }
 }

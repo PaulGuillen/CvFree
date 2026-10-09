@@ -3,7 +3,7 @@ package com.devpaul.features.auth.domain.usecase
 import com.devpaul.core.domain.result.UseCaseResult
 import com.devpaul.core.domain.result.useCaseResult
 import com.devpaul.features.auth.domain.exception.AuthFailure
-import com.devpaul.features.auth.domain.exception.toAuthFailure
+import com.devpaul.features.auth.domain.mapper.toAuthFailure
 import com.devpaul.features.auth.domain.repository.AuthRepository
 import com.devpaul.features.auth.domain.validation.validateEmail
 import org.koin.core.annotation.Factory

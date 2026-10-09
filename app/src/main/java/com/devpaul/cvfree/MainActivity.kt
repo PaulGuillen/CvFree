@@ -94,9 +94,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        UpdateState.Loading -> {
-                            // Pantalla vacía mientras Google Play valida la actualización
-                        }
+                        UpdateState.Loading -> Unit
                     }
                 }
             }
