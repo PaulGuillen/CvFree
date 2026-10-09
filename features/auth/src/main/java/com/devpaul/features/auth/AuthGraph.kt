@@ -5,10 +5,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.devpaul.core.designsystem.component.mvi.BaseScreenWithState
-import com.devpaul.features.auth.ui.forgot.ForgotPasswordViewModel
+import com.devpaul.features.auth.ui.forgot.ForgotPasswordScreen
 import com.devpaul.features.auth.ui.forgot.ForgotPasswordUiEvent
 import com.devpaul.features.auth.ui.forgot.ForgotPasswordUiIntent
-import com.devpaul.features.auth.ui.forgot.ForgotPasswordScreen
+import com.devpaul.features.auth.ui.forgot.ForgotPasswordViewModel
 import com.devpaul.features.auth.ui.forgot.PasswordResetSentScreen
 import com.devpaul.features.auth.ui.login.LoginScreen
 import com.devpaul.features.auth.ui.login.LoginUiEvent
@@ -44,7 +44,7 @@ fun NavGraphBuilder.authGraph(
                         is LoginUiEvent.ShowSnackbar -> showSnackbar(event.message)
                     }
                 },
-            ) { uiState, onIntent, _ ->
+            ) { uiState, onIntent ->
                 LoginScreen(
                     onLogin = { email, password ->
                         onIntent(LoginUiIntent.Login(email, password))
@@ -65,7 +65,7 @@ fun NavGraphBuilder.authGraph(
                         is RegisterUiEvent.ShowSnackbar -> showSnackbar(event.message)
                     }
                 },
-            ) { uiState, onIntent, _ ->
+            ) { uiState, onIntent ->
                 RegisterScreen(
                     onRegister = { name, email, password ->
                         onIntent(RegisterUiIntent.Register(name, email, password))
@@ -86,7 +86,7 @@ fun NavGraphBuilder.authGraph(
                         is ForgotPasswordUiEvent.ShowSnackbar -> showSnackbar(event.message)
                     }
                 },
-            ) { uiState, onIntent, _ ->
+            ) { uiState, onIntent ->
                 ForgotPasswordScreen(
                     uiState = uiState,
                     onSend = { email -> onIntent(ForgotPasswordUiIntent.Send(email)) },

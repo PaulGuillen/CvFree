@@ -10,10 +10,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import com.devpaul.core.platform.lifecycle.StatefulViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun <UiState, UiIntent, UiEvent> BaseScreenWithState(
@@ -24,12 +22,10 @@ fun <UiState, UiIntent, UiEvent> BaseScreenWithState(
     content: @Composable (
         uiState: UiState,
         onIntent: (UiIntent) -> Unit,
-        showSnackbar: (String) -> Unit,
     ) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     val currentEventHandler by rememberUpdatedState(onUiEvent)
 
     LaunchedEffect(viewModel, initialIntent) {
@@ -52,22 +48,6 @@ fun <UiState, UiIntent, UiEvent> BaseScreenWithState(
         content(
             uiState,
             viewModel::executeUiIntent,
-            { message ->
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(message)
-                }
-            },
         )
-    }
-}
-
-@Composable
-fun <T> OnValueChangeEffect(
-    value: T?,
-    onChange: (T) -> Unit,
-) {
-    val currentOnChange by rememberUpdatedState(onChange)
-    LaunchedEffect(value) {
-        value?.let(currentOnChange)
     }
 }
