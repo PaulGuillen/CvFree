@@ -83,6 +83,13 @@ fun Project.firebaseImplementation() {
     }
 }
 
+fun Project.coroutinesPlayServicesImplementation() {
+    val libs = getLibs()
+    dependencies {
+        "implementation"(libs["coroutines-play-services"])
+    }
+}
+
 fun Project.navigationFragmentImplementation() {
     val libs = getLibs()
     dependencies {

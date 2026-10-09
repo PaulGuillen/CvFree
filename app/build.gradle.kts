@@ -1,5 +1,6 @@
 plugins {
     id("plugin.application")
+    alias(libs.plugins.google.services)
 }
 
 android {
