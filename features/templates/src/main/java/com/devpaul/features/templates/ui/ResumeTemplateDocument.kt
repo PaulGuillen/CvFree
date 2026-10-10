@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
@@ -61,6 +62,9 @@ private val DocumentMuted = Color(0xFF73757A)
 private val DocumentLine = Color(0xFF515154)
 private val SidebarBackground = Color(0xFF414143)
 private val SidebarText = Color(0xFFF8F8F8)
+private val BudapestContentFontSize = 7.8.sp
+private val BudapestContentLineHeight = 10.5.sp
+private val BudapestSectionFontSize = 10.sp
 
 internal const val RESUME_DESIGN_WIDTH_DP = 490
 private val BudapestSidebarWidth = 180.dp
@@ -91,13 +95,16 @@ private fun BudapestTemplate(resume: ResumeDocument) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min),
+            .drawBehind {
+                drawRect(
+                    color = SidebarBackground,
+                    size = size.copy(width = BudapestSidebarWidth.toPx()),
+                )
+            },
     ) {
         BudapestSidebar(
             resume = resume,
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(BudapestSidebarWidth),
+            modifier = Modifier.width(BudapestSidebarWidth),
         )
         ClassicMainContent(
             resume = resume,
@@ -125,8 +132,8 @@ private fun BudapestSidebar(
             Text(
                 text = formattedText(resume.summary, resume.summaryFormatting),
                 color = SidebarText,
-                fontSize = 7.8.sp,
-                lineHeight = 10.5.sp,
+                fontSize = BudapestContentFontSize,
+                lineHeight = BudapestContentLineHeight,
             )
             if (showLinks || showLanguages || showReferences) SidebarDivider()
         }
@@ -135,18 +142,18 @@ private fun BudapestSidebar(
             resume.links.forEachIndexed { index, link ->
                 Text(
                     text = buildAnnotatedString {
-                        pushStyle(SpanStyle(fontSize = 8.sp, fontWeight = FontWeight.Bold))
+                        pushStyle(SpanStyle(fontSize = BudapestContentFontSize, fontWeight = FontWeight.Bold))
                         append(link.name.replaceFirstChar { it.uppercase() })
                         append(':')
                         pop()
                         append('\n')
-                        pushStyle(SpanStyle(fontSize = 7.8.sp, textDecoration = TextDecoration.Underline))
+                        pushStyle(SpanStyle(fontSize = BudapestContentFontSize, textDecoration = TextDecoration.Underline))
                         append(link.url)
                         pop()
                     },
                     color = SidebarText,
-                    fontSize = 7.8.sp,
-                    lineHeight = 10.sp,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
                 )
                 if (index != resume.links.lastIndex) Spacer(Modifier.height(7.dp))
             }
@@ -158,8 +165,8 @@ private fun BudapestSidebar(
                 Text(
                     text = language.language.uppercase(),
                     color = SidebarText,
-                    fontSize = 8.sp,
-                    lineHeight = 10.sp,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
                 )
                 Spacer(Modifier.height(2.dp))
                 Box(
@@ -185,9 +192,9 @@ private fun BudapestSidebar(
                 Text(
                     text = reference.name.uppercase(),
                     color = SidebarText,
-                    fontSize = 8.5.sp,
-                    lineHeight = 10.5.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
+                    fontWeight = FontWeight.Bold,
                 )
                 CompactSidebarText(reference.company)
                 CompactSidebarText(reference.phone, prefix = "T:")
@@ -285,8 +292,8 @@ private fun ResumeHeader(resume: ResumeDocument) {
                 Text(
                     text = contact.professionalTitle.uppercase(),
                     color = DocumentInk,
-                    fontSize = 7.sp,
-                    lineHeight = 8.5.sp,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -323,7 +330,12 @@ private fun ContactLine(icon: ImageVector, text: String, showDivider: Boolean) {
                 Icon(icon, contentDescription = null, modifier = Modifier.size(9.dp), tint = Color.White)
             }
             Spacer(Modifier.width(4.dp))
-            Text(text, color = DocumentMuted, fontSize = 6.2.sp, lineHeight = 8.sp)
+            Text(
+                text = text,
+                color = DocumentMuted,
+                fontSize = BudapestContentFontSize,
+                lineHeight = BudapestContentLineHeight,
+            )
         }
         if (showDivider) {
             HorizontalDivider(
@@ -337,7 +349,7 @@ private fun ContactLine(icon: ImageVector, text: String, showDivider: Boolean) {
 
 @Composable
 private fun MainSectionTitle(text: String) {
-    Text(text, color = DocumentInk, fontSize = 9.sp, fontWeight = FontWeight.Black)
+    Text(text, color = DocumentInk, fontSize = BudapestSectionFontSize, fontWeight = FontWeight.Black)
     Spacer(Modifier.height(3.dp))
     HorizontalDivider(color = DocumentLine, thickness = 0.7.dp)
     Spacer(Modifier.height(6.dp))
@@ -359,12 +371,32 @@ private fun TimelineEntry(
     ) {
         Column(
             modifier = Modifier
-                .width(56.dp)
+                .width(64.dp)
                 .padding(end = 4.dp, bottom = 7.dp),
         ) {
-            Text(organization, color = DocumentInk, fontSize = 6.2.sp, lineHeight = 7.8.sp, fontWeight = FontWeight.Bold)
-            if (location.isNotBlank()) Text(location, color = DocumentMuted, fontSize = 5.8.sp, lineHeight = 7.2.sp)
-            if (date.isNotBlank()) Text(date, color = DocumentMuted, fontSize = 5.8.sp, lineHeight = 7.2.sp)
+            Text(
+                text = organization,
+                color = DocumentInk,
+                fontSize = BudapestContentFontSize,
+                lineHeight = BudapestContentLineHeight,
+                fontWeight = FontWeight.Bold,
+            )
+            if (location.isNotBlank()) {
+                Text(
+                    text = location,
+                    color = DocumentMuted,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
+                )
+            }
+            if (date.isNotBlank()) {
+                Text(
+                    text = date,
+                    color = DocumentMuted,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -380,7 +412,13 @@ private fun TimelineEntry(
                 .weight(1f)
                 .padding(start = 5.dp, bottom = 8.dp),
         ) {
-            Text(title, color = DocumentInk, fontSize = 7.sp, lineHeight = 8.5.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = title,
+                color = DocumentInk,
+                fontSize = BudapestContentFontSize,
+                lineHeight = BudapestContentLineHeight,
+                fontWeight = FontWeight.Bold,
+            )
             if (description.isNotBlank()) {
                 Spacer(Modifier.height(3.dp))
                 ExperienceDescription(
@@ -388,8 +426,8 @@ private fun TimelineEntry(
                     formatting = descriptionFormatting,
                     modifier = Modifier.fillMaxWidth(),
                     color = DocumentMuted,
-                    fontSize = 6.2.sp,
-                    lineHeight = 8.5.sp,
+                    fontSize = BudapestContentFontSize,
+                    lineHeight = BudapestContentLineHeight,
                 )
             }
         }
@@ -407,15 +445,15 @@ private fun SkillLabel(text: String) {
             text = text,
             modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp),
             color = DocumentMuted,
-            fontSize = 5.2.sp,
-            lineHeight = 6.2.sp,
+            fontSize = BudapestContentFontSize,
+            lineHeight = BudapestContentLineHeight,
         )
     }
 }
 
 @Composable
 private fun SidebarTitle(text: String) {
-    Text(text, color = SidebarText, fontSize = 10.sp, fontWeight = FontWeight.Black)
+    Text(text, color = SidebarText, fontSize = BudapestSectionFontSize, fontWeight = FontWeight.Black)
     Spacer(Modifier.height(10.dp))
 }
 
@@ -432,8 +470,8 @@ private fun CompactSidebarText(text: String, prefix: String = "") {
         Text(
             text = if (prefix.isBlank()) text else "$prefix $text",
             color = SidebarText,
-            fontSize = 8.sp,
-            lineHeight = 10.5.sp,
+            fontSize = BudapestContentFontSize,
+            lineHeight = BudapestContentLineHeight,
         )
     }
 }
