@@ -209,7 +209,7 @@ class ResumeTextParserTest {
 
         assertEquals("Paul", document.contact.name)
         assertEquals("Guillen Acuña", document.contact.lastName)
-        assertEquals("INGENIERO DE SISTEMAS", document.contact.professionalTitle)
+        assertEquals("Ingeniero de Sistemas", document.contact.professionalTitle)
         assertEquals("Lima", document.contact.city)
         assertEquals(2, document.experiences.size)
         assertEquals("Mobile Developer - APP", document.experiences[0].position)
@@ -229,6 +229,220 @@ class ResumeTextParserTest {
         assertEquals("Android Studio", document.education[1].degree)
         assertEquals("CIBERTEC", document.education[1].institution)
         assertEquals("Miguel Angel Pacheco", document.references.single().name)
+    }
+
+    @Test
+    fun `maps experience columns from the legacy CVFree image PDF`() {
+        val document = ResumeTextParser.parse(
+            ResumePdfTextContent(
+                fullText = """
+                    PAUL
+                    GUILLEN ACUÑA
+                    INGENIERO DE SISTEMAS
+                    SOBRE MÍ
+                    Desarrollador Android Senior con +5 años de experiencia.
+                    EXPERIENCIA LABORAL
+                """.trimIndent(),
+                headerText = """
+                    PAUL
+                    9 Lima, Lima, 07051, Peru, Lima
+                    GUILLEN ACUÑA
+                    R+51977588534
+                    M paulguillen190@gmail.com
+                    INGENIERO DE SISTEMAS
+                """.trimIndent(),
+                sidebarText = """
+                    SOBRE MÍ
+                    Desarrollador Android Senior con +5 años de experiencia.
+                """.trimIndent(),
+                mainText = """
+                    PAUL
+                    9 Lima, Lima, 07051, Peru, Lima
+                    GUILLEN ACUÑA
+                    R+51977588534
+                    M paulguillen190@gmail.com
+                    INGENIERO DE SISTEMAS
+                    EXPERIENCIA LABORAL
+                    SYNOPSIS
+                    Android Engineer
+                    Lima
+                    2025 - Actualidad
+                    BIM
+                    Desarrollo de la billetera digital BIM en Android con Kotlin.
+                    Mobile Developer - APP
+                    zOLUXIONES
+                    LATAM
+                    Scotiabank
+                    Lima
+                    2025 - 2026
+                    Desarrollo de aplicaciones nativas en Android Studio con Kotlin.
+                    INDRA
+                    Software Engineer - APP
+                    Telefónica del Perú
+                    2024 - 9025
+                    Jerarquía de ventas para aplicaciones retail.
+                    Engineer - APP
+                    NTT DATA
+                    Lima
+                    Scotiabank
+                    2022 - 2024
+                    Desarrollo de aplicaciones nativas en Android Studio con Kotlin y Java.
+                    Telefónica del Perú
+                    Lideré el desarrollo de aplicaciones nativas con arquitecturas escalables.
+                    EDUCACIÓN
+                """.trimIndent(),
+                templateId = ResumeTemplateCatalog.BUDAPEST_ID,
+            ),
+        )
+
+        assertEquals(ResumeTemplateCatalog.BUDAPEST_ID, document.templateName)
+        assertEquals("Paul", document.contact.name)
+        assertEquals("Guillen Acuña", document.contact.lastName)
+        assertEquals("Ingeniero de Sistemas", document.contact.professionalTitle)
+        assertTrue(document.summary.startsWith("Desarrollador Android Senior"))
+        assertEquals(4, document.experiences.size)
+        assertEquals("Android Engineer", document.experiences[0].position)
+        assertEquals("SYNOPSIS", document.experiences[0].company)
+        assertEquals("2025", document.experiences[0].startYear)
+        assertTrue(document.experiences[0].isCurrent)
+        assertTrue(document.experiences[0].achievements.startsWith("BIM"))
+        assertEquals("Mobile Developer - APP", document.experiences[1].position)
+        assertEquals("ZOLUXIONES LATAM", document.experiences[1].company)
+        assertEquals("2025", document.experiences[1].startYear)
+        assertEquals("2026", document.experiences[1].endYear)
+        assertTrue(document.experiences[1].achievements.startsWith("Scotiabank"))
+        assertEquals("Software Engineer - APP", document.experiences[2].position)
+        assertEquals("INDRA", document.experiences[2].company)
+        assertEquals("2024", document.experiences[2].startYear)
+        assertEquals("2025", document.experiences[2].endYear)
+        assertEquals("Engineer - APP", document.experiences[3].position)
+        assertEquals("NTT DATA", document.experiences[3].company)
+        assertEquals("2022", document.experiences[3].startYear)
+        assertEquals("2024", document.experiences[3].endYear)
+    }
+
+    @Test
+    fun `maps the remaining sections from the legacy CVFree image PDF`() {
+        val sidebar = """
+            SOBRE MÍ
+            Desarrollador Android Senior con +5 años de experiencia en el desarrollo de aplicaciones nativas con Kotlin y Java en Android Studio. .ESpeote ecializado en arquitecturas modernas como MWM y Clean Architecture, integración de Jetpack Compose, XML, Firebase, Retrofit y gestión de estados con MVI. He liderado proyectos en sectores de banca y telecomunicaciones, asequrando se calidad, escalabilidad y excelente experiencia de usuario. Experiencia con Cl/ CD (Jenkins, Azure DevOps) y metodologías ágiles (Scrum). Además, Cuento con conocimie onocimientos en desarrollo web (Angular) y backend (Node.js, Java 17), así como experiencia en IN el desarrollo de aplicaciones Li no híbridas utilizando lonic, React Native y Flutter.
+            ENLACES
+            GitHub:
+            https://github.com/paulguillen?t=a
+            LinkedIn:
+            https://www.linkedin.com/in/paul-
+            IDIOMAS
+            ESPAÑOL
+            INGLES
+            REFERENCIAS
+            JHOSSY JHOSSEP VARGAS
+            Scotiabank
+            T: 932937506
+            C: jhossvs2299 @gmail.com
+            MIGUEL ANGEL PACHECO
+            Indra Company
+            T: +51 943603363
+            C: mapacheco @indracompany.com
+            ARTEMIO GUERRERO SANTA CRUZ
+            Telefónica del Perí
+            T: +51 995429498
+            C: artemio.guerrero@telefonica.com
+            RENZO BERECHE
+            NTT DATA
+            T: 935320924
+            C: rbereche@emeal.nttdata.com
+        """.trimIndent()
+        val main = """
+            HABILIDADES
+            aVDI (JENKINSAZURE-DOCKER-KUBERNETES)
+            CLEAN ARCHITECTURE GOoGLE ANALYTIcs
+            JETPACK cOMPOSE ROOM/SQLITE REACT NATIVE UNIT TESTING SONARQUBE
+            REACT EXPO TYPESCRIPT JAVASCRIPT MONGODB NEW RELIC KOIN/HILT POWER BI
+            ANGULAR JAVA GRAPHQLRETROFIT FIREBASE JASMINE PYTHON REACTJS
+            JACOCO DEVOPS NODEJS KARMA
+            KOTLIN NEXTUS KMP sCRUM MVM
+            IONIC DART XMIL
+            MVISQL GIT
+            CURSOS
+            • Desarrollo Web - React JS
+            IDAT
+            2024 - 2025
+            IDAT
+            Python for Data Analyst
+            2023 - 2023
+            IDAT
+            Desarrollo App - React Expo
+            2023 - 2023
+            SCRUM STUDY
+            Scrum Fundamentals Certfied
+            2022 - 2022
+            Google Activate
+            GOOGLE
+            2021 - 2021
+            sCRUM STUDY
+            Scrum Fundamentals Certfied
+            2022 - 2022
+            cONECTA
+            Desarrollo de Apps Móviles
+            EMPLEO
+            2021 - 2021
+            AUTÓNOMA DEL
+            Business Analytics con Power BI
+            ONOM
+            PERÚ
+            2021 - 2021
+            EDUCACIÓN
+            UNIVERSIDAD
+            Bachiller Ingeniería de Sistemas
+            AUTÓNOMA DEL
+            PERÚ
+            Lima
+            Android Studio
+            CIBERTEC
+            Lima
+        """.trimIndent()
+
+        val document = ResumeTextParser.parse(
+            ResumePdfTextContent(
+                fullText = "$sidebar\n$main",
+                sidebarText = sidebar,
+                mainText = main,
+                templateId = ResumeTemplateCatalog.BUDAPEST_ID,
+            ),
+        )
+
+        assertEquals(2, document.education.size)
+        assertEquals("UNIVERSIDAD AUTÓNOMA DEL PERÚ", document.education[0].institution)
+        assertEquals("Bachiller Ingeniería de Sistemas", document.education[0].degree)
+        assertEquals("Lima", document.education[0].city)
+        assertEquals("CIBERTEC", document.education[1].institution)
+        assertEquals("Android Studio", document.education[1].degree)
+        assertEquals(
+            listOf(
+                "CI/DI (JENKINS-AZURE-DOCKER-KUBERNETES)", "CLEAN ARCHITECTURE", "GOOGLE ANALYTICS",
+                "JETPACK COMPOSE", "ROOM/SQLITE", "REACT NATIVE", "UNIT TESTING", "SONARQUBE",
+                "REACT EXPO", "TYPESCRIPT", "JAVASCRIPT", "MONGODB", "NEW RELIC", "KOIN/HILT", "POWER BI",
+                "ANGULAR", "JAVA", "GRAPHQL", "RETROFIT", "FIREBASE", "JASMINE", "PYTHON", "REACTJS",
+                "JACOCO", "DEVOPS", "NODEJS", "KARMA", "KOTLIN", "NEXTJS", "KMP", "SCRUM", "MVVM",
+                "IONIC", "DART", "XML", "MVI", "SQL", "GIT",
+            ),
+            document.skills,
+        )
+        assertEquals(8, document.courses.size)
+        assertEquals("Desarrollo Web - React JS", document.courses[0].name)
+        assertEquals("IDAT", document.courses[0].institution)
+        assertEquals("CONECTA EMPLEO", document.courses[6].institution)
+        assertEquals("AUTÓNOMA DEL PERÚ", document.courses[7].institution)
+        assertEquals("Business Analytics con Power BI", document.courses[7].name)
+        assertEquals(2, document.links.size)
+        assertEquals(listOf("ESPAÑOL", "INGLES"), document.languages.map { it.language })
+        assertEquals(4, document.references.size)
+        assertEquals("jhossvs2299@gmail.com", document.references[0].email)
+        assertEquals("mapacheco@indracompany.com", document.references[1].email)
+        assertEquals("Telefónica del Perú", document.references[2].company)
+        assertTrue(document.summary.contains("Especializado en arquitecturas modernas como MVVM"))
+        assertTrue(document.summary.contains("asegurando calidad"))
+        assertTrue(document.summary.contains("experiencia en el desarrollo de aplicaciones no híbridas"))
     }
 
     @Test

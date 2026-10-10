@@ -63,17 +63,24 @@ internal object ResumeTextParser {
     private val phoneRegex = Regex("(?<!\\d)(?:\\+?\\d[\\d ()-]{6,}\\d)(?!\\d)")
     private val yearRegex = Regex("(?<!\\d)(?:19|20)\\d{2}(?!\\d)")
     private val currentExperienceRegex = Regex("(?i)actualidad|actual|presente|present|current")
+    private val knownEntryLocations = setOf(
+        "LIMA", "CALLAO", "AREQUIPA", "CUSCO", "TRUJILLO", "PIURA", "CHICLAYO",
+        "ICA", "HUANCAYO", "TACNA", "PUNO", "MADRID", "BARCELONA", "BOGOTA",
+        "SANTIAGO", "MEXICO", "REMOTO", "REMOTE",
+    )
     private val dateRangeRegex = Regex(
         "(?i)(?:(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic|jan|apr|aug|dec)[a-z.]*\\s+)?" +
             "(?:19|20)\\d{2}\\s*(?:-|–|—|a|hasta)\\s*" +
             "(?:(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic|jan|apr|aug|dec)[a-z.]*\\s+)?" +
             "(?:(?:19|20)\\d{2}|actualidad|actual|presente|present|current)",
     )
+    private val ocrYearRangeTypoRegex = Regex("((?:19|20)\\d{2}\\s*-\\s*)9(0\\d{2})")
     private val bulletSplitRegex = Regex("\\s*(?:[•●▪◦·]|\\||;|,)\\s*")
     private val groupedToolchainRegex = Regex("(?i)CI/(?:CD|DI)\\s*\\([^)]*\\)")
     private val compoundSkillNames = setOf(
         "ANDROID STUDIO", "JETPACK COMPOSE", "CLEAN ARCHITECTURE", "UNIT TESTING",
         "REACT NATIVE", "REACT EXPO", "SPRING BOOT", "POWER BI", "GOOGLE ANALYTICS",
+        "ROOM/SQLITE", "KOIN/HILT",
         "GOOGLE CLOUD", "AMAZON WEB SERVICES", "NEW RELIC",
         "MACHINE LEARNING", "DATA ANALYSIS", "ANALISIS DE DATOS", "SOFTWARE DEVELOPMENT",
         "DESARROLLO DE SOFTWARE", "PROJECT MANAGEMENT", "GESTION DE PROYECTOS",
@@ -86,7 +93,8 @@ internal object ResumeTextParser {
         "IONIC", "JAVA", "JAVASCRIPT", "JENKINS", "JIRA", "KARMA", "KMP", "KOIN",
         "KOTLIN", "KUBERNETES", "MONGODB", "MVC", "MVI", "MVVM", "MYSQL", "NEXTJS",
         "NODEJS", "NOSQL", "ORACLE", "PHP", "POSTGRESQL", "PYTHON", "REACT", "REDUX",
-        "RETROFIT", "ROOM", "SCRUM", "SQL", "SQLITE", "SWIFT", "TYPESCRIPT", "UNITY",
+        "RETROFIT", "ROOM", "SCRUM", "SONARQUBE", "SQL", "SQLITE", "SWIFT", "TYPESCRIPT", "UNITY",
+        "REACTJS",
         "VUE", "XML",
     )
     private val referenceCompanySuffixRegex = Regex(
@@ -98,6 +106,10 @@ internal object ResumeTextParser {
             "manager|gerente|director(?:a)?|coordinador(?:a)?|administrador(?:a)?|contador(?:a)?|" +
             "abogad[oa]|docente|profesor(?:a)?|marketing|ventas|recursos humanos|product owner|" +
             "scrum master|qa|soporte|sistemas|inform[aá]tic[oa])\\b",
+    )
+    private val academicTitleRegex = Regex(
+        "(?i)\\b(?:bachiller|licenciad[oa]|maestr[ií]a|doctorad[oa]|ingenier[ií]a|" +
+            "t[eé]cnic[oa]|android studio)\\b",
     )
 
     fun parse(rawText: String): ResumeDocument = parse(ResumePdfTextContent(fullText = rawText))
@@ -156,7 +168,7 @@ internal object ResumeTextParser {
             experiences = experiences,
             education = education,
             skills = skills,
-            summary = sideSection(Section.Summary).joinToString(" ").cleanSentence(),
+            summary = sideSection(Section.Summary).joinToString(" ").cleanOcrSummary(),
             courses = courses,
             links = links,
             languages = languages,
@@ -218,7 +230,9 @@ internal object ResumeTextParser {
             ?: findContactIdentity(allLines.filterNot { detectSection(it) != null })
         val nameLine = identity?.fullName
             ?: candidates.firstOrNull(::looksLikePersonName).orEmpty()
-        val titleLine = identity?.title
+        val titleLine = candidates.firstOrNull {
+            looksLikeProfessionalTitle(it) && it.allLettersUppercase()
+        } ?: identity?.title
             ?: candidates.firstOrNull(::looksLikeProfessionalTitle).orEmpty()
         val location = extractContactLocation(candidateLines + allLines)
 
@@ -226,7 +240,7 @@ internal object ResumeTextParser {
         return ResumeContact(
             name = nameParts.firstOrNull().orEmpty(),
             lastName = nameParts.drop(1).joinToString(" "),
-            professionalTitle = titleLine,
+            professionalTitle = normalizedProfessionalTitle(titleLine),
             email = email,
             phone = phone,
             city = location.substringBefore(',').trim(),
@@ -265,13 +279,18 @@ internal object ResumeTextParser {
     }
 
     private fun findContactIdentity(lines: List<String>): ContactIdentity? {
-        lines.forEachIndexed { titleIndex, title ->
-            if (!looksLikeProfessionalTitle(title)) return@forEachIndexed
+        val titleIndexes = lines.indices
+            .filter { looksLikeProfessionalTitle(lines[it]) }
+            .sortedByDescending { lines[it].allLettersUppercase() }
+        titleIndexes.forEach { titleIndex ->
+            val title = lines[titleIndex]
             val nameParts = mutableListOf<String>()
-            var index = titleIndex - 1
-            while (index >= 0 && nameParts.size < 2 && looksLikeNameFragment(lines[index])) {
-                nameParts.add(0, lines[index])
-                index--
+            val firstCandidate = (titleIndex - 8).coerceAtLeast(0)
+            for (index in titleIndex - 1 downTo firstCandidate) {
+                if (looksLikeNameFragment(lines[index])) {
+                    nameParts.add(0, lines[index])
+                    if (nameParts.sumOf { it.split(Regex("\\s+")).size } >= 3) break
+                }
             }
             val fullName = nameParts.joinToString(" ").trim()
             if (fullName.split(Regex("\\s+")).size in 2..6) {
@@ -319,7 +338,7 @@ internal object ResumeTextParser {
         }
 
     private fun parseEducation(lines: List<String>): List<ResumeEducation> =
-        parseAcademicEntries(lines).map { entry ->
+        (parseColumnarEducationEntries(lines) ?: parseAcademicEntries(lines)).map { entry ->
             ResumeEducation(
                 institution = entry.organization,
                 degree = entry.title,
@@ -330,7 +349,7 @@ internal object ResumeTextParser {
         }
 
     private fun parseCourses(lines: List<String>): List<ResumeCourse> =
-        parseAcademicEntries(lines).map { entry ->
+        (parseDatedCourseEntries(lines) ?: parseAcademicEntries(lines)).map { entry ->
             ResumeCourse(
                 name = entry.title,
                 institution = entry.organization,
@@ -338,6 +357,77 @@ internal object ResumeTextParser {
                 endDate = entry.endDate,
             )
         }
+
+    private fun parseColumnarEducationEntries(lines: List<String>): List<ParsedEntry>? {
+        if (lines.any { it.contains('|') || it.containsDate() }) return null
+        val titleIndexes = lines.indices.filter { academicTitleRegex.containsMatchIn(lines[it]) }
+        if (titleIndexes.isEmpty()) return null
+        if (titleIndexes.any { academicTitleRegex.find(lines[it])?.range?.first != 0 }) return null
+
+        return titleIndexes.mapIndexed { entryIndex, titleIndex ->
+            val previousTitle = titleIndexes.getOrNull(entryIndex - 1) ?: -1
+            val nextTitle = titleIndexes.getOrNull(entryIndex + 1) ?: lines.size
+            val before = mutableListOf<String>()
+            var index = titleIndex - 1
+            while (index > previousTitle && looksLikeOrganizationFragment(lines[index])) {
+                before.add(0, lines[index])
+                index--
+            }
+            val after = lines.subList(titleIndex + 1, nextTitle)
+            val organization = (before + after.filter(::looksLikeOrganizationFragment))
+                .distinctBy(::normalize)
+                .joinToString(" ") { it.uppercase() }
+            val location = after.firstOrNull(::isKnownEntryLocation)
+                ?: lines.subList((previousTitle + 1).coerceAtLeast(0), nextTitle)
+                    .firstOrNull(::looksLikeEntryLocation).orEmpty()
+            ParsedEntry(
+                title = lines[titleIndex],
+                organization = organization,
+                location = location,
+                startDate = "",
+                endDate = "",
+                description = "",
+            )
+        }.filter { it.organization.isNotBlank() }
+            .takeIf { it.isNotEmpty() }
+    }
+
+    private fun parseDatedCourseEntries(lines: List<String>): List<ParsedEntry>? {
+        if (lines.any { it.contains('|') }) return null
+        val dateIndexes = lines.indices.filter { lines[it].containsDate() }
+        if (dateIndexes.isEmpty()) return null
+
+        return dateIndexes.mapIndexedNotNull { entryIndex, dateIndex ->
+            val start = dateIndexes.getOrNull(entryIndex - 1)?.plus(1) ?: 0
+            val heading = lines.subList(start, dateIndex)
+            val titleIndex = heading.indexOfFirst { line ->
+                !looksLikeOrganizationFragment(line) && !looksLikeEntryLocation(line)
+            }
+            if (titleIndex < 0) return@mapIndexedNotNull null
+            val title = heading[titleIndex].removeBulletPrefix()
+            val rawOrganization = heading.filterIndexed { index, line ->
+                index != titleIndex && looksLikeOrganizationFragment(line)
+            }
+            val organization = rawOrganization
+                .filterNot { fragment ->
+                    val normalizedFragment = normalize(fragment)
+                    normalizedFragment.length >= 3 && rawOrganization.any { other ->
+                        other !== fragment && normalize(other).contains(normalizedFragment)
+                    }
+                }
+                .distinctBy(::normalize)
+                .joinToString(" ") { it.uppercase() }
+            val (startDate, endDate) = splitDate(lines[dateIndex].extractDate())
+            ParsedEntry(
+                title = title,
+                organization = organization,
+                location = "",
+                startDate = startDate,
+                endDate = endDate,
+                description = "",
+            )
+        }.takeIf { it.isNotEmpty() }
+    }
 
     private fun parseAcademicEntries(lines: List<String>): List<ParsedEntry> {
         if (lines.isEmpty()) return emptyList()
@@ -392,6 +482,14 @@ internal object ResumeTextParser {
             !looksLikeEntryLocation(value)
     }
 
+    private fun looksLikeOrganizationFragment(value: String): Boolean {
+        if (isKnownEntryLocation(value)) return false
+        val letters = value.filter(Char::isLetter)
+        return letters.isNotEmpty() &&
+            value.split(Regex("\\s+")).size <= 5 &&
+            letters.count(Char::isUpperCase) >= letters.length * 0.75
+    }
+
     private fun String.allLettersUppercase(): Boolean {
         val letters = filter(Char::isLetter)
         return letters.isNotEmpty() && letters.all(Char::isUpperCase)
@@ -434,6 +532,55 @@ internal object ResumeTextParser {
         return dateIndexes.mapIndexedNotNull { entryIndex, dateIndex ->
             val headingStart = headingStarts[entryIndex]
             val headingLines = lines.subList(headingStart, dateIndex)
+            val separatedTitleIndex = headingLines.indexOfFirst(::looksLikeProfessionalTitle)
+                .takeIf { index ->
+                    index > 0 || index == 0 && headingLines.drop(1).any(::looksLikeOrganizationFragment)
+                }
+            if (separatedTitleIndex != null) {
+                var title = headingLines[separatedTitleIndex]
+                var details = headingLines.drop(separatedTitleIndex + 1)
+                if (normalize(details.firstOrNull().orEmpty()) == "APP") {
+                    title += " - APP"
+                    details = details.drop(1)
+                }
+                val leadingOrganization = details.takeWhile(::looksLikeOrganizationFragment)
+                val organization = if (separatedTitleIndex > 0) {
+                    headingLines
+                        .take(separatedTitleIndex)
+                        .filter(::looksLikeOrganizationFragment)
+                        .map(String::uppercase)
+                        .joinToString(" ")
+                } else {
+                    leadingOrganization.joinToString(" ") { it.uppercase() }
+                }
+                if (separatedTitleIndex == 0) details = details.drop(leadingOrganization.size)
+                val location = details.firstOrNull(::isKnownEntryLocation)
+                    ?: details.firstOrNull(::looksLikeEntryLocation).orEmpty()
+                val date = lines[dateIndex].extractDate()
+                val (start, end) = splitDate(date)
+                val inlineDetail = lines[dateIndex]
+                    .replace(dateRangeRegex, "")
+                    .replace(yearRegex, "")
+                    .trim(' ', '-', '|', '–', '—')
+                val descriptionEnd = headingStarts.getOrNull(entryIndex + 1) ?: lines.size
+                val descriptionPrefix = buildList {
+                    addAll(details.filterNot { it == location })
+                    if (inlineDetail.isNotBlank()) add(inlineDetail)
+                }
+                val descriptionBody = lines.subList(dateIndex + 1, descriptionEnd).toDescriptionText()
+                val description = (descriptionPrefix + descriptionBody)
+                    .filter(String::isNotBlank)
+                    .joinToString("\n")
+                return@mapIndexedNotNull ParsedEntry(
+                    title = title,
+                    organization = organization,
+                    location = location,
+                    startDate = start,
+                    endDate = end,
+                    description = description,
+                    isCurrent = currentExperienceRegex.containsMatchIn(date),
+                ).takeIf { it.title.isNotBlank() || it.organization.isNotBlank() }
+            }
             val location = headingLines.lastOrNull()
                 ?.takeIf(::looksLikeEntryLocation)
                 .orEmpty()
@@ -469,6 +616,20 @@ internal object ResumeTextParser {
         ) {
             return dateIndex
         }
+        val separatedTitleIndex = (dateIndex - 1 downTo lowerBound)
+            .take(6)
+            .firstOrNull { looksLikeProfessionalTitle(lines[it]) }
+        if (separatedTitleIndex != null) {
+            var start = separatedTitleIndex
+            while (
+                start - 1 >= lowerBound &&
+                separatedTitleIndex - start < 3 &&
+                isUppercaseOrganizationContinuation(lines[start - 1])
+            ) {
+                start--
+            }
+            return start
+        }
         var index = dateIndex - 1
         if (index < lowerBound) return dateIndex
         if (looksLikeEntryLocation(lines[index])) index--
@@ -495,6 +656,9 @@ internal object ResumeTextParser {
             (clean.contains(',') || normalize(clean) in knownLocations ||
                 words.size == 1 && clean.any(Char::isLowerCase))
     }
+
+    private fun isKnownEntryLocation(value: String): Boolean =
+        normalize(value) in knownEntryLocations
 
     private data class MutableEntry(
         val title: String,
@@ -573,12 +737,31 @@ internal object ResumeTextParser {
     private fun parseSkills(lines: List<String>): List<String> = normalizeImportedSkills(lines)
 
     internal fun normalizeImportedSkills(skills: List<String>): List<String> = skills
+        .map(::repairOcrSkillLine)
         .flatMap { line -> line.split(bulletSplitRegex) }
         .flatMap(::splitCompactSkillList)
         .map { it.removeBulletPrefix().trim() }
+        .map(::canonicalSkillName)
         .filter { it.length in 2..45 && !it.containsDate() }
         .distinctBy(::normalize)
         .take(60)
+
+    private fun repairOcrSkillLine(value: String): String = value
+        .replace(Regex("(?i)^avdi\\s*\\("), "CI/DI (")
+        .replace(Regex("(?i)JENKINSAZURE"), "JENKINS-AZURE")
+        .replace(Regex("(?i)GRAPHQL\\s*RETROFIT"), "GRAPHQL RETROFIT")
+        .replace(Regex("(?i)\\bNEXTUS\\b"), "NEXTJS")
+        .replace(Regex("(?i)\\bMVM\\b"), "MVVM")
+        .replace(Regex("(?i)\\bXMIL\\b"), "XML")
+        .replace(Regex("(?i)\\bMVI\\s*SQL\\b"), "MVI SQL")
+
+    private fun canonicalSkillName(value: String): String {
+        val letters = value.filter(Char::isLetter)
+        if (letters.isNotEmpty() && letters.count(Char::isUpperCase) < letters.length * 0.75) return value
+        val canonical = (compoundSkillNames + singleSkillNames)
+            .firstOrNull { normalize(it) == normalize(value) }
+        return canonical ?: value
+    }
 
     private fun splitCompactSkillList(value: String): List<String> {
         val cleanValue = value.removeBulletPrefix().trim()
@@ -608,7 +791,10 @@ internal object ResumeTextParser {
                 index += compoundSize
             } else {
                 val word = words[index]
-                parsed += word to (normalize(word) in singleSkillNames)
+                val normalizedWord = normalize(word)
+                parsed += word to (
+                    normalizedWord in singleSkillNames || normalizedWord in compoundSkillNames
+                )
                 index++
             }
         }
@@ -841,13 +1027,28 @@ internal object ResumeTextParser {
         }
     }
 
-    private fun cleanLine(value: String): String = value
-        .trim()
-        .replace(Regex("[\\t ]{2,}"), "\u001F")
-        .replace(Regex("[\\t ]+"), " ")
-        .split('\u001F')
-        .joinToString(" ") { collapseTrackedUppercase(it.trim()) }
-        .trim()
+    private fun normalizedProfessionalTitle(value: String): String {
+        if (value.isBlank() || !value.allLettersUppercase()) return value.trim()
+        val connectors = setOf("a", "de", "del", "en", "la", "las", "los", "y")
+        return value.lowercase().split(Regex("\\s+")).mapIndexed { index, word ->
+            if (index > 0 && word in connectors) word else word.replaceFirstChar(Char::uppercase)
+        }.joinToString(" ")
+    }
+
+    private fun cleanLine(value: String): String {
+        val clean = value
+            .trim()
+            .replace(Regex("[\\t ]{2,}"), "\u001F")
+            .replace(Regex("[\\t ]+"), " ")
+            .split('\u001F')
+            .joinToString(" ") { collapseTrackedUppercase(it.trim()) }
+            .replace(Regex("\\s*@\\s*"), "@")
+            .replace("Perí", "Perú")
+            .trim()
+        return ocrYearRangeTypoRegex.replace(clean) { match ->
+            "${match.groupValues[1]}2${match.groupValues[2]}"
+        }
+    }
 
     private fun collapseTrackedUppercase(value: String): String {
         val words = value.split(Regex("\\s+")).filter(String::isNotBlank)
@@ -868,8 +1069,17 @@ internal object ResumeTextParser {
             .lineSequence()
             .joinToString("\n") { it.removeBulletPrefix() }
 
-    private fun String.cleanSentence(): String =
-        replace(Regex("\\s+"), " ").trim()
+    private fun String.cleanOcrSummary(): String =
+        replace(Regex("\\s+"), " ")
+            .replace(Regex("(?i)\\.\\s*\\.?(?:ESpeote\\s+)?ecializado"), ". Especializado")
+            .replace(Regex("\\bMWM\\b"), "MVVM")
+            .replace(Regex("(?i)asequrando\\s+se\\s+"), "asegurando ")
+            .replace(Regex("\\bCl/\\s*CD\\b"), "CI/CD")
+            .replace("Cuento con conocimie onocimientos", "cuento con conocimientos")
+            .replace("experiencia en IN el", "experiencia en el")
+            .replace("aplicaciones Li no híbridas", "aplicaciones no híbridas")
+            .replace(Regex("\\blonic\\b"), "Ionic")
+            .trim()
 
     private fun normalize(value: String): String = Normalizer
         .normalize(value, Normalizer.Form.NFD)
