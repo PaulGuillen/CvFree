@@ -10,9 +10,11 @@ import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.features.home.ui.AllTemplatesScreen
 import com.devpaul.features.home.ui.HomeScreen
 import com.devpaul.navigation.route.HomeRoute
+import kotlinx.coroutines.flow.StateFlow
 
 fun NavGraphBuilder.homeGraph(
     repository: ResumeRepository,
+    userName: StateFlow<String>,
     onNavigateToMyCvs: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTemplates: () -> Unit,
@@ -24,10 +26,12 @@ fun NavGraphBuilder.homeGraph(
     ) {
         composable<HomeRoute.Home> {
             val resumes by repository.resumes.collectAsState(initial = emptyList())
+            val currentUserName by userName.collectAsState()
             HomeScreen(
                 onNavigateToMyCvs = onNavigateToMyCvs,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToTemplates = onNavigateToTemplates,
+                userName = currentUserName,
                 recentResume = resumes.maxByOrNull(ResumeDocument::updatedAt),
                 onContinueResume = onContinueResume,
             )

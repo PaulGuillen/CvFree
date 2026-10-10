@@ -67,6 +67,7 @@ fun MainGraph(
             registerViewModel = registerViewModel,
             forgotPasswordViewModel = forgotPasswordViewModel,
             onAuthenticated = {
+                authSessionViewModel.refreshUser()
                 navController.navigate(HomeRoute.Graph) {
                     popUpTo<AuthRoute.Graph> { inclusive = true }
                     launchSingleTop = true
@@ -108,6 +109,7 @@ fun MainGraph(
         )
         homeGraph(
             repository = resumeRepository,
+            userName = authSessionViewModel.userName,
             onNavigateToMyCvs = {
                 navController.navigateToMainDestination(ResumeRoute.Graph)
             },

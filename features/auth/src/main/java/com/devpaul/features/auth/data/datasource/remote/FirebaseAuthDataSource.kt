@@ -15,6 +15,14 @@ class FirebaseAuthDataSource(
 ) {
     fun currentUser(): FirebaseUser? = auth.currentUser
 
+    suspend fun currentUserName(userID: String): String =
+        firestore.collection(USERS_COLLECTION)
+            .document(userID)
+            .get()
+            .await()
+            .getString(NAME_FIELD)
+            .orEmpty()
+
     suspend fun signIn(email: String, password: String): FirebaseUser {
         val result = auth.signInWithEmailAndPassword(email, password).await()
         return requireNotNull(result.user) { "Firebase user is null" }
@@ -56,5 +64,6 @@ class FirebaseAuthDataSource(
 
     private companion object {
         const val USERS_COLLECTION = "users"
+        const val NAME_FIELD = "name"
     }
 }

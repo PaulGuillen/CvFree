@@ -18,6 +18,12 @@ class AuthRepositoryImpl(
 
     override fun currentUser(): AuthUser? = dataSource.currentUser()?.toDomain()
 
+    override suspend fun currentUserProfile(): AuthUser? = firebaseCall {
+        val firebaseUser = dataSource.currentUser() ?: return@firebaseCall null
+        val savedName = dataSource.currentUserName(firebaseUser.uid)
+        firebaseUser.toDomain(preferredName = savedName)
+    }
+
     override suspend fun signIn(email: String, password: String): AuthUser = firebaseCall {
         dataSource.signIn(email, password).toDomain()
     }

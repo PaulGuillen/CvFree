@@ -70,7 +70,7 @@ fun HomeScreen(
     onNavigateToTemplates: () -> Unit,
     onContinueResume: (ResumeDocument) -> Unit,
     modifier: Modifier = Modifier,
-    userName: String = "Paul",
+    userName: String = "",
     templates: List<ResumeTemplateDefinition> = ResumeTemplateCatalog.templates.take(3),
     recentResume: ResumeDocument? = null,
 ) {
@@ -165,7 +165,7 @@ private fun HomeHeader(userName: String) {
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = "Hola, $userName.",
+            text = userName.trim().takeIf(String::isNotEmpty)?.let { "Hola, $it." } ?: "Hola.",
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineLarge,
         )
