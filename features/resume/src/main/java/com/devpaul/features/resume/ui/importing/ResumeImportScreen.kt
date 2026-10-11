@@ -58,6 +58,7 @@ import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.features.resume.importing.ResumeImportStage
+import com.devpaul.features.resume.importing.ResumeImportPolicy
 import com.devpaul.features.resume.importing.ResumePdfImporter
 import kotlinx.coroutines.CancellationException
 import kotlin.math.roundToInt
@@ -65,6 +66,7 @@ import kotlin.math.roundToInt
 @Composable
 fun ResumeImportScreen(
     documentUri: Uri,
+    importPolicy: ResumeImportPolicy = ResumeImportPolicy(),
     onComplete: (ResumeDocument) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -88,7 +90,7 @@ fun ResumeImportScreen(
         progress = 0
         stage = ResumeImportStage.Preparing
         try {
-            ResumePdfImporter.import(context, documentUri) { nextProgress, nextStage ->
+            ResumePdfImporter.import(context, documentUri, importPolicy) { nextProgress, nextStage ->
                 progress = nextProgress
                 stage = nextStage
             }

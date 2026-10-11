@@ -11,4 +11,5 @@ android {
 dependencies {
     firebaseImplementation()
     coroutinesPlayServicesImplementation()
+    implementation(libs.koin.compose)
 }

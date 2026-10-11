@@ -9,6 +9,28 @@ android {
     defaultConfig {
         applicationId = "com.devpaul.cvfree"
     }
+
+    flavorDimensions += "access"
+    productFlavors {
+        create("free") {
+            dimension = "access"
+            buildConfigField("String", "ACCESS_PLAN", "\"free\"")
+            buildConfigField("boolean", "PREMIUM_ACCESS_OVERRIDE", "false")
+        }
+        create("premium") {
+            dimension = "access"
+            buildConfigField("String", "ACCESS_PLAN", "\"premium\"")
+            buildConfigField("boolean", "PREMIUM_ACCESS_OVERRIDE", "true")
+        }
+    }
+}
+
+androidComponents {
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        if (variant.productFlavors.any { (_, flavor) -> flavor == "premium" }) {
+            variant.enable = false
+        }
+    }
 }
 
 dependencies {
@@ -29,6 +51,9 @@ dependencies {
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.app.update.ktx)
+    implementation(libs.koin.compose)
     implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.config)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     debugImplementation(libs.firebase.appcheck.debug)
 }

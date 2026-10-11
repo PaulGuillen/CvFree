@@ -17,14 +17,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
-import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.cvfree.ui.ForceUpdateScreen
 import com.devpaul.cvfree.ui.UpdateState
 import com.devpaul.cvfree.ui.openPlayStore
-import com.devpaul.features.auth.ui.forgot.ForgotPasswordViewModel
-import com.devpaul.features.auth.ui.login.LoginViewModel
-import com.devpaul.features.auth.ui.register.RegisterViewModel
-import com.devpaul.features.auth.ui.session.AuthSessionViewModel
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -32,16 +27,8 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-
-    private val resumeRepository: ResumeRepository by inject()
-    private val authSessionViewModel: AuthSessionViewModel by viewModel()
-    private val loginViewModel: LoginViewModel by viewModel()
-    private val registerViewModel: RegisterViewModel by viewModel()
-    private val forgotPasswordViewModel: ForgotPasswordViewModel by viewModel()
 
     private lateinit var appUpdateManager: AppUpdateManager
 
@@ -84,14 +71,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         UpdateState.NotRequired -> {
-                            MainGraph(
-                                navController = navController,
-                                resumeRepository = resumeRepository,
-                                authSessionViewModel = authSessionViewModel,
-                                loginViewModel = loginViewModel,
-                                registerViewModel = registerViewModel,
-                                forgotPasswordViewModel = forgotPasswordViewModel,
-                            )
+                            MainGraph(navController = navController)
                         }
 
                         UpdateState.Loading -> Unit

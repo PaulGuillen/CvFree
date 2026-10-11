@@ -19,7 +19,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 internal object ResumeAiExtractor {
-    private const val MODEL_NAME = "gemini-3.8-flash"
     private const val MAX_SOURCE_LENGTH = 60_000
 
     private val json = Json {
@@ -99,12 +98,13 @@ internal object ResumeAiExtractor {
     suspend fun enhance(
         content: ResumePdfTextContent,
         localDocument: ResumeDocument,
+        modelName: String,
     ): ResumeDocument? {
         val source = content.forAi().take(MAX_SOURCE_LENGTH)
         if (source.length < 80) return null
 
         val model = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
-            modelName = MODEL_NAME,
+            modelName = modelName,
             generationConfig = generationConfig {
                 temperature = 0.1f
                 responseMimeType = "application/json"

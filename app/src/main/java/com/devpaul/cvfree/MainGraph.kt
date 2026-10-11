@@ -1,22 +1,20 @@
 package com.devpaul.cvfree
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.devpaul.core.domain.resume.ResumeRepository
+import com.devpaul.cvfree.access.FeatureAccessController
 import com.devpaul.features.auth.authGraph
-import com.devpaul.features.auth.ui.forgot.ForgotPasswordViewModel
-import com.devpaul.features.auth.ui.forgot.ForgotPasswordUiIntent
-import com.devpaul.features.auth.ui.login.LoginViewModel
-import com.devpaul.features.auth.ui.login.LoginUiIntent
-import com.devpaul.features.auth.ui.register.RegisterViewModel
-import com.devpaul.features.auth.ui.register.RegisterUiIntent
 import com.devpaul.features.auth.ui.session.AuthSessionViewModel
 import com.devpaul.features.home.homeGraph
 import com.devpaul.features.onboarding.onboardingGraph
-import com.devpaul.features.resume.resumeGraph
 import com.devpaul.features.resume.ResumeDraftState
-import com.devpaul.core.domain.resume.ResumeRepository
+import com.devpaul.features.resume.importing.ResumeImportPolicy
+import com.devpaul.features.resume.resumeGraph
 import com.devpaul.features.settings.settingsGraph
 import com.devpaul.features.splash.splashGraph
 import com.devpaul.navigation.route.AuthRoute
@@ -25,17 +23,22 @@ import com.devpaul.navigation.route.OnboardingRoute
 import com.devpaul.navigation.route.ResumeRoute
 import com.devpaul.navigation.route.SettingsRoute
 import com.devpaul.navigation.route.SplashRoute
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun MainGraph(
     navController: NavHostController,
-    resumeRepository: ResumeRepository,
-    authSessionViewModel: AuthSessionViewModel,
-    loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel,
-    forgotPasswordViewModel: ForgotPasswordViewModel,
 ) {
+    val resumeRepository: ResumeRepository = koinInject()
+    val authSessionViewModel: AuthSessionViewModel = koinViewModel()
+    val featureAccessController: FeatureAccessController = koinInject()
+    val featureAccess by featureAccessController.state.collectAsStateWithLifecycle()
     val resumeDraftState: ResumeDraftState = viewModel()
+    val resumeImportPolicy = ResumeImportPolicy(
+        aiEnhancementEnabled = featureAccess.aiResumeImportEnabled,
+        aiModelName = featureAccess.aiModelName,
+    )
 
     NavHost(
         navController = navController,
@@ -63,9 +66,6 @@ fun MainGraph(
             },
         )
         authGraph(
-            loginViewModel = loginViewModel,
-            registerViewModel = registerViewModel,
-            forgotPasswordViewModel = forgotPasswordViewModel,
             onAuthenticated = {
                 authSessionViewModel.refreshUser()
                 navController.navigate(HomeRoute.Graph) {
@@ -74,7 +74,6 @@ fun MainGraph(
                 }
             },
             onForgotPassword = {
-                loginViewModel.executeUiIntent(LoginUiIntent.ClearError)
                 navController.navigate(AuthRoute.ForgotPassword) {
                     launchSingleTop = true
                 }
@@ -86,24 +85,20 @@ fun MainGraph(
                 }
             },
             onBackFromForgotPassword = {
-                forgotPasswordViewModel.executeUiIntent(ForgotPasswordUiIntent.ClearError)
                 navController.popBackStack()
             },
             onBackToLogin = {
-                forgotPasswordViewModel.executeUiIntent(ForgotPasswordUiIntent.ClearError)
                 navController.navigate(AuthRoute.Login) {
                     popUpTo<AuthRoute.Graph> { inclusive = false }
                     launchSingleTop = true
                 }
             },
             onNavigateToRegister = {
-                loginViewModel.executeUiIntent(LoginUiIntent.ClearError)
                 navController.navigate(AuthRoute.Register) {
                     launchSingleTop = true
                 }
             },
             onNavigateToLogin = {
-                registerViewModel.executeUiIntent(RegisterUiIntent.ClearError)
                 navController.popBackStack()
             },
         )
@@ -131,6 +126,7 @@ fun MainGraph(
             navController = navController,
             repository = resumeRepository,
             draftState = resumeDraftState,
+            importPolicy = resumeImportPolicy,
             onNavigateToHome = {
                 navController.navigateToMainDestination(HomeRoute.Graph)
             },

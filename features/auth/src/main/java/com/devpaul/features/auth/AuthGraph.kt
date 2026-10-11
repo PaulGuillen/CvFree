@@ -19,11 +19,9 @@ import com.devpaul.features.auth.ui.register.RegisterUiEvent
 import com.devpaul.features.auth.ui.register.RegisterUiIntent
 import com.devpaul.features.auth.ui.register.RegisterViewModel
 import com.devpaul.navigation.route.AuthRoute
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.authGraph(
-    loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel,
-    forgotPasswordViewModel: ForgotPasswordViewModel,
     onAuthenticated: () -> Unit,
     onForgotPassword: () -> Unit,
     onPasswordResetSent: (email: String) -> Unit,
@@ -36,6 +34,7 @@ fun NavGraphBuilder.authGraph(
         startDestination = AuthRoute.Login,
     ) {
         composable<AuthRoute.Login> {
+            val loginViewModel: LoginViewModel = koinViewModel()
             BaseScreenWithState(
                 viewModel = loginViewModel,
                 onUiEvent = { event, showSnackbar ->
@@ -49,14 +48,21 @@ fun NavGraphBuilder.authGraph(
                     onLogin = { email, password ->
                         onIntent(LoginUiIntent.Login(email, password))
                     },
-                    onForgotPassword = onForgotPassword,
-                    onNavigateToRegister = onNavigateToRegister,
+                    onForgotPassword = {
+                        onIntent(LoginUiIntent.ClearError)
+                        onForgotPassword()
+                    },
+                    onNavigateToRegister = {
+                        onIntent(LoginUiIntent.ClearError)
+                        onNavigateToRegister()
+                    },
                     uiState = uiState,
                     onInputChanged = { onIntent(LoginUiIntent.ClearError) },
                 )
             }
         }
         composable<AuthRoute.Register> {
+            val registerViewModel: RegisterViewModel = koinViewModel()
             BaseScreenWithState(
                 viewModel = registerViewModel,
                 onUiEvent = { event, showSnackbar ->
@@ -70,13 +76,17 @@ fun NavGraphBuilder.authGraph(
                     onRegister = { name, email, password ->
                         onIntent(RegisterUiIntent.Register(name, email, password))
                     },
-                    onNavigateToLogin = onNavigateToLogin,
+                    onNavigateToLogin = {
+                        onIntent(RegisterUiIntent.ClearError)
+                        onNavigateToLogin()
+                    },
                     uiState = uiState,
                     onInputChanged = { onIntent(RegisterUiIntent.ClearError) },
                 )
             }
         }
         composable<AuthRoute.ForgotPassword> {
+            val forgotPasswordViewModel: ForgotPasswordViewModel = koinViewModel()
             BaseScreenWithState(
                 viewModel = forgotPasswordViewModel,
                 onUiEvent = { event, showSnackbar ->
@@ -91,7 +101,10 @@ fun NavGraphBuilder.authGraph(
                     uiState = uiState,
                     onSend = { email -> onIntent(ForgotPasswordUiIntent.Send(email)) },
                     onInputChanged = { onIntent(ForgotPasswordUiIntent.ClearError) },
-                    onNavigateBack = onBackFromForgotPassword,
+                    onNavigateBack = {
+                        onIntent(ForgotPasswordUiIntent.ClearError)
+                        onBackFromForgotPassword()
+                    },
                 )
             }
         }

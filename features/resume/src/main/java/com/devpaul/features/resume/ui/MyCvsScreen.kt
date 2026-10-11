@@ -77,6 +77,7 @@ import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.domain.resume.ResumeDocument
+import com.devpaul.features.resume.importing.ResumeImportPolicy
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
@@ -92,6 +93,7 @@ import java.util.Locale
 @Composable
 fun MyCvsScreen(
     modifier: Modifier = Modifier,
+    importPolicy: ResumeImportPolicy = ResumeImportPolicy(),
     onNavigateToHome: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onCreateCv: () -> Unit,
@@ -168,6 +170,22 @@ fun MyCvsScreen(
                     snackbarHostState.showSnackbar("No se pudo abrir el escáner. Inténtalo nuevamente.")
                 }
             }
+    }
+
+    fun launchImport(action: ImportAction) {
+        showCreateOptions = false
+        when (action) {
+            ImportAction.Pdf -> pdfPicker.launch(arrayOf("application/pdf"))
+            ImportAction.Scan -> launchScanner()
+        }
+    }
+
+    fun requestImport(action: ImportAction) {
+        if (importPolicy.aiEnhancementEnabled) {
+            pendingImportAction = action
+        } else {
+            launchImport(action)
+        }
     }
     val visibleResumes = resumes
         .let { filtered ->
@@ -324,7 +342,7 @@ fun MyCvsScreen(
                     icon = Icons.Outlined.DocumentScanner,
                     title = "Escanear documento",
                     description = "Captura, recorta y mejora varias páginas automáticamente.",
-                    onClick = { pendingImportAction = ImportAction.Scan },
+                    onClick = { requestImport(ImportAction.Scan) },
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -333,8 +351,12 @@ fun MyCvsScreen(
                 CreateResumeOption(
                     icon = Icons.Outlined.UploadFile,
                     title = "Importar PDF",
-                    description = "Analiza y organiza el contenido con asistencia de IA.",
-                    onClick = { pendingImportAction = ImportAction.Pdf },
+                    description = if (importPolicy.aiEnhancementEnabled) {
+                        "Analiza y organiza el contenido con asistencia de IA."
+                    } else {
+                        "Extrae y organiza el contenido directamente en el dispositivo."
+                    },
+                    onClick = { requestImport(ImportAction.Pdf) },
                 )
             }
         }
@@ -354,11 +376,7 @@ fun MyCvsScreen(
                 TextButton(
                     onClick = {
                         pendingImportAction = null
-                        showCreateOptions = false
-                        when (action) {
-                            ImportAction.Pdf -> pdfPicker.launch(arrayOf("application/pdf"))
-                            ImportAction.Scan -> launchScanner()
-                        }
+                        launchImport(action)
                     },
                 ) {
                     Text("Continuar")

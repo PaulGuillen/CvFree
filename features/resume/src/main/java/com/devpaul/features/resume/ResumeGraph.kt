@@ -10,6 +10,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeRepository
+import com.devpaul.features.resume.importing.ResumeImportPolicy
 import com.devpaul.features.resume.ui.MyCvsScreen
 import com.devpaul.features.resume.ui.contact.ContactScreen
 import com.devpaul.features.resume.ui.courses.CoursesScreen
@@ -31,6 +32,7 @@ fun NavGraphBuilder.resumeGraph(
     navController: NavHostController,
     repository: ResumeRepository,
     draftState: ResumeDraftState,
+    importPolicy: ResumeImportPolicy = ResumeImportPolicy(),
     onNavigateToHome: () -> Unit,
     onNavigateToSettings: () -> Unit,
 ) {
@@ -70,6 +72,7 @@ fun NavGraphBuilder.resumeGraph(
 
         MyCvsScreen(
             resumes = resumes,
+            importPolicy = importPolicy,
             onCreateCv = {
                 draftState.startNew(emptySet())
                 navController.navigate(ResumeRoute.SectionSelection)
@@ -97,6 +100,7 @@ fun NavGraphBuilder.resumeGraph(
         val route = backStackEntry.toRoute<ResumeRoute.Importing>()
         ResumeImportScreen(
             documentUri = android.net.Uri.parse(route.uri),
+            importPolicy = importPolicy,
             onBack = { navController.popBackStack() },
             onComplete = { importedResume ->
                 draftState.load(importedResume)

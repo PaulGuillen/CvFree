@@ -48,6 +48,7 @@ internal object ResumePdfImporter {
     suspend fun import(
         context: Context,
         uri: Uri,
+        policy: ResumeImportPolicy = ResumeImportPolicy(),
         onProgress: suspend (progress: Int, stage: ResumeImportStage) -> Unit,
     ): ResumeDocument {
         onProgress(6, ResumeImportStage.Preparing)
@@ -77,12 +78,16 @@ internal object ResumePdfImporter {
             ResumeTextParser.parse(content)
         }
 
-        onProgress(66, ResumeImportStage.Enhancing)
-        val enhancedDocument = try {
-            ResumeAiExtractor.enhance(content, document)
-        } catch (error: CancellationException) {
-            throw error
-        } catch (_: Exception) {
+        val enhancedDocument = if (policy.aiEnhancementEnabled) {
+            onProgress(66, ResumeImportStage.Enhancing)
+            try {
+                ResumeAiExtractor.enhance(content, document, policy.aiModelName)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Exception) {
+                null
+            }
+        } else {
             null
         }
 
