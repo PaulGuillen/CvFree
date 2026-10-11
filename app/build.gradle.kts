@@ -29,4 +29,6 @@ dependencies {
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.app.update.ktx)
+    implementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
 }

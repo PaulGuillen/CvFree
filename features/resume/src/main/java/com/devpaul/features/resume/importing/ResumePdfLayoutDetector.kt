@@ -17,6 +17,7 @@ internal data class ResumePdfTextContent(
     val headerText: String = "",
     val sidebarText: String = "",
     val mainText: String = fullText,
+    val layoutText: String = "",
     val templateId: String = ResumeTemplateCatalog.BUDAPEST_ID,
 )
 

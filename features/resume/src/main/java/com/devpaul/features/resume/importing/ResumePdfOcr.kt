@@ -15,13 +15,15 @@ import kotlin.coroutines.resumeWithException
 
 internal object ResumePdfOcr {
 
+    private const val OCR_DPI = 250f
+
     suspend fun extract(document: PDDocument, templateId: String): ResumePdfTextContent {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         val pages = mutableListOf<List<OcrLine>>()
         val renderer = PDFRenderer(document)
         try {
             repeat(document.numberOfPages) { pageIndex ->
-                val bitmap = renderer.renderImageWithDPI(pageIndex, 150f, ImageType.RGB)
+                val bitmap = renderer.renderImageWithDPI(pageIndex, OCR_DPI, ImageType.RGB)
                 try {
                     val result = recognizer.process(InputImage.fromBitmap(bitmap, 0)).await()
                     pages += result.textBlocks
@@ -61,12 +63,23 @@ internal object ResumePdfOcr {
                 .inReadingOrder()
                 .joinToString("\n", transform = OcrLine::text)
         }
+        val layout = pages.mapIndexed { pageIndex, page ->
+            buildString {
+                appendLine("PAGE ${pageIndex + 1}")
+                page.inReadingOrder().forEach { line ->
+                    val x = line.bounds.left * 100 / line.pageWidth
+                    val y = line.bounds.top * 100 / line.pageHeight
+                    appendLine("[x=$x y=$y] ${line.text}")
+                }
+            }.trimEnd()
+        }.joinToString("\n")
         return ResumePdfTextContent(
             fullText = full,
             flowText = full,
             headerText = header,
             sidebarText = sidebar,
             mainText = main.ifBlank { full },
+            layoutText = layout,
             templateId = templateId,
         )
     }

@@ -27,7 +27,7 @@ okhttp = "5.5.0"
 chucker = "4.3.1"
 mockito = "5.23.0"
 mockitoInline = "5.2.0"
-firebase = "34.18.0"
+firebase = "35.0.0"
 firebaseAnalytics = "22.5.0"
 firebaseAuth = "23.2.1"
 firebaseFirestore = "25.1.4"
@@ -39,6 +39,7 @@ appUpdateKtx = "2.1.0"
 kotlinxCoroutines = "1.11.0"
 pdfBoxAndroid = "2.0.27.0"
 mlKitTextRecognition = "16.0.1"
+mlKitDocumentScanner = "16.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -84,6 +85,7 @@ datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 pdfbox-android = { group = "com.tom-roush", name = "pdfbox-android", version.ref = "pdfBoxAndroid" }
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlKitTextRecognition" }
+mlkit-document-scanner = { group = "com.google.android.gms", name = "play-services-mlkit-document-scanner", version.ref = "mlKitDocumentScanner" }
 
 # Koin
 koin = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
@@ -114,6 +116,9 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx", ver
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestore" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessaging" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorage" }
+firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
+firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
+firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug" }
 
 #Fragment
 androidx_fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidx-fragment" }

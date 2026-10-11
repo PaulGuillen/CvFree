@@ -29,6 +29,10 @@ internal enum class ResumeImportStage(
         title = "Identificando tu información...",
         detail = "Extrayendo experiencia, educación y habilidades.",
     ),
+    Enhancing(
+        title = "Revisando con inteligencia artificial...",
+        detail = "Validando secciones y corrigiendo la lectura del documento.",
+    ),
     Building(
         title = "Construyendo tu currículum...",
         detail = "Organizando los datos en tus formularios.",
@@ -73,11 +77,20 @@ internal object ResumePdfImporter {
             ResumeTextParser.parse(content)
         }
 
-        onProgress(78, ResumeImportStage.Building)
+        onProgress(66, ResumeImportStage.Enhancing)
+        val enhancedDocument = try {
+            ResumeAiExtractor.enhance(content, document)
+        } catch (error: CancellationException) {
+            throw error
+        } catch (_: Exception) {
+            null
+        }
+
+        onProgress(84, ResumeImportStage.Building)
         delay(450.milliseconds)
         onProgress(100, ResumeImportStage.Complete)
         delay(700.milliseconds)
-        return document
+        return enhancedDocument ?: document
     }
 
     private data class ExtractedPdf(
@@ -94,6 +107,9 @@ internal object ResumePdfImporter {
                 PDDocument.load(stream).use { document ->
                     if (document.isEncrypted) {
                         throw ResumeImportException("El PDF está protegido con contraseña y no puede analizarse.")
+                    }
+                    if (document.numberOfPages > 20) {
+                        throw ResumeImportException("El documento supera el límite de 20 páginas.")
                     }
                     val information = document.documentInformation
                     val embeddedDocument = information

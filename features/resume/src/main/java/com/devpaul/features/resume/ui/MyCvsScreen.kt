@@ -1,8 +1,12 @@
 package com.devpaul.features.resume.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.MoreVert
@@ -47,6 +52,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,6 +61,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,6 +80,10 @@ import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,13 +103,16 @@ fun MyCvsScreen(
 ) {
     var selectedFilterName by rememberSaveable { mutableStateOf(CvFilter.All.name) }
     var showCreateOptions by rememberSaveable { mutableStateOf(false) }
+    var pendingImportAction by remember { mutableStateOf<ImportAction?>(null) }
     var pendingDelete by remember { mutableStateOf<ResumeDocument?>(null) }
     val selectedFilter = CvFilter.valueOf(selectedFilterName)
     val context = LocalContext.current
+    val activity = context.findActivity()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     val pdfPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
-        showCreateOptions = false
         if (uri != null) {
             runCatching {
                 context.contentResolver.takePersistableUriPermission(
@@ -107,6 +122,52 @@ fun MyCvsScreen(
             }
             onImportPdf(uri)
         }
+    }
+    val scanner = remember {
+        GmsDocumentScanning.getClient(
+            GmsDocumentScannerOptions.Builder()
+                .setGalleryImportAllowed(true)
+                .setPageLimit(12)
+                .setResultFormats(GmsDocumentScannerOptions.RESULT_FORMAT_PDF)
+                .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL)
+                .build(),
+        )
+    }
+    val scannerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val scannedPdf = GmsDocumentScanningResult
+                .fromActivityResultIntent(result.data)
+                ?.pdf
+                ?.uri
+            if (scannedPdf != null) {
+                onImportPdf(scannedPdf)
+            } else {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("No se pudo crear el PDF escaneado.")
+                }
+            }
+        }
+    }
+
+    fun launchScanner() {
+        val hostActivity = activity
+        if (hostActivity == null) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("El escáner no está disponible en este dispositivo.")
+            }
+            return
+        }
+        scanner.getStartScanIntent(hostActivity)
+            .addOnSuccessListener { intentSender ->
+                scannerLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+            }
+            .addOnFailureListener {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("No se pudo abrir el escáner. Inténtalo nuevamente.")
+                }
+            }
     }
     val visibleResumes = resumes
         .let { filtered ->
@@ -123,6 +184,7 @@ fun MyCvsScreen(
     Scaffold(
         modifier = modifier,
         containerColor = background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             CvBottomNavigation(
                 selectedDestination = CvMainDestination.MyCvs,
@@ -259,13 +321,55 @@ fun MyCvsScreen(
                     color = MaterialTheme.colorScheme.outline,
                 )
                 CreateResumeOption(
+                    icon = Icons.Outlined.DocumentScanner,
+                    title = "Escanear documento",
+                    description = "Captura, recorta y mejora varias páginas automáticamente.",
+                    onClick = { pendingImportAction = ImportAction.Scan },
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    color = MaterialTheme.colorScheme.outline,
+                )
+                CreateResumeOption(
                     icon = Icons.Outlined.UploadFile,
-                    title = "Subir y mejorar",
-                    description = "Importa un PDF y completa tus datos automáticamente.",
-                    onClick = { pdfPicker.launch(arrayOf("application/pdf")) },
+                    title = "Importar PDF",
+                    description = "Analiza y organiza el contenido con asistencia de IA.",
+                    onClick = { pendingImportAction = ImportAction.Pdf },
                 )
             }
         }
+    }
+
+    pendingImportAction?.let { action ->
+        AlertDialog(
+            onDismissRequest = { pendingImportAction = null },
+            title = { Text("Procesamiento inteligente") },
+            text = {
+                Text(
+                    "Para organizar el currículum, el texto reconocido se enviará de forma segura " +
+                        "a Firebase AI Logic. No se enviará el archivo original y podrás revisar cada dato.",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        pendingImportAction = null
+                        showCreateOptions = false
+                        when (action) {
+                            ImportAction.Pdf -> pdfPicker.launch(arrayOf("application/pdf"))
+                            ImportAction.Scan -> launchScanner()
+                        }
+                    },
+                ) {
+                    Text("Continuar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingImportAction = null }) {
+                    Text("Cancelar")
+                }
+            },
+        )
     }
 
     pendingDelete?.let { resume ->
@@ -296,6 +400,17 @@ fun MyCvsScreen(
             },
         )
     }
+}
+
+private enum class ImportAction {
+    Pdf,
+    Scan,
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
 
 @Composable
