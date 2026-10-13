@@ -1,6 +1,7 @@
 package com.devpaul.features.home.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,6 +69,7 @@ fun HomeScreen(
     onNavigateToMyCvs: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTemplates: () -> Unit,
+    onPreviewTemplate: (String) -> Unit,
     onContinueResume: (ResumeDocument) -> Unit,
     modifier: Modifier = Modifier,
     userName: String = "",
@@ -111,6 +113,7 @@ fun HomeScreen(
                 FeaturedTemplatesSection(
                     templates = templates,
                     onViewAll = onNavigateToTemplates,
+                    onPreviewTemplate = onPreviewTemplate,
                 )
             }
             item {
@@ -217,6 +220,7 @@ private fun AchievementBanner() {
 private fun FeaturedTemplatesSection(
     templates: List<ResumeTemplateDefinition>,
     onViewAll: () -> Unit,
+    onPreviewTemplate: (String) -> Unit,
 ) {
     Column {
         Row(
@@ -238,15 +242,25 @@ private fun FeaturedTemplatesSection(
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             items(templates) { template ->
-                TemplateCard(template = template)
+                TemplateCard(
+                    template = template,
+                    onClick = { onPreviewTemplate(template.id) },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun TemplateCard(template: ResumeTemplateDefinition) {
-    Column(modifier = Modifier.width(210.dp)) {
+private fun TemplateCard(
+    template: ResumeTemplateDefinition,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .width(210.dp)
+            .clickable(onClick = onClick),
+    ) {
         TemplateThumbnail(
             template = template,
             modifier = Modifier
@@ -483,7 +497,7 @@ internal fun formatRecentEdit(
 @Composable
 private fun HomeLightPreview() {
     CvFreeTheme(darkTheme = false) {
-        HomeScreen({}, {}, {}, {})
+        HomeScreen({}, {}, {}, {}, {})
     }
 }
 
@@ -491,6 +505,6 @@ private fun HomeLightPreview() {
 @Composable
 private fun HomeDarkPreview() {
     CvFreeTheme(darkTheme = true) {
-        HomeScreen({}, {}, {}, {})
+        HomeScreen({}, {}, {}, {}, {})
     }
 }

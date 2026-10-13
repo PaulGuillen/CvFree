@@ -12,4 +12,7 @@ sealed interface HomeRoute : AppRoute {
 
     @Serializable
     data object Templates : HomeRoute, DestinationRoute
+
+    @Serializable
+    data class TemplatePreview(val templateId: String) : HomeRoute, DestinationRoute
 }

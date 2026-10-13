@@ -114,6 +114,9 @@ fun MainGraph(
             onNavigateToTemplates = {
                 navController.navigate(HomeRoute.Templates)
             },
+            onPreviewTemplate = { templateId ->
+                navController.navigate(HomeRoute.TemplatePreview(templateId))
+            },
             onNavigateBack = {
                 navController.popBackStack()
             },

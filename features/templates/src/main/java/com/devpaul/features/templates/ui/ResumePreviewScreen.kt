@@ -59,6 +59,7 @@ import com.devpaul.core.domain.resume.ResumeContact
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeEducation
 import com.devpaul.core.domain.resume.ResumeExperience
+import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.pdf.ResumePdfExporter
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -208,25 +209,76 @@ fun ResumePreviewScreen(
 }
 
 @Composable
+fun TemplateExamplePreviewScreen(
+    templateId: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val template = ResumeTemplateCatalog.find(templateId)
+    val exampleResume = remember(template.id) {
+        previewDocument().copy(templateName = template.id)
+    }
+    val background = MaterialTheme.colorScheme.background
+    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(background)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+    ) {
+        PreviewTopBar(
+            onBack = onBack,
+            title = template.displayName,
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Text(
+                text = "Vista previa con información de ejemplo",
+                modifier = Modifier.padding(start = 20.dp, top = 6.dp, end = 20.dp, bottom = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            ScaledResumeDocument(
+                resume = exampleResume,
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .fillMaxWidth(),
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
 private fun ScaledResumeDocument(
     resume: ResumeDocument,
-    captureLayer: GraphicsLayer,
+    captureLayer: GraphicsLayer? = null,
     modifier: Modifier = Modifier,
 ) {
     val designWidth = with(LocalDensity.current) { RESUME_DESIGN_WIDTH_DP.dp.roundToPx() }
     Layout(
         modifier = modifier,
         content = {
-            ResumeTemplateDocument(
-                resume = resume,
-                modifier = Modifier
+            val documentModifier = if (captureLayer == null) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier
                     .fillMaxWidth()
                     .drawWithContent {
                         captureLayer.record {
                             this@drawWithContent.drawContent()
                         }
                         drawLayer(captureLayer)
-                    },
+                    }
+            }
+            ResumeTemplateDocument(
+                resume = resume,
+                modifier = documentModifier,
             )
         },
     ) { measurables, constraints ->
@@ -252,7 +304,10 @@ private fun ScaledResumeDocument(
 }
 
 @Composable
-private fun PreviewTopBar(onBack: () -> Unit) {
+private fun PreviewTopBar(
+    onBack: () -> Unit,
+    title: String = "Vista previa",
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,7 +323,7 @@ private fun PreviewTopBar(onBack: () -> Unit) {
             )
         }
         Text(
-            text = "Vista previa",
+            text = title,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
         )
@@ -277,19 +332,19 @@ private fun PreviewTopBar(onBack: () -> Unit) {
 
 private fun previewResume() = ResumeDocument(
     contact = ResumeContact(
-        name = "Paul Antony",
-        lastName = "Guillen Acuña",
-        professionalTitle = "Ingeniero de Sistemas",
-        email = "paulguillen190@gmail.com",
-        phone = "977588534",
-        city = "Lima",
+        name = "Elena",
+        lastName = "Vargas Salazar",
+        professionalTitle = "Desarrolladora Android",
+        email = "elena.vargas@example.com",
+        phone = "+51 900 000 000",
+        city = "Arequipa",
     ),
     summary = "Ingeniero experto desarrollador Android Senior en reactivo que sea escalable y mantenible.",
     experiences = listOf(
         ResumeExperience(
             position = "Senior Android Developer",
-            company = "Producto Digital",
-            city = "Lima",
+            company = "Nexo Digital",
+            city = "Arequipa",
             startYear = "2022",
             endYear = "Actualidad",
             achievements = "Desarrollo de aplicaciones con Kotlin y Jetpack Compose.\nArquitectura limpia y pruebas automatizadas.",
@@ -297,9 +352,9 @@ private fun previewResume() = ResumeDocument(
     ),
     education = listOf(
         ResumeEducation(
-            institution = "Universidad Autónoma del Perú",
+            institution = "Universidad Nacional",
             degree = "Ingeniería de Sistemas",
-            city = "Lima",
+            city = "Arequipa",
             startYear = "2017",
             endYear = "2022",
         ),

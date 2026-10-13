@@ -5,10 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.features.home.ui.AllTemplatesScreen
 import com.devpaul.features.home.ui.HomeScreen
+import com.devpaul.features.templates.ui.TemplateExamplePreviewScreen
 import com.devpaul.navigation.route.HomeRoute
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,6 +20,7 @@ fun NavGraphBuilder.homeGraph(
     onNavigateToMyCvs: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTemplates: () -> Unit,
+    onPreviewTemplate: (String) -> Unit,
     onNavigateBack: () -> Unit,
     onContinueResume: (ResumeDocument) -> Unit,
 ) {
@@ -31,13 +34,24 @@ fun NavGraphBuilder.homeGraph(
                 onNavigateToMyCvs = onNavigateToMyCvs,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToTemplates = onNavigateToTemplates,
+                onPreviewTemplate = onPreviewTemplate,
                 userName = currentUserName,
                 recentResume = resumes.maxByOrNull(ResumeDocument::updatedAt),
                 onContinueResume = onContinueResume,
             )
         }
         composable<HomeRoute.Templates> {
-            AllTemplatesScreen(onBack = onNavigateBack)
+            AllTemplatesScreen(
+                onBack = onNavigateBack,
+                onPreviewTemplate = onPreviewTemplate,
+            )
+        }
+        composable<HomeRoute.TemplatePreview> { backStackEntry ->
+            val route = backStackEntry.toRoute<HomeRoute.TemplatePreview>()
+            TemplateExamplePreviewScreen(
+                templateId = route.templateId,
+                onBack = onNavigateBack,
+            )
         }
     }
 }

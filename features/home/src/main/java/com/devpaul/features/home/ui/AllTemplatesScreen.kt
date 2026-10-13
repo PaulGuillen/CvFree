@@ -1,6 +1,7 @@
 package com.devpaul.features.home.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,15 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +43,7 @@ import com.devpaul.features.templates.ui.TemplateThumbnail
 @Composable
 fun AllTemplatesScreen(
     onBack: () -> Unit,
+    onPreviewTemplate: (String) -> Unit,
     modifier: Modifier = Modifier,
     templates: List<ResumeTemplateDefinition> = ResumeTemplateCatalog.templates,
 ) {
@@ -82,15 +87,25 @@ fun AllTemplatesScreen(
             verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             items(templates, key = ResumeTemplateDefinition::id) { template ->
-                AllTemplateCard(template = template)
+                AllTemplateCard(
+                    template = template,
+                    onClick = { onPreviewTemplate(template.id) },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun AllTemplateCard(template: ResumeTemplateDefinition) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+private fun AllTemplateCard(
+    template: ResumeTemplateDefinition,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+    ) {
         TemplateThumbnail(
             template = template,
             modifier = Modifier
@@ -114,11 +129,26 @@ private fun AllTemplateCard(template: ResumeTemplateDefinition) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedButton(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Visibility,
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Ver")
+        }
     }
 }
 
 @Preview(name = "All templates", showBackground = true)
 @Composable
 private fun AllTemplatesPreview() {
-    CvFreeTheme { AllTemplatesScreen(onBack = {}) }
+    CvFreeTheme { AllTemplatesScreen(onBack = {}, onPreviewTemplate = {}) }
 }
