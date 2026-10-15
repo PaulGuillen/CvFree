@@ -43,53 +43,15 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.onboarding.R
 import kotlinx.coroutines.launch
-
-private data class OnboardingPage(
-    val icon: ImageVector,
-    val title: String,
-    val description: String,
-    val firstFeatureIcon: ImageVector,
-    val firstFeature: String,
-    val secondFeatureIcon: ImageVector,
-    val secondFeature: String,
-)
-
-private val onboardingPages = listOf(
-    OnboardingPage(
-        icon = Icons.Outlined.Description,
-        title = "Elige una plantilla profesional",
-        description = "Completa tus datos, elige una plantilla y descarga tu CV en PDF.",
-        firstFeatureIcon = Icons.Outlined.AutoAwesome,
-        firstFeature = "Diseños personalizables",
-        secondFeatureIcon = Icons.Outlined.PictureAsPdf,
-        secondFeature = "PDF de alta calidad",
-    ),
-    OnboardingPage(
-        icon = Icons.Outlined.Edit,
-        title = "Completa tu perfil fácilmente",
-        description = "Organiza tu experiencia, estudios y habilidades paso a paso.",
-        firstFeatureIcon = Icons.Outlined.Edit,
-        firstFeature = "Edición sencilla",
-        secondFeatureIcon = Icons.Outlined.VerifiedUser,
-        secondFeature = "Datos protegidos",
-    ),
-    OnboardingPage(
-        icon = Icons.Outlined.Download,
-        title = "Tu próximo empleo empieza aquí",
-        description = "Mantén tu currículum actualizado y listo para compartir cuando lo necesites.",
-        firstFeatureIcon = Icons.Outlined.AutoAwesome,
-        firstFeature = "Resultado profesional",
-        secondFeatureIcon = Icons.Outlined.Download,
-        secondFeature = "Descarga inmediata",
-    ),
-)
 
 @Composable
 fun OnboardingScreen(
@@ -116,7 +78,7 @@ fun OnboardingScreen(
                 .padding(horizontal = 16.dp, vertical = 4.dp),
         ) {
             Text(
-                text = "Saltar",
+                text = stringResource(R.string.ui_skip_2e5178),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge,
             )
@@ -174,7 +136,7 @@ fun OnboardingScreen(
             ),
         ) {
             Text(
-                text = if (pagerState.currentPage == onboardingPages.lastIndex) "Empezar" else "Siguiente",
+                text = if (pagerState.currentPage == onboardingPages.lastIndex) stringResource(R.string.ui_get_started_8b1222) else stringResource(R.string.ui_next_c4d83a),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
@@ -194,7 +156,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         OnboardingIllustration(icon = page.icon)
         Spacer(modifier = Modifier.height(28.dp))
         Text(
-            text = page.title,
+            text = stringResource(page.title),
             modifier = Modifier.widthIn(max = 520.dp),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineMedium,
@@ -202,7 +164,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = page.description,
+            text = stringResource(page.description),
             modifier = Modifier.widthIn(max = 520.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
@@ -217,12 +179,12 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         ) {
             FeatureTile(
                 icon = page.firstFeatureIcon,
-                label = page.firstFeature,
+                label = stringResource(page.firstFeature),
                 modifier = Modifier.weight(1f),
             )
             FeatureTile(
                 icon = page.secondFeatureIcon,
-                label = page.secondFeature,
+                label = stringResource(page.secondFeature),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -297,7 +259,7 @@ private fun OnboardingIllustration(icon: ImageVector) {
             shadowElevation = 8.dp,
         ) {
             Text(
-                text = "Recomendado",
+                text = stringResource(R.string.ui_recommended_fef9d9),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 9.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.labelLarge,

@@ -23,12 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.splash.R
 import kotlinx.coroutines.delay
 
 private const val SplashDurationMillis = 1_600L
@@ -94,7 +96,7 @@ fun SplashScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Crea tu currículum profesional gratis",
+                text = stringResource(R.string.ui_create_your_professional_resume_for_free_7b4396),
                 color = contentColor.copy(alpha = 0.82f),
                 style = MaterialTheme.typography.bodyLarge,
             )
