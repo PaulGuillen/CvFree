@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.devpaul.features.settings.ui.SettingsScreen
+import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.navigation.route.SettingsRoute
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,6 +17,8 @@ fun NavGraphBuilder.settingsGraph(
     userName: StateFlow<String>,
     userEmail: StateFlow<String>,
     onUpdateName: suspend (String) -> String?,
+    appLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit,
 ) {
     navigation<SettingsRoute.Graph>(
         startDestination = SettingsRoute.Settings,
@@ -30,6 +33,8 @@ fun NavGraphBuilder.settingsGraph(
                 userName = currentUserName,
                 userEmail = currentUserEmail,
                 onUpdateName = onUpdateName,
+                appLanguage = appLanguage,
+                onLanguageSelected = onLanguageSelected,
             )
         }
     }

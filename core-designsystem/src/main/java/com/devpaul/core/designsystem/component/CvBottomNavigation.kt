@@ -24,11 +24,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.devpaul.core.designsystem.R
 
 enum class CvMainDestination {
     Home,
@@ -38,7 +40,7 @@ enum class CvMainDestination {
 
 private data class BottomNavigationItem(
     val destination: CvMainDestination,
-    val label: String,
+    val labelRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
 )
@@ -46,19 +48,19 @@ private data class BottomNavigationItem(
 private val bottomNavigationItems = listOf(
     BottomNavigationItem(
         destination = CvMainDestination.Home,
-        label = "Inicio",
+        labelRes = R.string.navigation_home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
     ),
     BottomNavigationItem(
         destination = CvMainDestination.MyCvs,
-        label = "Mis CV",
+        labelRes = R.string.navigation_my_resumes,
         selectedIcon = Icons.Filled.Description,
         unselectedIcon = Icons.Outlined.Description,
     ),
     BottomNavigationItem(
         destination = CvMainDestination.Settings,
-        label = "Ajustes",
+        labelRes = R.string.navigation_settings,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
     ),
@@ -114,7 +116,7 @@ fun CvBottomNavigation(
                             modifier = Modifier.size(25.dp),
                         )
                         Text(
-                            text = item.label,
+                            text = stringResource(item.labelRes),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }

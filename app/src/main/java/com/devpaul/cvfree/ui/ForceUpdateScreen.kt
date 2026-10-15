@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +60,7 @@ import com.devpaul.core.platform.theme.SlateGray
 import com.devpaul.core.platform.theme.Taupe
 import com.devpaul.core.platform.theme.TextSecondary
 import com.devpaul.core.platform.theme.White
+import com.devpaul.cvfree.R
 
 @Composable
 fun ForceUpdateScreen(onOpenStore: () -> Unit) {
@@ -152,7 +154,7 @@ private fun ForceUpdateBadge(
         )
 
         Text(
-            text = "NUEVA VERSIÓN DISPONIBLE",
+            text = stringResource(R.string.ui_new_version_available_d8cb2e),
             color = White.copy(alpha = 0.84f),
             fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
@@ -174,7 +176,7 @@ private fun ForceUpdateBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Actualiza para continuar",
+            text = stringResource(R.string.ui_update_to_continue_01e518),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = colors.title,
@@ -184,7 +186,7 @@ private fun ForceUpdateBody(
         Spacer(Modifier.height(6.dp))
 
         Text(
-            text = "Esta versión ya no es compatible. Descarga la más reciente para seguir usando la aplicación.",
+            text = stringResource(R.string.ui_this_version_is_no_longer_supported_download_the_latest_vers_7f2476),
             style = MaterialTheme.typography.bodySmall,
             color = colors.description,
             textAlign = TextAlign.Center
@@ -214,7 +216,7 @@ private fun ForceUpdateBody(
             )
         ) {
             Text(
-                text = "Actualizar en Play Store",
+                text = stringResource(R.string.ui_update_on_play_store_60cd3e),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
@@ -223,7 +225,7 @@ private fun ForceUpdateBody(
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = "La aplicación no funcionará sin actualizar",
+            text = stringResource(R.string.ui_the_app_will_not_work_without_updating_a436ff),
             style = MaterialTheme.typography.labelSmall,
             color = colors.caption,
             textAlign = TextAlign.Center

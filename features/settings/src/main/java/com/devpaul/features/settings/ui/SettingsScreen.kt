@@ -45,9 +45,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
 import com.devpaul.core.designsystem.component.CvMainDestination
+import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.features.settings.R
 import com.devpaul.features.settings.ui.components.EditNameDialog
+import com.devpaul.features.settings.ui.components.LanguageSelectionDialog
 import com.devpaul.features.settings.ui.components.ProfileCard
 import com.devpaul.features.settings.ui.components.SettingsDivider
 import com.devpaul.features.settings.ui.components.SettingsLinkRow
@@ -55,6 +57,7 @@ import com.devpaul.features.settings.ui.components.SettingsSectionTitle
 import com.devpaul.features.settings.ui.components.SettingsSwitchRow
 import com.devpaul.features.settings.ui.util.MAX_PROFILE_NAME_LENGTH
 import com.devpaul.features.settings.ui.util.isValidProfileName
+import com.devpaul.features.settings.ui.util.labelRes
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,6 +68,8 @@ fun SettingsScreen(
     userName: String,
     userEmail: String,
     onUpdateName: suspend (String) -> String?,
+    appLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
@@ -73,6 +78,7 @@ fun SettingsScreen(
     var editedName by rememberSaveable { mutableStateOf("") }
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
     var isSavingName by rememberSaveable { mutableStateOf(false) }
+    var isChoosingLanguage by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -145,8 +151,8 @@ fun SettingsScreen(
                             icon = Icons.Outlined.Language,
                             title = stringResource(R.string.settings_language),
                             subtitle = stringResource(R.string.settings_language_subtitle),
-                            value = stringResource(R.string.settings_language_spanish),
-                            onClick = {},
+                            value = stringResource(appLanguage.labelRes()),
+                            onClick = { isChoosingLanguage = true },
                         )
                         SettingsDivider()
                         SettingsLinkRow(
@@ -270,4 +276,16 @@ fun SettingsScreen(
         )
     }
 
+    if (isChoosingLanguage) {
+        LanguageSelectionDialog(
+            selectedLanguage = appLanguage,
+            onDismiss = { isChoosingLanguage = false },
+            onLanguageSelected = { language ->
+                isChoosingLanguage = false
+                if (language != appLanguage) {
+                    onLanguageSelected(language)
+                }
+            },
+        )
+    }
 }

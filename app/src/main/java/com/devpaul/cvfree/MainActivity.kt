@@ -1,6 +1,7 @@
 package com.devpaul.cvfree
 
 import android.os.Bundle
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,13 +11,19 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.locale.AppLanguageManager
+import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.cvfree.ui.ForceUpdateScreen
 import com.devpaul.cvfree.ui.UpdateState
 import com.devpaul.cvfree.ui.openPlayStore
@@ -30,12 +37,17 @@ import kotlinx.coroutines.tasks.await
 
 class MainActivity : ComponentActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageManager.wrap(newBase))
+    }
+
     private lateinit var appUpdateManager: AppUpdateManager
 
     private val immediateUpdateOptions =
         AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
 
     private var updateState by mutableStateOf<UpdateState>(UpdateState.Loading)
+    private var appLanguage by mutableStateOf(AppLanguage.Spanish)
 
     private val immediateUpdateLauncher =
         registerForActivityResult(StartIntentSenderForResult()) { result ->
@@ -48,6 +60,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
+        appLanguage = AppLanguageManager.current(this)
         enableEdgeToEdge()
 
         validateAppUpdate()
@@ -56,25 +69,35 @@ class MainActivity : ComponentActivity() {
             val isDarkTheme = isSystemInDarkTheme()
             val statusBarColor = if (isDarkTheme) Color.Black else Color.White
             val navController = rememberNavController()
+            val localizedContext = remember(appLanguage) {
+                AppLanguageManager.wrap(this@MainActivity, appLanguage)
+            }
 
             SetStatusBarColor(color = statusBarColor, darkIcons = !isDarkTheme)
 
-            CvFreeTheme(darkTheme = isDarkTheme, dynamicColor = false) {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    when (updateState) {
-                        UpdateState.Required -> {
-                            ForceUpdateScreen(
-                                onOpenStore = {
-                                    startImmediateUpdate()
+            key(appLanguage) {
+                CompositionLocalProvider(LocalResources provides localizedContext.resources) {
+                    CvFreeTheme(darkTheme = isDarkTheme, dynamicColor = false) {
+                        Surface(color = MaterialTheme.colorScheme.background) {
+                            when (updateState) {
+                                UpdateState.Required -> {
+                                    ForceUpdateScreen(onOpenStore = ::startImmediateUpdate)
                                 }
-                            )
-                        }
 
-                        UpdateState.NotRequired -> {
-                            MainGraph(navController = navController)
-                        }
+                                UpdateState.NotRequired -> {
+                                    MainGraph(
+                                        navController = navController,
+                                        appLanguage = appLanguage,
+                                        onLanguageSelected = { language ->
+                                            AppLanguageManager.set(this@MainActivity, language)
+                                            appLanguage = language
+                                        },
+                                    )
+                                }
 
-                        UpdateState.Loading -> Unit
+                                UpdateState.Loading -> Unit
+                            }
+                        }
                     }
                 }
             }
@@ -140,7 +163,7 @@ class MainActivity : ComponentActivity() {
     private fun showForceUpdateMandatoryMessageAndClose() {
         Toast.makeText(
             this,
-            "Debes actualizar la aplicación para continuar.",
+            AppLanguageManager.wrap(this, appLanguage).getString(R.string.ui_you_must_update_the_app_to_continue_76be00),
             Toast.LENGTH_LONG
         ).show()
 

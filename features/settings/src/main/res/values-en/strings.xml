@@ -4,6 +4,8 @@
     <string name="settings_language">Language</string>
     <string name="settings_language_subtitle">Application language</string>
     <string name="settings_language_spanish">Spanish</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_choose_language">Select language</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_appearance_subtitle">Use the system theme</string>
     <string name="settings_system">System</string>

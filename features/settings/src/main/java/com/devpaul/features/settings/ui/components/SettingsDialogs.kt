@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.features.settings.R
+import com.devpaul.features.settings.ui.util.labelRes
 
 @Composable
 internal fun EditNameDialog(
@@ -64,5 +66,42 @@ internal fun EditNameDialog(
                 Text(stringResource(R.string.settings_cancel))
             }
         },
+    )
+}
+
+@Composable
+internal fun LanguageSelectionDialog(
+    selectedLanguage: AppLanguage,
+    onDismiss: () -> Unit,
+    onLanguageSelected: (AppLanguage) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_choose_language)) },
+        text = {
+            Column {
+                AppLanguage.entries.forEach { language ->
+                    Surface(
+                        onClick = { onLanguageSelected(language) },
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = language == selectedLanguage,
+                                onClick = { onLanguageSelected(language) },
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(language.labelRes()), style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
     )
 }

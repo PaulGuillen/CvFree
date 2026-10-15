@@ -3,12 +3,13 @@ package com.devpaul.features.settings.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.locale.AppLanguage
 
 @Preview(name = "Settings Light", showBackground = true, heightDp = 900)
 @Composable
 private fun SettingsLightPreview() {
     CvFreeTheme(darkTheme = false) {
-        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null })
+        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {})
     }
 }
 
@@ -16,6 +17,6 @@ private fun SettingsLightPreview() {
 @Composable
 private fun SettingsDarkPreview() {
     CvFreeTheme(darkTheme = true) {
-        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null })
+        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {})
     }
 }
