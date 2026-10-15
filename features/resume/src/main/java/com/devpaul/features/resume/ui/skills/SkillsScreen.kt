@@ -29,36 +29,40 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
 
 private const val MaxSkillLength = 40
-private val suggestedSkills = listOf("Docker", "GraphQL", "Metodologías ágiles", "Git", "Figma")
-
 @Composable
 fun SkillsScreen(
     onBack: () -> Unit,
     onContinue: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
     totalSteps: Int = 5,
-    actionText: String = "Continuar a Resumen profesional →",
+    actionText: String = stringResource(R.string.ui_continue_to_professional_summary_c7a0cf),
     initialSkills: List<String> = listOf("Kotlin", "Jetpack Compose"),
 ) {
+    val suggestedSkills = listOf("Docker", "GraphQL", stringResource(R.string.ui_agile_methodologies_cc0fae), "Git", "Figma")
     var input by rememberSaveable { mutableStateOf("") }
     var skills by rememberSaveable(initialSkills) { mutableStateOf(initialSkills.distinct()) }
     var inputError by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val skillLengthError = stringResource(R.string.skill_max_length, MaxSkillLength)
+    val duplicateSkillError = stringResource(R.string.ui_this_skill_has_already_been_added_340179)
 
     fun skillsWithPendingInput(): List<String>? {
         val skill = input.trim()
         if (skill.isEmpty()) return skills
         inputError = when {
-            skill.length > MaxSkillLength -> "Usa hasta $MaxSkillLength caracteres"
-            skills.any { it.equals(skill, ignoreCase = true) } -> "Esta habilidad ya fue agregada"
+            skill.length > MaxSkillLength -> skillLengthError
+            skills.any { it.equals(skill, ignoreCase = true) } -> duplicateSkillError
             else -> null
         }
         return if (inputError == null) listOf(skill) + skills else null
@@ -76,9 +80,9 @@ fun SkillsScreen(
         onBack = onBack,
         step = 4,
         totalSteps = totalSteps,
-        stepName = "Habilidades",
-        title = "Destaca tus habilidades",
-        description = "Agrega competencias técnicas y herramientas que definan tu perfil.",
+        stepName = stringResource(R.string.ui_skills_bff903),
+        title = stringResource(R.string.ui_showcase_your_skills_6173cd),
+        description = stringResource(R.string.ui_add_technical_skills_and_tools_that_define_your_profile_27b9a1),
         actionText = actionText,
         onContinue = {
             skillsWithPendingInput()?.let { completedSkills ->
@@ -105,7 +109,7 @@ fun SkillsScreen(
                         inputError = null
                     },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Busca o añade una habilidad...") },
+                    placeholder = { Text(stringResource(R.string.ui_search_or_add_a_skill_d933b8)) },
                     singleLine = true,
                     isError = inputError != null,
                     supportingText = inputError?.let { message -> { Text(message) } },
@@ -122,7 +126,7 @@ fun SkillsScreen(
                     modifier = Modifier.height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                 ) {
-                    Text("Añadir")
+                    Text(stringResource(R.string.ui_add_41261d))
                 }
             }
         }
@@ -142,7 +146,7 @@ fun SkillsScreen(
         Spacer(Modifier.height(16.dp))
         BuilderFormCard {
             Text(
-                text = "SUGERENCIAS PARA TI",
+                text = stringResource(R.string.ui_suggestions_for_you_bf6ab6),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             )
@@ -177,7 +181,7 @@ private fun SelectedSkillChip(label: String, onRemove: () -> Unit) {
             Spacer(Modifier.width(6.dp))
             Icon(
                 imageVector = Icons.Outlined.Close,
-                contentDescription = "Quitar $label",
+                contentDescription = stringResource(R.string.remove_skill, label),
                 modifier = Modifier.size(16.dp),
             )
         }

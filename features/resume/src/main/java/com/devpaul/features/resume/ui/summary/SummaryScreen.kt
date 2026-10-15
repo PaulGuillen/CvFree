@@ -8,11 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeTextFormatting
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
 
@@ -38,23 +40,23 @@ fun SummaryScreen(
         onBack = onBack,
         step = step,
         totalSteps = totalSteps,
-        stepName = "Resumen",
-        title = "Resumen profesional",
-        description = "Resume tu perfil, experiencia y fortalezas. Puedes usar listas para facilitar la lectura.",
-        actionText = "Seleccionar plantilla →",
+        stepName = stringResource(R.string.ui_summary_35414e),
+        title = stringResource(R.string.ui_professional_summary_b65e50),
+        description = stringResource(R.string.ui_summarize_your_profile_experience_and_strengths_you_can_use_ca393b),
+        actionText = stringResource(R.string.ui_choose_template_4b2e85),
         onContinue = { onContinue(editor.value.text, editor.formatting) },
         modifier = modifier,
     ) {
         BuilderFormCard {
             RichTextEditor(
                 state = editor,
-                label = "Acerca de mí",
-                placeholder = "Ej. Desarrollador Android sénior con experiencia en Kotlin, Compose y arquitectura limpia...",
+                label = stringResource(R.string.ui_about_me_17764c),
+                placeholder = stringResource(R.string.ui_e_g_senior_android_developer_experienced_in_kotlin_compose_a_7d2724),
                 minLines = 5,
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "${editor.value.text.length}/$SummaryMaxLength caracteres",
+                text = stringResource(R.string.summary_character_count, editor.value.text.length, SummaryMaxLength),
                 modifier = Modifier.fillMaxWidth().align(Alignment.End),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,

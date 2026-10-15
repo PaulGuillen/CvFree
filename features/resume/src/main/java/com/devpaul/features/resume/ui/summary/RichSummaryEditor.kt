@@ -1,7 +1,7 @@
 package com.devpaul.features.resume.ui.summary
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
@@ -60,6 +61,7 @@ import com.devpaul.core.domain.resume.ResumeParagraphStyle
 import com.devpaul.core.domain.resume.ResumeTextAlignment
 import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.core.domain.resume.ResumeTextSpan
+import com.devpaul.features.resume.R
 
 private const val DEFAULT_MAX_LENGTH = 1_500
 private val EditorColors = listOf(0xFF1F2937L, 0xFFB91C1CL, 0xFF1D4ED8L, 0xFF047857L, 0xFF7E22CEL)
@@ -271,7 +273,7 @@ internal fun RichTextEditor(
     if (linkDialogVisible) {
         AlertDialog(
             onDismissRequest = { linkDialogVisible = false },
-            title = { Text("Agregar enlace") },
+            title = { Text(stringResource(R.string.ui_add_link_44d638)) },
             text = {
                 OutlinedTextField(
                     value = linkUrl,
@@ -288,9 +290,9 @@ internal fun RichTextEditor(
                         linkDialogVisible = false
                     },
                     enabled = linkUrl.isNotBlank(),
-                ) { Text("Agregar") }
+                ) { Text(stringResource(R.string.ui_add_87ebee)) }
             },
-            dismissButton = { TextButton(onClick = { linkDialogVisible = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { linkDialogVisible = false }) { Text(stringResource(R.string.ui_cancel_c111e0)) } },
         )
     }
 }
@@ -324,25 +326,25 @@ private fun FormattingToolbar(
             itemVerticalAlignment = Alignment.CenterVertically,
             maxItemsInEachRow = 5,
         ) {
-            ToolbarButton(Icons.Outlined.FormatBold, "Negrita", InlineStyle.Bold in activeStyles, onBold)
-            ToolbarButton(Icons.Outlined.FormatItalic, "Cursiva", InlineStyle.Italic in activeStyles, onItalic)
-            ToolbarButton(Icons.Outlined.FormatUnderlined, "Subrayado", InlineStyle.Underline in activeStyles, onUnderline)
+            ToolbarButton(Icons.Outlined.FormatBold, stringResource(R.string.ui_bold_9860e8), InlineStyle.Bold in activeStyles, onBold)
+            ToolbarButton(Icons.Outlined.FormatItalic, stringResource(R.string.ui_italic_108bf6), InlineStyle.Italic in activeStyles, onItalic)
+            ToolbarButton(Icons.Outlined.FormatUnderlined, stringResource(R.string.ui_underline_756180), InlineStyle.Underline in activeStyles, onUnderline)
             ToolbarButton(
                 Icons.Outlined.FormatStrikethrough,
-                "Tachado",
+                stringResource(R.string.ui_strikethrough_5827c0),
                 InlineStyle.Strikethrough in activeStyles,
                 onStrikethrough,
             )
-            ToolbarButton(Icons.Outlined.FormatListNumbered, "Lista numerada", onClick = onNumberedList)
+            ToolbarButton(Icons.Outlined.FormatListNumbered, stringResource(R.string.ui_numbered_list_621cc6), onClick = onNumberedList)
             ToolbarButton(
                 Icons.AutoMirrored.Outlined.FormatListBulleted,
-                "Lista con viñetas",
+                stringResource(R.string.ui_bulleted_list_389a94),
                 onClick = onBulletedList,
             )
-            ToolbarButton(Icons.Outlined.Link, "Enlace", onClick = onLink)
-            ColorToolbarButton(Icons.Outlined.FormatColorText, "Color de texto", EditorColors, onTextColor)
-            ColorToolbarButton(Icons.Outlined.FormatColorFill, "Resaltado", HighlightColors, onHighlight)
-            ToolbarButton(Icons.AutoMirrored.Outlined.FormatAlignLeft, "Alineación", onClick = onAlignment)
+            ToolbarButton(Icons.Outlined.Link, stringResource(R.string.ui_link_4b0eaf), onClick = onLink)
+            ColorToolbarButton(Icons.Outlined.FormatColorText, stringResource(R.string.ui_text_color_6d0aeb), EditorColors, onTextColor)
+            ColorToolbarButton(Icons.Outlined.FormatColorFill, stringResource(R.string.ui_highlight_cd5365), HighlightColors, onHighlight)
+            ToolbarButton(Icons.AutoMirrored.Outlined.FormatAlignLeft, stringResource(R.string.ui_alignment_5d2d6a), onClick = onAlignment)
         }
     }
 }

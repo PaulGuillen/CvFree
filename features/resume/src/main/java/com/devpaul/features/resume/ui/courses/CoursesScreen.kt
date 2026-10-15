@@ -12,11 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeCourse
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -106,9 +108,9 @@ fun CoursesScreen(
         onBack = onBack,
         step = step,
         totalSteps = totalSteps,
-        stepName = "Cursos",
-        title = "Certificaciones y cursos",
-        description = "Incluye cursos relevantes que respalden tus conocimientos y habilidades.",
+        stepName = stringResource(R.string.ui_courses_8d7151),
+        title = stringResource(R.string.ui_certifications_and_courses_7bdacd),
+        description = stringResource(R.string.ui_include_relevant_courses_that_support_your_knowledge_and_ski_1080be),
         actionText = actionText,
         onContinue = ::continueFlow,
         modifier = modifier,
@@ -116,7 +118,7 @@ fun CoursesScreen(
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nuevo curso o certificación",
+                    title = stringResource(R.string.ui_new_course_or_certification_604366),
                     bringIntoView = courses.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -171,7 +173,7 @@ fun CoursesScreen(
                 )
             }
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir curso", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_course_1b5690), onClick = ::startNew)
             }
         }
     }
@@ -194,17 +196,17 @@ private fun CourseEditor(
     BuilderTextField(
         value = courseName,
         onValueChange = onCourseNameChange,
-        label = "Nombre del curso o certificación",
-        placeholder = "Ej. Android con Jetpack Compose",
+        label = stringResource(R.string.ui_course_or_certification_name_e4f530),
+        placeholder = stringResource(R.string.ui_e_g_android_with_jetpack_compose_a66e8b),
         isError = showErrors && courseName.isBlank(),
-        supportingText = if (showErrors && courseName.isBlank()) "El nombre es obligatorio" else null,
+        supportingText = if (showErrors && courseName.isBlank()) stringResource(R.string.ui_name_is_required_6043d7) else null,
     )
     Spacer(Modifier.height(16.dp))
     BuilderTextField(
         value = institution,
         onValueChange = onInstitutionChange,
-        label = "Institución u organizador",
-        placeholder = "Ej. Google, Coursera, Platzi",
+        label = stringResource(R.string.ui_institution_or_organizer_644116),
+        placeholder = stringResource(R.string.ui_e_g_google_coursera_platzi_5aebb6),
     )
     Spacer(Modifier.height(16.dp))
     Row(
@@ -214,7 +216,7 @@ private fun CourseEditor(
         BuilderTextField(
             value = startDate,
             onValueChange = onStartDateChange,
-            label = "Inicio",
+            label = stringResource(R.string.ui_start_4f70d8),
             placeholder = "MM/AAAA",
             modifier = Modifier.weight(1f),
             maxLength = 7,
@@ -224,7 +226,7 @@ private fun CourseEditor(
         BuilderTextField(
             value = endDate,
             onValueChange = onEndDateChange,
-            label = "Fin",
+            label = stringResource(R.string.ui_end_425106),
             placeholder = "MM/AAAA",
             modifier = Modifier.weight(1f),
             maxLength = 7,
@@ -242,11 +244,11 @@ private fun dateRange(start: String, end: String): String =
 @Preview(name = "Courses Light", showBackground = true, heightDp = 880)
 @Composable
 private fun CoursesLightPreview() {
-    CvFreeTheme(darkTheme = false) { CoursesScreen({}, {}, 5, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = false) { CoursesScreen({}, {}, 5, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }
 
 @Preview(name = "Courses Dark", showBackground = true, heightDp = 880)
 @Composable
 private fun CoursesDarkPreview() {
-    CvFreeTheme(darkTheme = true) { CoursesScreen({}, {}, 5, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = true) { CoursesScreen({}, {}, 5, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }

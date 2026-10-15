@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,8 +29,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.EditNote
@@ -67,6 +67,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,20 +75,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
 import com.devpaul.core.designsystem.component.CvMainDestination
+import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
-import com.devpaul.core.domain.resume.ResumeDocument
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.importing.ResumeImportPolicy
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
+import com.devpaul.features.templates.ui.localizedName
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,6 +115,9 @@ fun MyCvsScreen(
     val activity = context.findActivity()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val scannedPdfError = stringResource(R.string.ui_the_scanned_pdf_couldn_t_be_created_13dfd7)
+    val scannerUnavailableError = stringResource(R.string.ui_the_scanner_isn_t_available_on_this_device_fcd110)
+    val scannerOpenError = stringResource(R.string.ui_the_scanner_couldn_t_be_opened_try_again_0cdc7e)
     val pdfPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
@@ -147,7 +153,7 @@ fun MyCvsScreen(
                 onImportPdf(scannedPdf)
             } else {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar("No se pudo crear el PDF escaneado.")
+                    snackbarHostState.showSnackbar(scannedPdfError)
                 }
             }
         }
@@ -157,7 +163,7 @@ fun MyCvsScreen(
         val hostActivity = activity
         if (hostActivity == null) {
             coroutineScope.launch {
-                snackbarHostState.showSnackbar("El escáner no está disponible en este dispositivo.")
+                snackbarHostState.showSnackbar(scannerUnavailableError)
             }
             return
         }
@@ -167,7 +173,7 @@ fun MyCvsScreen(
             }
             .addOnFailureListener {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar("No se pudo abrir el escáner. Inténtalo nuevamente.")
+                    snackbarHostState.showSnackbar(scannerOpenError)
                 }
             }
     }
@@ -225,7 +231,7 @@ fun MyCvsScreen(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
-                    contentDescription = "Crear o importar currículum",
+                    contentDescription = stringResource(R.string.ui_create_or_import_resume_cf411e),
                     modifier = Modifier.size(34.dp),
                 )
             }
@@ -246,7 +252,7 @@ fun MyCvsScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Mis CV",
+                        text = stringResource(R.string.ui_my_resumes_29f302),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.headlineLarge,
                     )
@@ -314,21 +320,21 @@ fun MyCvsScreen(
                     .padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
             ) {
                 Text(
-                    text = "Crear currículum",
+                    text = stringResource(R.string.ui_create_resume_1ba285),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Elige cómo quieres comenzar.",
+                    text = stringResource(R.string.ui_choose_how_you_want_to_begin_c950b6),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(16.dp))
                 CreateResumeOption(
                     icon = Icons.Outlined.EditNote,
-                    title = "Empezar desde cero",
-                    description = "Completa cada sección paso a paso.",
+                    title = stringResource(R.string.ui_start_from_scratch_fad4a9),
+                    description = stringResource(R.string.ui_complete_each_section_step_by_step_af5b50),
                     onClick = {
                         showCreateOptions = false
                         onCreateCv()
@@ -340,8 +346,8 @@ fun MyCvsScreen(
                 )
                 CreateResumeOption(
                     icon = Icons.Outlined.DocumentScanner,
-                    title = "Escanear documento",
-                    description = "Captura, recorta y mejora varias páginas automáticamente.",
+                    title = stringResource(R.string.ui_scan_document_c873c8),
+                    description = stringResource(R.string.ui_capture_crop_and_enhance_multiple_pages_automatically_5952c0),
                     onClick = { requestImport(ImportAction.Scan) },
                 )
                 HorizontalDivider(
@@ -350,11 +356,11 @@ fun MyCvsScreen(
                 )
                 CreateResumeOption(
                     icon = Icons.Outlined.UploadFile,
-                    title = "Importar PDF",
+                    title = stringResource(R.string.ui_import_pdf_23e4c6),
                     description = if (importPolicy.aiEnhancementEnabled) {
-                        "Analiza y organiza el contenido con asistencia de IA."
+                        stringResource(R.string.ui_analyze_and_organize_the_content_with_ai_assistance_7b0063)
                     } else {
-                        "Extrae y organiza el contenido directamente en el dispositivo."
+                        stringResource(R.string.ui_extract_and_organize_the_content_directly_on_the_device_1ea11b)
                     },
                     onClick = { requestImport(ImportAction.Pdf) },
                 )
@@ -365,11 +371,10 @@ fun MyCvsScreen(
     pendingImportAction?.let { action ->
         AlertDialog(
             onDismissRequest = { pendingImportAction = null },
-            title = { Text("Procesamiento inteligente") },
+            title = { Text(stringResource(R.string.ui_smart_processing_a52050)) },
             text = {
                 Text(
-                    "Para organizar el currículum, el texto reconocido se enviará de forma segura " +
-                        "a Firebase AI Logic. No se enviará el archivo original y podrás revisar cada dato.",
+                    stringResource(R.string.ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9),
                 )
             },
             confirmButton = {
@@ -379,12 +384,12 @@ fun MyCvsScreen(
                         launchImport(action)
                     },
                 ) {
-                    Text("Continuar")
+                    Text(stringResource(R.string.ui_continue_b8cb6f))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingImportAction = null }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
         )
@@ -393,11 +398,10 @@ fun MyCvsScreen(
     pendingDelete?.let { resume ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Eliminar currículum") },
+            title = { Text(stringResource(R.string.ui_delete_resume_daf230)) },
             text = {
                 Text(
-                    "¿Seguro que deseas eliminar \"${resume.displayName}\"? " +
-                        "Esta acción no se puede deshacer.",
+                    stringResource(R.string.resume_delete_confirmation, resume.displayName),
                 )
             },
             confirmButton = {
@@ -408,12 +412,12 @@ fun MyCvsScreen(
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 ) {
-                    Text("Eliminar")
+                    Text(stringResource(R.string.ui_delete_54e140))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
         )
@@ -506,7 +510,7 @@ private fun ResumeCard(
                         color = MaterialTheme.colorScheme.primaryContainer,
                     ) {
                         Text(
-                            text = template.displayName,
+                            text = template.localizedName(),
                             modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -530,7 +534,7 @@ private fun ResumeCard(
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
-                            text = "Actualizado ${formatResumeDate(resume.updatedAt)}",
+                            text = stringResource(R.string.resume_updated, formatResumeDate(resume.updatedAt)),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall,
                         )
@@ -540,7 +544,7 @@ private fun ResumeCard(
                     IconButton(onClick = { showActionsMenu = true }) {
                         Icon(
                             imageVector = Icons.Outlined.MoreVert,
-                            contentDescription = "Más opciones para ${resume.displayName}",
+                            contentDescription = stringResource(R.string.resume_more_options, resume.displayName),
                         )
                     }
                     DropdownMenu(
@@ -548,7 +552,7 @@ private fun ResumeCard(
                         onDismissRequest = { showActionsMenu = false },
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Eliminar currículum", color = MaterialTheme.colorScheme.error) },
+                            text = { Text(stringResource(R.string.ui_delete_resume_daf230), color = MaterialTheme.colorScheme.error) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Outlined.Delete,
@@ -581,7 +585,7 @@ private fun ResumeCard(
                 ) {
                     Icon(Icons.Outlined.Edit, contentDescription = null)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Editar")
+                    Text(stringResource(R.string.ui_edit_2b5f23))
                 }
                 FilledTonalButton(
                     onClick = onView,
@@ -592,7 +596,7 @@ private fun ResumeCard(
                 ) {
                     Icon(Icons.Outlined.Visibility, contentDescription = null)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Ver")
+                    Text(stringResource(R.string.ui_view_49b372))
                 }
             }
         }
@@ -791,7 +795,7 @@ private fun FilterChip(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
-                text = filter.label,
+                text = stringResource(filter.label),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center,
             )
@@ -814,14 +818,14 @@ private fun EmptyCvsState(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Aún no tienes currículums",
+            text = stringResource(R.string.ui_you_don_t_have_any_resumes_yet_5c79fc),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Crea tu primer CV profesional con el botón +.",
+            text = stringResource(R.string.ui_create_your_first_professional_resume_with_the_button_f321a0),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,

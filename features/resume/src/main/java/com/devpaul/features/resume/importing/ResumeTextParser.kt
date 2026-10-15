@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.importing
 
+import com.devpaul.features.resume.R
+
 import com.devpaul.core.domain.resume.ResumeContact
 import com.devpaul.core.domain.resume.ResumeCourse
 import com.devpaul.core.domain.resume.ResumeDocument
@@ -125,7 +127,7 @@ internal object ResumeTextParser {
         val headerSections = splitSections(headerLines)
 
         if (lines.isEmpty() && flowLines.isEmpty()) {
-            throw ResumeImportException("No se encontró contenido legible en el PDF.")
+            throw ResumeImportException(R.string.ui_no_readable_content_was_found_in_the_pdf_7f891b)
         }
 
         fun mainSection(section: Section): List<String> =

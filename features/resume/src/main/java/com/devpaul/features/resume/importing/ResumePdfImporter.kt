@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.importing
 
+import com.devpaul.features.resume.R
+
 import android.content.Context
 import android.net.Uri
 import com.devpaul.core.domain.resume.ResumeDocumentCodec
@@ -12,36 +14,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
-
-internal enum class ResumeImportStage(
-    val title: String,
-    val detail: String,
-) {
-    Preparing(
-        title = "Preparando tu currículum...",
-        detail = "Abriendo el documento de forma segura.",
-    ),
-    Reading(
-        title = "Analizando tu currículum...",
-        detail = "Leyendo el contenido del PDF.",
-    ),
-    Extracting(
-        title = "Identificando tu información...",
-        detail = "Extrayendo experiencia, educación y habilidades.",
-    ),
-    Enhancing(
-        title = "Revisando con inteligencia artificial...",
-        detail = "Validando secciones y corrigiendo la lectura del documento.",
-    ),
-    Building(
-        title = "Construyendo tu currículum...",
-        detail = "Organizando los datos en tus formularios.",
-    ),
-    Complete(
-        title = "Tu currículum está listo",
-        detail = "Revisa y mejora cada sección antes de guardarlo.",
-    ),
-}
 
 internal object ResumePdfImporter {
 
@@ -68,7 +40,7 @@ internal object ResumePdfImporter {
         val content = extracted.textContent
         if (content == null || content.fullText.isBlank() && content.flowText.isBlank()) {
             throw ResumeImportException(
-                "No pudimos reconocer texto legible. Prueba con un PDF más nítido o con mayor resolución.",
+                R.string.ui_we_couldn_t_recognize_readable_text_try_a_clearer_or_higher_fa32fc,
             )
         }
 
@@ -106,15 +78,15 @@ internal object ResumePdfImporter {
     private suspend fun extractPdf(context: Context, uri: Uri): ExtractedPdf = withContext(Dispatchers.IO) {
         PDFBoxResourceLoader.init(context.applicationContext)
         val input = context.contentResolver.openInputStream(uri)
-            ?: throw ResumeImportException("No se pudo abrir el archivo seleccionado.")
+            ?: throw ResumeImportException(R.string.ui_the_selected_file_couldn_t_be_opened_806cef)
         try {
             input.use { stream ->
                 PDDocument.load(stream).use { document ->
                     if (document.isEncrypted) {
-                        throw ResumeImportException("El PDF está protegido con contraseña y no puede analizarse.")
+                        throw ResumeImportException(R.string.ui_the_pdf_is_password_protected_and_can_t_be_analyzed_efac06)
                     }
                     if (document.numberOfPages > 20) {
-                        throw ResumeImportException("El documento supera el límite de 20 páginas.")
+                        throw ResumeImportException(R.string.ui_the_document_exceeds_the_20_page_limit_ad18df)
                     }
                     val information = document.documentInformation
                     val embeddedDocument = information
@@ -136,7 +108,7 @@ internal object ResumePdfImporter {
                                     throw error
                                 } catch (_: Exception) {
                                     throw ResumeImportException(
-                                        "No se pudo reconocer el texto de las páginas escaneadas.",
+                                        R.string.ui_the_text_on_the_scanned_pages_couldn_t_be_recognized_ab09b4,
                                     )
                                 }
                             },
@@ -149,9 +121,7 @@ internal object ResumePdfImporter {
         } catch (error: ResumeImportException) {
             throw error
         } catch (_: Exception) {
-            throw ResumeImportException("El archivo no es un PDF válido o está dañado.")
+            throw ResumeImportException(R.string.ui_the_file_isn_t_a_valid_pdf_or_is_damaged_8d3878)
         }
     }
 }
-
-internal class ResumeImportException(message: String) : IllegalArgumentException(message)

@@ -11,12 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeReference
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -105,9 +107,9 @@ fun ReferencesScreen(
         onBack = onBack,
         step = step,
         totalSteps = totalSteps,
-        stepName = "Referencias",
-        title = "Referencias profesionales",
-        description = "Añade personas que puedan respaldar tu experiencia y desempeño profesional.",
+        stepName = stringResource(R.string.ui_references_382921),
+        title = stringResource(R.string.ui_professional_references_e0c09b),
+        description = stringResource(R.string.ui_add_people_who_can_vouch_for_your_experience_and_professiona_523732),
         actionText = actionText,
         onContinue = ::continueFlow,
         modifier = modifier,
@@ -115,7 +117,7 @@ fun ReferencesScreen(
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nueva referencia",
+                    title = stringResource(R.string.ui_new_reference_c614de),
                     bringIntoView = references.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -170,7 +172,7 @@ fun ReferencesScreen(
                 )
             }
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir referencia", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_reference_bc2cfa), onClick = ::startNew)
             }
         }
     }
@@ -193,41 +195,41 @@ private fun ReferenceEditor(
     BuilderTextField(
         value = name,
         onValueChange = onNameChange,
-        label = "Nombre completo",
-        placeholder = "Ej. Andrea Ramírez",
+        label = stringResource(R.string.ui_full_name_cccece),
+        placeholder = stringResource(R.string.ui_e_g_andrea_ramirez_b06485),
         isError = showErrors && name.isBlank(),
-        supportingText = if (showErrors && name.isBlank()) "El nombre es obligatorio" else null,
+        supportingText = if (showErrors && name.isBlank()) stringResource(R.string.ui_name_is_required_6043d7) else null,
     )
     Spacer(Modifier.height(16.dp))
     BuilderTextField(
         value = company,
         onValueChange = onCompanyChange,
-        label = "Empresa y cargo",
-        placeholder = "Ej. Tecnología Andina · Gerente de Ingeniería",
+        label = stringResource(R.string.ui_company_and_position_9198ec),
+        placeholder = stringResource(R.string.ui_e_g_andean_technology_engineering_manager_f52628),
     )
     Spacer(Modifier.height(16.dp))
     val missingContact = showErrors && phone.isBlank() && email.isBlank()
     BuilderTextField(
         value = phone,
         onValueChange = onPhoneChange,
-        label = "Teléfono",
+        label = stringResource(R.string.ui_phone_99af37),
         placeholder = "+51 999 999 999",
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         isError = missingContact,
-        supportingText = if (missingContact) "Agrega teléfono o correo" else null,
+        supportingText = if (missingContact) stringResource(R.string.ui_add_a_phone_number_or_email_3fa668) else null,
     )
     Spacer(Modifier.height(16.dp))
     val invalidEmail = showErrors && !email.isValidEmailOrBlank()
     BuilderTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = "Correo electrónico",
-        placeholder = "nombre@correo.com",
+        label = stringResource(R.string.ui_email_59a167),
+        placeholder = "email@example.com",
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         isError = invalidEmail || missingContact,
         supportingText = when {
-            invalidEmail -> "Ingresa un correo válido"
-            missingContact -> "Agrega teléfono o correo"
+            invalidEmail -> stringResource(R.string.ui_enter_a_valid_email_d6ab4c)
+            missingContact -> stringResource(R.string.ui_add_a_phone_number_or_email_3fa668)
             else -> null
         },
     )
@@ -238,11 +240,11 @@ private fun ReferenceEditor(
 @Preview(name = "References Light", showBackground = true, heightDp = 920)
 @Composable
 private fun ReferencesLightPreview() {
-    CvFreeTheme(darkTheme = false) { ReferencesScreen({}, {}, 8, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = false) { ReferencesScreen({}, {}, 8, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }
 
 @Preview(name = "References Dark", showBackground = true, heightDp = 920)
 @Composable
 private fun ReferencesDarkPreview() {
-    CvFreeTheme(darkTheme = true) { ReferencesScreen({}, {}, 8, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = true) { ReferencesScreen({}, {}, 8, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }

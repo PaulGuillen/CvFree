@@ -50,18 +50,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
-import com.devpaul.core.domain.resume.ResumeDocument
-import com.devpaul.features.resume.importing.ResumeImportStage
+import com.devpaul.features.resume.R
+import com.devpaul.features.resume.importing.ResumeImportException
 import com.devpaul.features.resume.importing.ResumeImportPolicy
+import com.devpaul.features.resume.importing.ResumeImportStage
 import com.devpaul.features.resume.importing.ResumePdfImporter
-import kotlinx.coroutines.CancellationException
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CancellationException
 
 @Composable
 fun ResumeImportScreen(
@@ -75,7 +78,7 @@ fun ResumeImportScreen(
     val background = MaterialTheme.colorScheme.background
     var progress by remember { mutableIntStateOf(0) }
     var stage by remember { mutableStateOf(ResumeImportStage.Preparing) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorMessage by remember { mutableStateOf<Int?>(null) }
     var attempt by rememberSaveable { mutableIntStateOf(0) }
     val animatedProgress by animateFloatAsState(
         targetValue = progress / 100f,
@@ -98,7 +101,7 @@ fun ResumeImportScreen(
         } catch (error: CancellationException) {
             throw error
         } catch (error: Exception) {
-            errorMessage = error.message ?: "No pudimos analizar este PDF."
+            errorMessage = (error as? ResumeImportException)?.messageRes ?: R.string.ui_we_couldn_t_analyze_this_pdf_bac5b0
         }
     }
 
@@ -117,7 +120,7 @@ fun ResumeImportScreen(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "Cancelar importación",
+                contentDescription = stringResource(R.string.ui_cancel_import_a0f648),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -132,7 +135,7 @@ fun ResumeImportScreen(
             )
         } else {
             ImportErrorContent(
-                message = errorMessage.orEmpty(),
+                message = stringResource(errorMessage!!),
                 onRetry = { attempt += 1 },
                 onBack = onBack,
                 modifier = Modifier
@@ -156,14 +159,14 @@ private fun ImportingContent(
         ResumeScanAnimation(progress)
         Spacer(Modifier.height(42.dp))
         Text(
-            text = stage.title,
+            text = stringResource(stage.title),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = stage.detail,
+            text = stringResource(stage.detail),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
@@ -270,7 +273,7 @@ private fun ImportErrorContent(
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            text = "No pudimos importar el currículum",
+            text = stringResource(R.string.ui_we_couldn_t_import_the_resume_035bea),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
@@ -288,10 +291,10 @@ private fun ImportErrorContent(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
-                Text("Volver")
+                Text(stringResource(R.string.ui_back_84a715))
             }
             Button(onClick = onRetry, modifier = Modifier.weight(1f)) {
-                Text("Reintentar")
+                Text(stringResource(R.string.ui_try_again_adec7b))
             }
         }
     }

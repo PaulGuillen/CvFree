@@ -37,9 +37,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.devpaul.features.resume.R
 
 @Composable
 fun BuilderSavedEntryCard(
@@ -75,7 +77,7 @@ fun BuilderSavedEntryCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = title.ifBlank { "Sin titulo" },
+                        text = title.ifBlank { stringResource(R.string.ui_untitled_8827eb) },
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         maxLines = 1,
@@ -103,13 +105,13 @@ fun BuilderSavedEntryCard(
                 IconButton(onClick = onEdit) {
                     Icon(
                         imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.Edit,
-                        contentDescription = if (expanded) "Minimizar" else "Editar",
+                        contentDescription = (if (expanded) stringResource(R.string.ui_collapse_29bd1f) else stringResource(R.string.ui_edit_2b5f23)),
                     )
                 }
                 IconButton(onClick = { deleteConfirmationVisible = true }) {
                     Icon(
                         imageVector = Icons.Outlined.DeleteOutline,
-                        contentDescription = "Eliminar",
+                        contentDescription = stringResource(R.string.ui_delete_54e140),
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
@@ -126,8 +128,8 @@ fun BuilderSavedEntryCard(
     if (deleteConfirmationVisible) {
         AlertDialog(
             onDismissRequest = { deleteConfirmationVisible = false },
-            title = { Text("¿Eliminar este elemento?") },
-            text = { Text("Esta acción quitará el elemento del currículum.") },
+            title = { Text(stringResource(R.string.ui_delete_this_item_a1cd1e)) },
+            text = { Text(stringResource(R.string.ui_this_action_will_remove_the_item_from_the_resume_38cf20)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -135,12 +137,12 @@ fun BuilderSavedEntryCard(
                         onDelete()
                     },
                 ) {
-                    Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.ui_delete_54e140), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { deleteConfirmationVisible = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
         )
@@ -192,11 +194,11 @@ fun BuilderEditorActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedButton(onClick = onCancel) {
-            Text("Cancelar")
+            Text(stringResource(R.string.ui_cancel_c111e0))
         }
         Spacer(Modifier.width(10.dp))
         Button(onClick = onSave, enabled = saveEnabled) {
-            Text("Guardar")
+            Text(stringResource(R.string.ui_save_a0b626))
         }
     }
 }

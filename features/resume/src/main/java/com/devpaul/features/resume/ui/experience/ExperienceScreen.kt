@@ -17,16 +17,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeExperience
 import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -38,6 +40,7 @@ import com.devpaul.features.resume.ui.components.isValidYearOrBlank
 import com.devpaul.features.resume.ui.components.replaceById
 import com.devpaul.features.resume.ui.summary.RichTextEditor
 import com.devpaul.features.resume.ui.summary.RichTextEditorState
+import com.devpaul.features.templates.ui.localizedEndYear
 
 @Composable
 fun ExperienceScreen(
@@ -144,17 +147,17 @@ fun ExperienceScreen(
         onBack = onBack,
         step = 2,
         totalSteps = totalSteps,
-        stepName = "Experiencia",
-        title = "Cuéntanos sobre tu experiencia laboral",
-        description = "Agrega tus empleos anteriores para mostrar tu trayectoria.",
-        actionText = "Continuar a Educación →",
+        stepName = stringResource(R.string.ui_experience_fbb04c),
+        title = stringResource(R.string.ui_tell_us_about_your_work_experience_905d16),
+        description = stringResource(R.string.ui_add_your_previous_jobs_to_show_your_career_path_20a658),
+        actionText = stringResource(R.string.ui_continue_to_education_15dd16),
         onContinue = ::continueFlow,
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nueva experiencia",
+                    title = stringResource(R.string.ui_new_experience_096118),
                     bringIntoView = experiences.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -184,7 +187,7 @@ fun ExperienceScreen(
                 BuilderSavedEntryCard(
                     title = item.position,
                     subtitle = item.company,
-                    supportingText = listOf(item.city, dateRange(item.startYear, item.displayEndYear))
+                    supportingText = listOf(item.city, dateRange(item.startYear, item.localizedEndYear()))
                         .filter(String::isNotBlank)
                         .joinToString(" · "),
                     expanded = expanded,
@@ -224,7 +227,7 @@ fun ExperienceScreen(
             }
 
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir empleo", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_job_9b257b), onClick = ::startNew)
             }
         }
     }
@@ -252,22 +255,22 @@ private fun ExperienceEditor(
     BuilderTextField(
         value = position,
         onValueChange = onPositionChange,
-        label = "Puesto",
-        placeholder = "Ej. Desarrollador Android",
+        label = stringResource(R.string.ui_position_7f57e4),
+        placeholder = stringResource(R.string.ui_e_g_android_developer_f3a6a5),
         isError = showErrors && position.isBlank(),
-        supportingText = if (showErrors && position.isBlank()) "El puesto es obligatorio" else null,
+        supportingText = if (showErrors && position.isBlank()) stringResource(R.string.ui_position_is_required_1998db) else null,
     )
     Spacer(Modifier.height(16.dp))
     BuilderTextField(
         value = company,
         onValueChange = onCompanyChange,
-        label = "Empresa",
-        placeholder = "Nombre de la empresa",
+        label = stringResource(R.string.ui_company_6eb94b),
+        placeholder = stringResource(R.string.ui_company_name_ff4065),
         isError = showErrors && company.isBlank(),
-        supportingText = if (showErrors && company.isBlank()) "La empresa es obligatoria" else null,
+        supportingText = if (showErrors && company.isBlank()) stringResource(R.string.ui_company_is_required_825984) else null,
     )
     Spacer(Modifier.height(16.dp))
-    BuilderTextField(city, onCityChange, "Ciudad", "Ciudad")
+    BuilderTextField(city, onCityChange, stringResource(R.string.ui_city_c6fbe2), stringResource(R.string.ui_city_c6fbe2))
     Spacer(Modifier.height(16.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -276,24 +279,24 @@ private fun ExperienceEditor(
         BuilderTextField(
             value = startYear,
             onValueChange = onStartYearChange,
-            label = "Desde",
+            label = stringResource(R.string.ui_from_966c7c),
             placeholder = "2021",
             modifier = Modifier.weight(1f),
             maxLength = 4,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = showErrors && !startYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
         )
         BuilderTextField(
-            value = if (isCurrent) "Actualidad" else endYear,
+            value = if (isCurrent) stringResource(R.string.ui_present_45d9cf) else endYear,
             onValueChange = onEndYearChange,
-            label = "Hasta",
-            placeholder = if (isCurrent) "Actualidad" else "2026",
+            label = stringResource(R.string.ui_to_ccdaad),
+            placeholder = if (isCurrent) stringResource(R.string.ui_present_45d9cf) else "2026",
             modifier = Modifier.weight(1f),
             maxLength = 4,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = showErrors && !isCurrent && !endYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !isCurrent && !endYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            supportingText = if (showErrors && !isCurrent && !endYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
             enabled = !isCurrent,
         )
     }
@@ -308,13 +311,13 @@ private fun ExperienceEditor(
             checked = isCurrent,
             onCheckedChange = null,
         )
-        Text(modifier = Modifier.padding(horizontal = 6.dp), text = "Trabajo actualmente aquí")
+        Text(modifier = Modifier.padding(horizontal = 6.dp), text = stringResource(R.string.ui_i_currently_work_here_c5d8e2))
     }
     Spacer(Modifier.height(16.dp))
     RichTextEditor(
         state = achievementsEditor,
-        label = "Logros y funciones",
-        placeholder = "Describe tus responsabilidades...",
+        label = stringResource(R.string.ui_achievements_and_responsibilities_419333),
+        placeholder = stringResource(R.string.ui_describe_your_responsibilities_97134a),
         minLines = 3,
     )
     Spacer(Modifier.height(18.dp))

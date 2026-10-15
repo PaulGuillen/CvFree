@@ -13,12 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeEducation
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -112,17 +114,17 @@ fun EducationScreen(
         onBack = onBack,
         step = 3,
         totalSteps = totalSteps,
-        stepName = "Educación",
-        title = "Agrega tu educación",
-        description = "Incluye estudios, programas o certificaciones relevantes.",
-        actionText = "Continuar a Habilidades →",
+        stepName = stringResource(R.string.ui_education_c77e9b),
+        title = stringResource(R.string.ui_add_your_education_5367bc),
+        description = stringResource(R.string.ui_include_relevant_studies_programs_or_certifications_4260c0),
+        actionText = stringResource(R.string.ui_continue_to_skills_40de13),
         onContinue = ::continueFlow,
         modifier = modifier,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nueva educación",
+                    title = stringResource(R.string.ui_new_education_5a8295),
                     bringIntoView = education.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -184,7 +186,7 @@ fun EducationScreen(
             }
 
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir educación", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_education_41c1e9), onClick = ::startNew)
             }
         }
     }
@@ -209,22 +211,22 @@ private fun EducationEditor(
     BuilderTextField(
         value = institution,
         onValueChange = onInstitutionChange,
-        label = "Institución",
-        placeholder = "Universidad / Instituto",
+        label = stringResource(R.string.ui_institution_c342a8),
+        placeholder = stringResource(R.string.ui_university_institute_e9c1fb),
         isError = showErrors && institution.isBlank(),
-        supportingText = if (showErrors && institution.isBlank()) "La institución es obligatoria" else null,
+        supportingText = if (showErrors && institution.isBlank()) stringResource(R.string.ui_institution_is_required_02f6dc) else null,
     )
     Spacer(Modifier.height(16.dp))
     BuilderTextField(
         value = degree,
         onValueChange = onDegreeChange,
-        label = "Grado o carrera",
-        placeholder = "Ingeniería de Sistemas",
+        label = stringResource(R.string.ui_degree_or_field_of_study_fb4221),
+        placeholder = stringResource(R.string.ui_systems_engineering_aaa2c6),
         isError = showErrors && degree.isBlank(),
-        supportingText = if (showErrors && degree.isBlank()) "El grado o carrera es obligatorio" else null,
+        supportingText = if (showErrors && degree.isBlank()) stringResource(R.string.ui_degree_or_field_of_study_is_required_6836ef) else null,
     )
     Spacer(Modifier.height(16.dp))
-    BuilderTextField(city, onCityChange, "Ciudad", "Ciudad")
+    BuilderTextField(city, onCityChange, stringResource(R.string.ui_city_c6fbe2), stringResource(R.string.ui_city_c6fbe2))
     Spacer(Modifier.height(16.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -233,24 +235,24 @@ private fun EducationEditor(
         BuilderTextField(
             value = startYear,
             onValueChange = onStartYearChange,
-            label = "Desde",
+            label = stringResource(R.string.ui_from_966c7c),
             placeholder = "2017",
             modifier = Modifier.weight(1f),
             maxLength = 4,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = showErrors && !startYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
         )
         BuilderTextField(
             value = endYear,
             onValueChange = onEndYearChange,
-            label = "Hasta",
+            label = stringResource(R.string.ui_to_ccdaad),
             placeholder = "2022",
             modifier = Modifier.weight(1f),
             maxLength = 4,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = showErrors && !endYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !endYear.isValidYearOrBlank()) "Usa AAAA" else null,
+            supportingText = if (showErrors && !endYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
         )
     }
     Spacer(Modifier.height(18.dp))

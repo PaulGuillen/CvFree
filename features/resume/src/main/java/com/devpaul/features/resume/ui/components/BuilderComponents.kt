@@ -39,10 +39,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.resume.R
 
 @Composable
 fun BuilderPage(
@@ -111,7 +113,7 @@ fun BuilderPage(
 fun BuilderTopBar(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "Creador de CV",
+    title: String = stringResource(R.string.ui_resume_builder_94b492),
 ) {
     Row(
         modifier = modifier
@@ -123,7 +125,7 @@ fun BuilderTopBar(
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.ui_back_84a715),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -165,7 +167,7 @@ fun BuilderStepIndicator(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Paso $currentStep de $totalSteps · $stepName",
+            text = stringResource(R.string.builder_step, currentStep, totalSteps, stepName),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
         )

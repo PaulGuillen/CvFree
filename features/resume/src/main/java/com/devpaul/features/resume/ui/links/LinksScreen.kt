@@ -18,11 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeLink
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -32,14 +34,6 @@ import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
 import com.devpaul.features.resume.ui.components.isValidWebUrl
 import com.devpaul.features.resume.ui.components.replaceById
-
-private data class LinkPreset(val name: String, val url: String)
-
-private val linkPresets = listOf(
-    LinkPreset("LinkedIn", "https://linkedin.com/in/"),
-    LinkPreset("GitHub", "https://github.com/"),
-    LinkPreset("Portafolio", "https://"),
-)
 
 @Composable
 fun LinksScreen(
@@ -112,9 +106,9 @@ fun LinksScreen(
         onBack = onBack,
         step = step,
         totalSteps = totalSteps,
-        stepName = "Enlaces",
-        title = "Enlaces y redes sociales",
-        description = "Agrega perfiles profesionales para mostrar mejor tu trabajo y experiencia.",
+        stepName = stringResource(R.string.ui_links_3029a5),
+        title = stringResource(R.string.ui_links_and_social_profiles_927b08),
+        description = stringResource(R.string.ui_add_professional_profiles_to_better_showcase_your_work_and_e_953589),
         actionText = actionText,
         onContinue = ::continueFlow,
         modifier = modifier,
@@ -122,7 +116,7 @@ fun LinksScreen(
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nuevo enlace",
+                    title = stringResource(R.string.ui_new_link_da7b3f),
                     bringIntoView = links.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -133,9 +127,9 @@ fun LinksScreen(
                         onUrlChange = { url = it },
                         showErrors = showErrors,
                         duplicateUrl = links.any { it.url.equals(url.trim(), ignoreCase = true) },
-                        onPreset = { preset ->
-                            linkName = preset.name
-                            url = preset.url
+                        onPreset = { name, presetUrl ->
+                            linkName = name
+                            url = presetUrl
                         },
                         onCancel = { editingId = null; resetEditor() },
                         onSave = ::saveEditor,
@@ -168,9 +162,9 @@ fun LinksScreen(
                                 duplicateUrl = links.any {
                                     it.id != editingId && it.url.equals(url.trim(), ignoreCase = true)
                                 },
-                                onPreset = { preset ->
-                                    linkName = preset.name
-                                    url = preset.url
+                                onPreset = { name, presetUrl ->
+                                    linkName = name
+                                    url = presetUrl
                                 },
                                 onCancel = { editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
@@ -180,7 +174,7 @@ fun LinksScreen(
                 )
             }
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir enlace", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_link_727982), onClick = ::startNew)
             }
         }
     }
@@ -194,7 +188,7 @@ private fun LinkEditor(
     onUrlChange: (String) -> Unit,
     showErrors: Boolean,
     duplicateUrl: Boolean,
-    onPreset: (LinkPreset) -> Unit,
+    onPreset: (String, String) -> Unit,
     onCancel: () -> Unit,
     onSave: () -> Unit,
 ) {
@@ -202,13 +196,14 @@ private fun LinkEditor(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        linkPresets.forEach { preset ->
+        LinkPreset.entries.forEach { preset ->
+            val presetName = stringResource(preset.label)
             OutlinedButton(
-                onClick = { onPreset(preset) },
+                onClick = { onPreset(presetName, preset.url) },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
             ) {
-                Text(preset.name)
+                Text(presetName)
             }
         }
     }
@@ -216,16 +211,16 @@ private fun LinkEditor(
     BuilderTextField(
         value = linkName,
         onValueChange = onLinkNameChange,
-        label = "Nombre del enlace",
-        placeholder = "Ej. LinkedIn",
+        label = stringResource(R.string.ui_link_name_ad3f67),
+        placeholder = stringResource(R.string.ui_e_g_linkedin_9f2fa3),
         isError = showErrors && linkName.isBlank(),
-        supportingText = if (showErrors && linkName.isBlank()) "El nombre es obligatorio" else null,
+        supportingText = if (showErrors && linkName.isBlank()) stringResource(R.string.ui_name_is_required_6043d7) else null,
     )
     Spacer(Modifier.height(16.dp))
     val urlError = when {
-        duplicateUrl -> "Este enlace ya fue agregado"
-        url.isNotBlank() && !url.isValidWebUrl() -> "Incluye una URL completa con https://"
-        showErrors && url.isBlank() -> "La URL es obligatoria"
+        duplicateUrl -> stringResource(R.string.ui_this_link_has_already_been_added_532ee0)
+        url.isNotBlank() && !url.isValidWebUrl() -> stringResource(R.string.ui_enter_a_complete_url_beginning_with_https_8eb976)
+        showErrors && url.isBlank() -> stringResource(R.string.ui_url_is_required_d73713)
         else -> null
     }
     BuilderTextField(
@@ -243,11 +238,11 @@ private fun LinkEditor(
 @Preview(name = "Links Light", showBackground = true, heightDp = 850)
 @Composable
 private fun LinksLightPreview() {
-    CvFreeTheme(darkTheme = false) { LinksScreen({}, {}, 6, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = false) { LinksScreen({}, {}, 6, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }
 
 @Preview(name = "Links Dark", showBackground = true, heightDp = 850)
 @Composable
 private fun LinksDarkPreview() {
-    CvFreeTheme(darkTheme = true) { LinksScreen({}, {}, 6, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = true) { LinksScreen({}, {}, 6, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }

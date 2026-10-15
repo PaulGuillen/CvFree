@@ -25,12 +25,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.domain.resume.ResumeLanguage
 import com.devpaul.core.domain.resume.newResumeEntryId
+import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
@@ -38,9 +40,6 @@ import com.devpaul.features.resume.ui.components.BuilderPage
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.NewEntryId
 import com.devpaul.features.resume.ui.components.replaceById
-
-private val availableLanguages = listOf("Español", "Inglés", "Portugués", "Francés", "Alemán")
-private val availableLevels = listOf("Básico", "Intermedio", "Avanzado", "Nativo")
 
 @Composable
 fun LanguagesScreen(
@@ -84,7 +83,7 @@ fun LanguagesScreen(
     fun saveEditor(): Boolean {
         showErrors = true
         val duplicate = selectedLanguages.any {
-            it.id != editingId && it.language.equals(selectedLanguage, ignoreCase = true)
+            it.id != editingId && sameLanguage(it.language, selectedLanguage)
         }
         if (duplicate) return false
 
@@ -118,9 +117,9 @@ fun LanguagesScreen(
         onBack = onBack,
         step = step,
         totalSteps = totalSteps,
-        stepName = "Idiomas",
-        title = "Idiomas",
-        description = "Indica los idiomas que dominas y tu nivel de competencia.",
+        stepName = stringResource(R.string.ui_languages_553733),
+        title = stringResource(R.string.ui_languages_553733),
+        description = stringResource(R.string.ui_list_the_languages_you_know_and_your_proficiency_level_179a0c),
         actionText = actionText,
         onContinue = ::continueFlow,
         modifier = modifier,
@@ -128,7 +127,7 @@ fun LanguagesScreen(
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (editingId == NewEntryId) {
                 BuilderNewEntryCard(
-                    title = "Nuevo idioma",
+                    title = stringResource(R.string.ui_new_language_014fc6),
                     bringIntoView = selectedLanguages.isNotEmpty(),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -144,7 +143,7 @@ fun LanguagesScreen(
                             editorTouched = true
                         },
                         duplicate = showErrors && selectedLanguages.any {
-                            it.language.equals(selectedLanguage, ignoreCase = true)
+                            sameLanguage(it.language, selectedLanguage)
                         },
                         onCancel = { editingId = null; resetEditor() },
                         onSave = ::saveEditor,
@@ -155,8 +154,8 @@ fun LanguagesScreen(
             selectedLanguages.forEach { item ->
                 val expanded = editingId == item.id
                 BuilderSavedEntryCard(
-                    title = item.language,
-                    subtitle = item.level,
+                    title = languageLabel(item.language),
+                    subtitle = proficiencyLabel(item.level),
                     expanded = expanded,
                     onEdit = { if (expanded) editingId = null else startEditing(item) },
                     onDelete = {
@@ -180,7 +179,7 @@ fun LanguagesScreen(
                                     editorTouched = true
                                 },
                                 duplicate = showErrors && selectedLanguages.any {
-                                    it.id != editingId && it.language.equals(selectedLanguage, ignoreCase = true)
+                                    it.id != editingId && sameLanguage(it.language, selectedLanguage)
                                 },
                                 onCancel = { editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
@@ -190,7 +189,7 @@ fun LanguagesScreen(
                 )
             }
             if (editingId == null) {
-                BuilderAddButton(text = "Añadir idioma", onClick = ::startNew)
+                BuilderAddButton(text = stringResource(R.string.ui_add_language_4fe149), onClick = ::startNew)
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -199,7 +198,7 @@ fun LanguagesScreen(
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
         ) {
             Text(
-                text = "Sé preciso con tu nivel. Algunas empresas pueden validarlo durante la entrevista.",
+                text = stringResource(R.string.ui_be_precise_about_your_level_some_companies_may_verify_it_dur_965ff4),
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyMedium,
@@ -220,7 +219,7 @@ private fun LanguageEditor(
 ) {
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Text("Idioma", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.ui_language_009433), color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
     Spacer(Modifier.height(8.dp))
     Box(modifier = Modifier.fillMaxWidth()) {
         Surface(
@@ -237,14 +236,14 @@ private fun LanguageEditor(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(selectedLanguage, modifier = Modifier.weight(1f))
-                Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = "Seleccionar idioma")
+                Text(languageLabel(selectedLanguage), modifier = Modifier.weight(1f))
+                Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = stringResource(R.string.ui_select_language_566b16))
             }
         }
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             availableLanguages.forEach { language ->
                 DropdownMenuItem(
-                    text = { Text(language) },
+                    text = { Text(languageLabel(language)) },
                     onClick = {
                         onLanguageChange(language)
                         menuExpanded = false
@@ -255,13 +254,13 @@ private fun LanguageEditor(
     }
     if (duplicate) {
         Text(
-            text = "Este idioma ya fue agregado",
+            text = stringResource(R.string.ui_this_language_has_already_been_added_303f72),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodySmall,
         )
     }
     Spacer(Modifier.height(18.dp))
-    Text("Nivel", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.ui_level_ada9db), color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium)
     Spacer(Modifier.height(8.dp))
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         availableLevels.chunked(2).forEach { rowLevels ->
@@ -270,7 +269,7 @@ private fun LanguageEditor(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 rowLevels.forEach { level ->
-                    val selected = level == selectedLevel
+                    val selected = sameProficiency(level, selectedLevel)
                     Surface(
                         onClick = { onLevelChange(level) },
                         modifier = Modifier.weight(1f).height(48.dp),
@@ -283,7 +282,7 @@ private fun LanguageEditor(
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
-                                text = level,
+                                text = proficiencyLabel(level),
                                 color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                             )
@@ -300,11 +299,11 @@ private fun LanguageEditor(
 @Preview(name = "Languages Light", showBackground = true, heightDp = 900)
 @Composable
 private fun LanguagesLightPreview() {
-    CvFreeTheme(darkTheme = false) { LanguagesScreen({}, {}, 7, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = false) { LanguagesScreen({}, {}, 7, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }
 
 @Preview(name = "Languages Dark", showBackground = true, heightDp = 900)
 @Composable
 private fun LanguagesDarkPreview() {
-    CvFreeTheme(darkTheme = true) { LanguagesScreen({}, {}, 7, 9, "Continuar →") }
+    CvFreeTheme(darkTheme = true) { LanguagesScreen({}, {}, 7, 9, stringResource(R.string.ui_continue_4ad2b3)) }
 }

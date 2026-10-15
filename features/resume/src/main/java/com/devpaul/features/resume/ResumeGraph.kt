@@ -1,8 +1,11 @@
 package com.devpaul.features.resume
 
+import com.devpaul.features.resume.R
+
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -174,7 +177,7 @@ fun NavGraphBuilder.resumeGraph(
         CoursesScreen(
             step = optionalStep(ResumeOptionalSection.Courses),
             totalSteps = totalSteps(),
-            actionText = "Continuar →",
+            actionText = stringResource(R.string.ui_continue_4ad2b3),
             courses = draftState.document.courses,
             onCoursesChange = draftState::updateCourses,
             onBack = { navController.popBackStack() },
@@ -186,7 +189,7 @@ fun NavGraphBuilder.resumeGraph(
         LinksScreen(
             step = optionalStep(ResumeOptionalSection.Links),
             totalSteps = totalSteps(),
-            actionText = "Continuar →",
+            actionText = stringResource(R.string.ui_continue_4ad2b3),
             links = draftState.document.links,
             onLinksChange = draftState::updateLinks,
             onBack = { navController.popBackStack() },
@@ -198,7 +201,7 @@ fun NavGraphBuilder.resumeGraph(
         LanguagesScreen(
             step = optionalStep(ResumeOptionalSection.Languages),
             totalSteps = totalSteps(),
-            actionText = "Continuar →",
+            actionText = stringResource(R.string.ui_continue_4ad2b3),
             selectedLanguages = draftState.document.languages,
             onLanguagesChange = draftState::updateLanguages,
             onBack = { navController.popBackStack() },
@@ -210,7 +213,7 @@ fun NavGraphBuilder.resumeGraph(
         ReferencesScreen(
             step = optionalStep(ResumeOptionalSection.References),
             totalSteps = totalSteps(),
-            actionText = "Continuar →",
+            actionText = stringResource(R.string.ui_continue_4ad2b3),
             references = draftState.document.references,
             onReferencesChange = draftState::updateReferences,
             onBack = { navController.popBackStack() },

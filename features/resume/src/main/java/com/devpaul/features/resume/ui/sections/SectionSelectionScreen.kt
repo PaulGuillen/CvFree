@@ -45,12 +45,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
-import com.devpaul.core.domain.resume.ResumeOptionalSection
+import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderTopBar
 
 @Composable
@@ -82,7 +84,7 @@ fun SectionSelectionScreen(
             .statusBarsPadding()
             .navigationBarsPadding(),
     ) {
-        BuilderTopBar(onBack = onBack, title = "¿Qué secciones quieres incluir?")
+        BuilderTopBar(onBack = onBack, title = stringResource(R.string.ui_which_sections_do_you_want_to_include_94036c))
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -90,20 +92,20 @@ fun SectionSelectionScreen(
                 .padding(horizontal = 20.dp),
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            SectionTitle("Secciones principales")
+            SectionTitle(stringResource(R.string.ui_main_sections_954587))
             Spacer(modifier = Modifier.height(12.dp))
-            SectionRow(Icons.Outlined.Contacts, "Información de contacto", true, {}, true)
-            SectionRow(Icons.Outlined.WorkOutline, "Experiencia laboral", true, {}, true)
-            SectionRow(Icons.Outlined.School, "Educación", true, {}, true)
-            SectionRow(Icons.Outlined.Star, "Habilidades", true, {}, true)
-            SectionRow(Icons.Outlined.EditNote, "Resumen profesional", true, {}, true)
+            SectionRow(Icons.Outlined.Contacts, stringResource(R.string.ui_contact_information_d4ed96), true, {}, true)
+            SectionRow(Icons.Outlined.WorkOutline, stringResource(R.string.ui_work_experience_b6b2aa), true, {}, true)
+            SectionRow(Icons.Outlined.School, stringResource(R.string.ui_education_c77e9b), true, {}, true)
+            SectionRow(Icons.Outlined.Star, stringResource(R.string.ui_skills_bff903), true, {}, true)
+            SectionRow(Icons.Outlined.EditNote, stringResource(R.string.ui_professional_summary_b65e50), true, {}, true)
             Spacer(modifier = Modifier.height(28.dp))
-            SectionTitle("Secciones opcionales")
+            SectionTitle(stringResource(R.string.ui_optional_sections_9663d0))
             Spacer(modifier = Modifier.height(12.dp))
-            SectionRow(Icons.AutoMirrored.Outlined.MenuBook, "Cursos", courses, { courses = it })
-            SectionRow(Icons.Outlined.Link, "Enlaces", links, { links = it })
-            SectionRow(Icons.Outlined.Language, "Idiomas", languages, { languages = it })
-            SectionRow(Icons.Outlined.Contacts, "Referencias", references, { references = it })
+            SectionRow(Icons.AutoMirrored.Outlined.MenuBook, stringResource(R.string.ui_courses_8d7151), courses, { courses = it })
+            SectionRow(Icons.Outlined.Link, stringResource(R.string.ui_links_3029a5), links, { links = it })
+            SectionRow(Icons.Outlined.Language, stringResource(R.string.ui_languages_553733), languages, { languages = it })
+            SectionRow(Icons.Outlined.Contacts, stringResource(R.string.ui_references_382921), references, { references = it })
             Spacer(modifier = Modifier.height(20.dp))
         }
         Row(
@@ -122,7 +124,7 @@ fun SectionSelectionScreen(
                     .height(58.dp),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Text("Restaurar", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.ui_restore_f9cdc1), style = MaterialTheme.typography.labelLarge)
             }
             Button(
                 onClick = {
@@ -141,7 +143,7 @@ fun SectionSelectionScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             ) {
-                Text("Confirmar", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.ui_confirm_81b4b6), style = MaterialTheme.typography.labelLarge)
             }
         }
     }
