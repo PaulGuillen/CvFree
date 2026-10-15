@@ -29,12 +29,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.R
 import com.devpaul.features.auth.ui.components.AuthErrorMessage
 import com.devpaul.features.auth.ui.components.AuthPanel
 import com.devpaul.features.auth.ui.components.AuthTextField
@@ -72,12 +74,12 @@ fun ForgotPasswordScreen(
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Volver",
+                    contentDescription = stringResource(R.string.ui_back_84a715),
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Recupera tu contraseña",
+                text = stringResource(R.string.ui_reset_your_password_560101),
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineLarge,
@@ -85,7 +87,7 @@ fun ForgotPasswordScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Escribe el correo asociado a tu cuenta y te enviaremos un enlace para crear una nueva contraseña.",
+                text = stringResource(R.string.ui_enter_the_email_associated_with_your_account_and_we_ll_send_b6b33f),
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
@@ -100,17 +102,17 @@ fun ForgotPasswordScreen(
                             email = it
                             onInputChanged()
                         },
-                        label = "Correo electrónico",
-                        placeholder = "ejemplo@correo.com",
+                        label = stringResource(R.string.ui_email_59a167),
+                        placeholder = "email@example.com",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     )
                     uiState.errorMessage?.let { error ->
                         Spacer(modifier = Modifier.height(18.dp))
-                        AuthErrorMessage(message = error)
+                        AuthErrorMessage(message = stringResource(error))
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                     PrimaryAuthButton(
-                        text = "Enviar",
+                        text = stringResource(R.string.ui_send_a91a95),
                         onClick = { onSend(email.trim()) },
                         isLoading = uiState.isLoading,
                     )

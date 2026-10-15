@@ -23,11 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.R
 import com.devpaul.features.auth.ui.components.PrimaryAuthButton
 
 @Composable
@@ -65,14 +67,14 @@ fun PasswordResetSentScreen(
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = "Revisa tu correo",
+            text = stringResource(R.string.ui_check_your_email_c4c0d3),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineLarge,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(14.dp))
         Text(
-            text = "Enviamos las instrucciones para restablecer tu contraseña a",
+            text = stringResource(R.string.ui_we_sent_password_reset_instructions_to_9d4d8e),
             modifier = Modifier.widthIn(max = 480.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
@@ -87,7 +89,7 @@ fun PasswordResetSentScreen(
         )
         Spacer(modifier = Modifier.height(36.dp))
         PrimaryAuthButton(
-            text = "Volver al inicio",
+            text = stringResource(R.string.ui_back_to_home_1afb11),
             onClick = onBackToLogin,
             modifier = Modifier.widthIn(max = 420.dp),
         )
@@ -98,6 +100,6 @@ fun PasswordResetSentScreen(
 @Composable
 private fun PasswordResetSentPreview() {
     CvFreeTheme {
-        PasswordResetSentScreen("ejemplo@correo.com", {})
+        PasswordResetSentScreen("email@example.com", {})
     }
 }

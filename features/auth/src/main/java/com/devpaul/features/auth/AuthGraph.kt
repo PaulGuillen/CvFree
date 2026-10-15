@@ -1,5 +1,7 @@
 package com.devpaul.features.auth
 
+import androidx.compose.ui.platform.LocalResources
+
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -35,12 +37,13 @@ fun NavGraphBuilder.authGraph(
     ) {
         composable<AuthRoute.Login> {
             val loginViewModel: LoginViewModel = koinViewModel()
+            val resources = LocalResources.current
             BaseScreenWithState(
                 viewModel = loginViewModel,
                 onUiEvent = { event, showSnackbar ->
                     when (event) {
                         LoginUiEvent.Authenticated -> onAuthenticated()
-                        is LoginUiEvent.ShowSnackbar -> showSnackbar(event.message)
+                        is LoginUiEvent.ShowSnackbar -> showSnackbar(resources.getString(event.message))
                     }
                 },
             ) { uiState, onIntent ->
@@ -63,12 +66,13 @@ fun NavGraphBuilder.authGraph(
         }
         composable<AuthRoute.Register> {
             val registerViewModel: RegisterViewModel = koinViewModel()
+            val resources = LocalResources.current
             BaseScreenWithState(
                 viewModel = registerViewModel,
                 onUiEvent = { event, showSnackbar ->
                     when (event) {
                         RegisterUiEvent.Authenticated -> onAuthenticated()
-                        is RegisterUiEvent.ShowSnackbar -> showSnackbar(event.message)
+                        is RegisterUiEvent.ShowSnackbar -> showSnackbar(resources.getString(event.message))
                     }
                 },
             ) { uiState, onIntent ->
@@ -87,13 +91,14 @@ fun NavGraphBuilder.authGraph(
         }
         composable<AuthRoute.ForgotPassword> {
             val forgotPasswordViewModel: ForgotPasswordViewModel = koinViewModel()
+            val resources = LocalResources.current
             BaseScreenWithState(
                 viewModel = forgotPasswordViewModel,
                 onUiEvent = { event, showSnackbar ->
                     when (event) {
                         is ForgotPasswordUiEvent.PasswordResetSent ->
                             onPasswordResetSent(event.email)
-                        is ForgotPasswordUiEvent.ShowSnackbar -> showSnackbar(event.message)
+                        is ForgotPasswordUiEvent.ShowSnackbar -> showSnackbar(resources.getString(event.message))
                     }
                 },
             ) { uiState, onIntent ->

@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.R
 import com.devpaul.features.auth.ui.components.AccountPrompt
 import com.devpaul.features.auth.ui.components.AuthErrorMessage
 import com.devpaul.features.auth.ui.components.AuthPanel
@@ -71,14 +73,14 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Crear cuenta",
+                text = stringResource(R.string.ui_create_account_11bd80),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineLarge,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Empieza gratis y crea tu primer currículum profesional.",
+                text = stringResource(R.string.ui_get_started_for_free_and_create_your_first_professional_resu_873328),
                 modifier = Modifier.widthIn(max = 480.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
@@ -94,8 +96,8 @@ fun RegisterScreen(
                             name = it
                             onInputChanged()
                         },
-                        label = "Nombre completo",
-                        placeholder = "Paul Guillén",
+                        label = stringResource(R.string.ui_full_name_cccece),
+                        placeholder = "Elena Vargas",
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
                         ),
@@ -107,8 +109,8 @@ fun RegisterScreen(
                             email = it
                             onInputChanged()
                         },
-                        label = "Correo electrónico",
-                        placeholder = "ejemplo@correo.com",
+                        label = stringResource(R.string.ui_email_59a167),
+                        placeholder = "email@example.com",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     )
                     Spacer(modifier = Modifier.height(18.dp))
@@ -118,25 +120,25 @@ fun RegisterScreen(
                             password = it
                             onInputChanged()
                         },
-                        label = "Contraseña",
-                        placeholder = "Mínimo 8 caracteres",
+                        label = stringResource(R.string.ui_password_5a6d1c),
+                        placeholder = stringResource(R.string.ui_at_least_8_characters_53cf13),
                         isPassword = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     )
                     uiState.errorMessage?.let { error ->
                         Spacer(modifier = Modifier.height(18.dp))
-                        AuthErrorMessage(message = error)
+                        AuthErrorMessage(message = stringResource(error))
                     }
                     Spacer(modifier = Modifier.height(26.dp))
                     PrimaryAuthButton(
-                        text = "Registrarme",
+                        text = stringResource(R.string.ui_sign_up_be32fb),
                         onClick = { onRegister(name.trim(), email.trim(), password) },
                         isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     AccountPrompt(
-                        message = "¿Ya tienes cuenta?",
-                        action = "Iniciar sesión",
+                        message = stringResource(R.string.ui_already_have_an_account_65b418),
+                        action = stringResource(R.string.ui_sign_in_9c18b1),
                         onClick = onNavigateToLogin,
                     )
                 }

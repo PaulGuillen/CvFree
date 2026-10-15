@@ -36,11 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.devpaul.features.auth.R
 
 @Composable
 fun AuthBrandHeader(
@@ -73,7 +75,7 @@ fun AuthBrandHeader(
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Crea tu futuro profesional hoy",
+            text = stringResource(R.string.ui_build_your_professional_future_today_6af353),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
@@ -142,11 +144,11 @@ fun AuthTextField(
                             } else {
                                 Icons.Outlined.Visibility
                             },
-                            contentDescription = if (passwordVisible) {
-                                "Ocultar contraseña"
+                            contentDescription = (if (passwordVisible) {
+                                stringResource(R.string.ui_hide_password_a0e898)
                             } else {
-                                "Mostrar contraseña"
-                            },
+                                stringResource(R.string.ui_show_password_3d04be)
+                            }),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

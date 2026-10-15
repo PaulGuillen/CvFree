@@ -1,17 +1,22 @@
 package com.devpaul.features.auth.ui.mapper
 
+import androidx.annotation.StringRes
+
+import com.devpaul.features.auth.R
+
 import com.devpaul.features.auth.domain.exception.AuthError
 
-internal fun AuthError.toUserMessage(): String = when (this) {
-    AuthError.INVALID_EMAIL -> "Escribe un correo electrónico válido."
-    AuthError.EMPTY_PASSWORD -> "Escribe tu contraseña."
-    AuthError.SHORT_PASSWORD -> "La contraseña debe tener al menos 8 caracteres."
-    AuthError.INVALID_NAME -> "Escribe un nombre válido."
-    AuthError.EMAIL_ALREADY_IN_USE -> "Ya existe una cuenta con este correo."
-    AuthError.INVALID_CREDENTIALS -> "El correo o la contraseña son incorrectos."
-    AuthError.USER_DISABLED -> "Esta cuenta está deshabilitada."
+@StringRes
+internal fun AuthError.toMessageResource(): Int = when (this) {
+    AuthError.INVALID_EMAIL -> R.string.ui_enter_a_valid_email_address_4ddef7
+    AuthError.EMPTY_PASSWORD -> R.string.ui_enter_your_password_5337bc
+    AuthError.SHORT_PASSWORD -> R.string.ui_password_must_be_at_least_8_characters_long_0af404
+    AuthError.INVALID_NAME -> R.string.ui_enter_a_valid_name_893e60
+    AuthError.EMAIL_ALREADY_IN_USE -> R.string.ui_an_account_with_this_email_already_exists_bec7d2
+    AuthError.INVALID_CREDENTIALS -> R.string.ui_the_email_or_password_is_incorrect_2ee7a8
+    AuthError.USER_DISABLED -> R.string.ui_this_account_is_disabled_1b4749
     AuthError.TOO_MANY_REQUESTS ->
-        "Demasiados intentos. Espera unos minutos y vuelve a intentarlo."
-    AuthError.NETWORK -> "No se pudo conectar. Revisa tu conexión e inténtalo de nuevo."
-    AuthError.UNKNOWN -> "No se pudo completar la operación. Inténtalo de nuevo."
+        R.string.ui_too_many_attempts_wait_a_few_minutes_and_try_again_483702
+    AuthError.NETWORK -> R.string.ui_couldn_t_connect_check_your_connection_and_try_again_e38359
+    AuthError.UNKNOWN -> R.string.ui_the_operation_couldn_t_be_completed_try_again_03bf2c
 }

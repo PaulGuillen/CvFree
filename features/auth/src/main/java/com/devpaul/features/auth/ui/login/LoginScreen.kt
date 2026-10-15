@@ -32,12 +32,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.auth.R
 import com.devpaul.features.auth.ui.components.AccountPrompt
 import com.devpaul.features.auth.ui.components.AuthBrandHeader
 import com.devpaul.features.auth.ui.components.AuthErrorMessage
@@ -83,7 +85,7 @@ fun LoginScreen(
             AuthPanel(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp)) {
                     Text(
-                        text = "¡Bienvenido de nuevo!",
+                        text = stringResource(R.string.ui_welcome_back_246d60),
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.headlineMedium,
@@ -96,8 +98,8 @@ fun LoginScreen(
                             email = it
                             onInputChanged()
                         },
-                        label = "Correo electrónico",
-                        placeholder = "ejemplo@correo.com",
+                        label = stringResource(R.string.ui_email_59a167),
+                        placeholder = "email@example.com",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     )
                     Spacer(modifier = Modifier.height(18.dp))
@@ -107,7 +109,7 @@ fun LoginScreen(
                     ) {
                         TextButton(onClick = onForgotPassword) {
                             Text(
-                                text = "¿Olvidaste tu contraseña?",
+                                text = stringResource(R.string.ui_forgot_your_password_28ca3f),
                                 color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             )
@@ -119,25 +121,25 @@ fun LoginScreen(
                             password = it
                             onInputChanged()
                         },
-                        label = "Contraseña",
+                        label = stringResource(R.string.ui_password_5a6d1c),
                         placeholder = "••••••••",
                         isPassword = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     )
                     uiState.errorMessage?.let { error ->
                         Spacer(modifier = Modifier.height(18.dp))
-                        AuthErrorMessage(message = error)
+                        AuthErrorMessage(message = stringResource(error))
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                     PrimaryAuthButton(
-                        text = "Iniciar sesión",
+                        text = stringResource(R.string.ui_sign_in_9c18b1),
                         onClick = { onLogin(email.trim(), password) },
                         isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     AccountPrompt(
-                        message = "¿No tienes una cuenta?",
-                        action = "Crear cuenta",
+                        message = stringResource(R.string.ui_don_t_have_an_account_0cb9ce),
+                        action = stringResource(R.string.ui_create_account_11bd80),
                         onClick = onNavigateToRegister,
                     )
                 }
@@ -148,8 +150,8 @@ fun LoginScreen(
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SecurityLabel(icon = Icons.Outlined.Lock, text = "Seguro y encriptado")
-                SecurityLabel(icon = Icons.Outlined.Language, text = "Español")
+                SecurityLabel(icon = Icons.Outlined.Lock, text = stringResource(R.string.ui_secure_and_encrypted_ffc3eb))
+                SecurityLabel(icon = Icons.Outlined.Language, text = stringResource(R.string.ui_spanish_2001ca))
             }
             Spacer(modifier = Modifier.height(12.dp))
         }

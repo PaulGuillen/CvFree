@@ -5,7 +5,7 @@ import com.devpaul.core.platform.lifecycle.StatefulViewModel
 import com.devpaul.features.auth.domain.exception.AuthFailure
 import com.devpaul.features.auth.domain.exception.AuthFailureType
 import com.devpaul.features.auth.domain.usecase.SendPasswordResetUseCase
-import com.devpaul.features.auth.ui.mapper.toUserMessage
+import com.devpaul.features.auth.ui.mapper.toMessageResource
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
@@ -37,7 +37,7 @@ class ForgotPasswordViewModel(
     }
 
     private suspend fun handleError(failure: AuthFailure) {
-        val message = failure.error.toUserMessage()
+        val message = failure.error.toMessageResource()
         updateUiState {
             it.copy(
                 isLoading = false,
