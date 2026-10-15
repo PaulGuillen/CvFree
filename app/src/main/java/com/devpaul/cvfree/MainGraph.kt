@@ -1,5 +1,7 @@
 package com.devpaul.cvfree
 
+import androidx.compose.ui.platform.LocalResources
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +32,7 @@ import org.koin.compose.koinInject
 fun MainGraph(
     navController: NavHostController,
 ) {
+    val resources = LocalResources.current
     val resumeRepository: ResumeRepository = koinInject()
     val authSessionViewModel: AuthSessionViewModel = koinViewModel()
     val featureAccessController: FeatureAccessController = koinInject()
@@ -138,6 +141,9 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            userName = authSessionViewModel.userName,
+            userEmail = authSessionViewModel.userEmail,
+            onUpdateName = { name -> authSessionViewModel.updateUserName(name)?.let(resources::getString) },
             onNavigateToHome = {
                 navController.navigateToMainDestination(HomeRoute.Graph)
             },

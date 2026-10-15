@@ -13,5 +13,7 @@ interface AuthRepository {
 
     suspend fun sendPasswordReset(email: String)
 
+    suspend fun updateUserName(name: String): AuthUser
+
     fun signOut()
 }

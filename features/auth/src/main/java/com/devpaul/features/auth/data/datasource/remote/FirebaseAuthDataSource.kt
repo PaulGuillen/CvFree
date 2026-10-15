@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import org.koin.core.annotation.Factory
 
@@ -58,6 +59,20 @@ class FirebaseAuthDataSource(
 
     suspend fun sendPasswordReset(email: String) {
         auth.sendPasswordResetEmail(email).await()
+    }
+
+    suspend fun updateCurrentUserName(name: String): FirebaseUser {
+        val user = checkNotNull(auth.currentUser) { "No authenticated user" }
+        val profile = UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+
+        user.updateProfile(profile).await()
+        firestore.collection(USERS_COLLECTION)
+            .document(user.uid)
+            .set(mapOf(NAME_FIELD to name), SetOptions.merge())
+            .await()
+        return user
     }
 
     fun signOut() = auth.signOut()

@@ -43,6 +43,10 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun updateUserName(name: String): AuthUser = firebaseCall {
+        dataSource.updateCurrentUserName(name).toDomain(preferredName = name)
+    }
+
     override fun signOut() = dataSource.signOut()
 
     private suspend fun <T> firebaseCall(operation: suspend () -> T): T = try {
