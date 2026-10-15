@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeTextFormatting
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 
 private val PragueInk = Color(0xFF38383A)
@@ -108,7 +110,7 @@ private fun PragueHeader(resume: ResumeDocument) {
                 text = listOf(contact.name, contact.lastName)
                     .filter(String::isNotBlank)
                     .joinToString(" ")
-                    .ifBlank { "TU NOMBRE" }
+                    .ifBlank { stringResource(R.string.ui_your_name_f308e7) }
                     .uppercase(),
                 color = PragueInk,
                 fontSize = 19.sp,
@@ -150,7 +152,7 @@ private fun PragueHeader(resume: ResumeDocument) {
                 .weight(0.57f)
                 .padding(start = 24.dp),
         ) {
-            PragueHeaderTitle("SOBRE MÍ")
+            PragueHeaderTitle(stringResource(R.string.ui_about_me_d15068))
             if (resume.summary.isNotBlank()) {
                 Spacer(Modifier.height(12.dp))
                 Text(
@@ -171,7 +173,7 @@ private fun PragueSidebar(resume: ResumeDocument, modifier: Modifier = Modifier)
 
     Column(modifier = modifier) {
         if (resume.education.isNotEmpty()) {
-            PragueSectionTitle("EDUCACIÓN")
+            PragueSectionTitle(stringResource(R.string.ui_education_4e9a5f))
             resume.education.forEachIndexed { index, education ->
                 Text(
                     text = education.degree.uppercase(),
@@ -192,7 +194,7 @@ private fun PragueSidebar(resume: ResumeDocument, modifier: Modifier = Modifier)
 
         if (showLinks) {
             if (resume.education.isNotEmpty()) PragueSideSectionGap()
-            PragueSectionTitle("ENLACES")
+            PragueSectionTitle(stringResource(R.string.ui_links_d38518))
             resume.links.forEachIndexed { index, link ->
                 Text(
                     text = link.name.replaceFirstChar { it.uppercase() },
@@ -218,11 +220,11 @@ private fun PragueSidebar(resume: ResumeDocument, modifier: Modifier = Modifier)
             if (resume.education.isNotEmpty() || showLinks) {
                 PragueSideSectionGap()
             }
-            PragueSectionTitle("IDIOMAS")
+            PragueSectionTitle(stringResource(R.string.ui_languages_c765ac))
             resume.languages.forEachIndexed { index, language ->
                 PragueProgressBar(
                     label = language.language.uppercase(),
-                    progress = pragueLanguageProgress(language.level),
+                    progress = languageProficiency(language.level),
                 )
                 if (language.level.isNotBlank()) {
                     Spacer(Modifier.height(2.dp))
@@ -241,13 +243,13 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
 
     Column(modifier = modifier) {
         if (resume.experiences.isNotEmpty()) {
-            PragueSectionTitle("EXPERIENCIA")
+            PragueSectionTitle(stringResource(R.string.ui_experience_0c1122))
             resume.experiences.forEachIndexed { index, experience ->
                 PragueMainEntry(
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = pragueDate(experience.startYear, experience.displayEndYear),
+                    date = pragueDate(experience.startYear, experience.localizedEndYear()),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -257,7 +259,7 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
 
         if (resume.skills.isNotEmpty()) {
             if (resume.experiences.isNotEmpty()) PragueMainSectionGap()
-            PragueSectionTitle("HABILIDADES")
+            PragueSectionTitle(stringResource(R.string.ui_skills_0794df))
             resume.skills.chunked(2).forEachIndexed { rowIndex, skills ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -278,7 +280,7 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
 
         if (showCourses) {
             if (resume.experiences.isNotEmpty() || resume.skills.isNotEmpty()) PragueMainSectionGap()
-            PragueSectionTitle("CURSOS")
+            PragueSectionTitle(stringResource(R.string.ui_courses_177a73))
             resume.courses.forEachIndexed { index, course ->
                 PragueMainEntry(
                     title = course.name,
@@ -294,7 +296,7 @@ private fun PragueMainContent(resume: ResumeDocument, modifier: Modifier = Modif
             if (resume.experiences.isNotEmpty() || resume.skills.isNotEmpty() || showCourses) {
                 PragueMainSectionGap()
             }
-            PragueSectionTitle("REFERENCIAS")
+            PragueSectionTitle(stringResource(R.string.ui_references_9e4676))
             resume.references.chunked(2).forEachIndexed { rowIndex, references ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -397,7 +399,7 @@ private fun PragueReference(
         )
         PragueCenteredSmallText(company)
         PragueCenteredSmallText(phone, "T:")
-        PragueCenteredSmallText(email, "C:")
+        PragueCenteredSmallText(email, stringResource(R.string.resume_email_prefix))
     }
 }
 
@@ -516,13 +518,6 @@ private fun PragueMainSectionGap() {
 
 private fun pragueDate(start: String, end: String): String =
     listOf(start, end).filter(String::isNotBlank).joinToString(" - ")
-
-private fun pragueLanguageProgress(level: String): Float = when (level.lowercase()) {
-    "nativo" -> 1f
-    "avanzado" -> 0.85f
-    "intermedio" -> 0.65f
-    else -> 0.4f
-}
 
 @Preview(name = "Praga", showBackground = true)
 @Composable

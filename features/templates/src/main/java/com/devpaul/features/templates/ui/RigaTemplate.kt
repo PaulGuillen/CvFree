@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeTextFormatting
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 
 private val EditorialInk = Color(0xFF202020)
@@ -90,7 +92,7 @@ private fun RigaHeader(resume: ResumeDocument) {
                     text = listOf(contact.name, contact.lastName)
                         .filter(String::isNotBlank)
                         .joinToString(" ")
-                        .ifBlank { "TU NOMBRE" }
+                        .ifBlank { stringResource(R.string.ui_your_name_f308e7) }
                         .uppercase(),
                     color = EditorialInk,
                     fontSize = 24.sp,
@@ -163,7 +165,7 @@ private fun EditorialSidebar(
     val showReferences = ResumeOptionalSection.References in resume.optionalSections && resume.references.isNotEmpty()
 
     Column(modifier = modifier) {
-        EditorialSideTitle("CONTACTO")
+        EditorialSideTitle(stringResource(R.string.ui_contact_2f09b4))
         EditorialContactValue(contact.phone)
         EditorialContactValue(contact.email)
         EditorialContactValue(
@@ -174,7 +176,7 @@ private fun EditorialSidebar(
 
         if (resume.summary.isNotBlank()) {
             EditorialSideDivider()
-            EditorialSideTitle("SOBRE MI")
+            EditorialSideTitle(stringResource(R.string.ui_about_me_3b9d35))
             Text(
                 text = formattedText(resume.summary, resume.summaryFormatting),
                 color = EditorialMuted,
@@ -185,7 +187,7 @@ private fun EditorialSidebar(
 
         if (showLinks) {
             EditorialSideDivider()
-            EditorialSideTitle("ENLACES")
+            EditorialSideTitle(stringResource(R.string.ui_links_d38518))
             resume.links.forEachIndexed { index, link ->
                 Text(
                     text = link.name.replaceFirstChar { it.uppercase() } + ":",
@@ -206,11 +208,11 @@ private fun EditorialSidebar(
 
         if (showLanguages) {
             EditorialSideDivider()
-            EditorialSideTitle("IDIOMAS")
+            EditorialSideTitle(stringResource(R.string.ui_languages_c765ac))
             resume.languages.forEachIndexed { index, language ->
                 EditorialProgressBar(
                     label = language.language.uppercase(),
-                    progress = editorialLanguageProgress(language.level),
+                    progress = languageProficiency(language.level),
                 )
                 if (index != resume.languages.lastIndex) Spacer(Modifier.height(8.dp))
             }
@@ -218,7 +220,7 @@ private fun EditorialSidebar(
 
         if (showReferences) {
             EditorialSideDivider()
-            EditorialSideTitle("REFERENCIAS")
+            EditorialSideTitle(stringResource(R.string.ui_references_9e4676))
             resume.references.forEachIndexed { index, reference ->
                 Text(
                     text = reference.name.uppercase(),
@@ -229,7 +231,7 @@ private fun EditorialSidebar(
                 )
                 EditorialSmallText(reference.company)
                 EditorialSmallText(reference.phone, "T:")
-                EditorialSmallText(reference.email, "C:")
+                EditorialSmallText(reference.email, stringResource(R.string.resume_email_prefix))
                 if (index != resume.references.lastIndex) Spacer(Modifier.height(11.dp))
             }
         }
@@ -245,13 +247,13 @@ private fun EditorialMainContent(
 
     Column(modifier = modifier) {
         if (resume.experiences.isNotEmpty()) {
-            EditorialMainTitle("EXPERIENCIA LABORAL")
+            EditorialMainTitle(stringResource(R.string.ui_work_experience_1706e7))
             resume.experiences.forEachIndexed { index, experience ->
                 EditorialEntry(
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = editorialDate(experience.startYear, experience.displayEndYear),
+                    date = editorialDate(experience.startYear, experience.localizedEndYear()),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -275,7 +277,7 @@ private fun EditorialMainContent(
 
         if (resume.skills.isNotEmpty()) {
             if (resume.experiences.isNotEmpty() || resume.education.isNotEmpty()) EditorialMainGap()
-            EditorialMainTitle("HABILIDADES")
+            EditorialMainTitle(stringResource(R.string.ui_skills_0794df))
             val skillRows = resume.skills.chunked(2)
             skillRows.forEachIndexed { rowIndex, skills ->
                 Row(
@@ -299,7 +301,7 @@ private fun EditorialMainContent(
             ) {
                 EditorialMainGap()
             }
-            EditorialMainTitle("CURSOS")
+            EditorialMainTitle(stringResource(R.string.ui_courses_177a73))
             resume.courses.forEachIndexed { index, course ->
                 EditorialEntry(
                     title = course.name,
@@ -439,13 +441,6 @@ private fun EditorialMainGap() = Spacer(Modifier.height(17.dp))
 
 private fun editorialDate(start: String, end: String): String =
     listOf(start, end).filter(String::isNotBlank).joinToString(" - ")
-
-private fun editorialLanguageProgress(level: String): Float = when (level.lowercase()) {
-    "nativo" -> 1f
-    "avanzado" -> 0.85f
-    "intermedio" -> 0.65f
-    else -> 0.4f
-}
 
 private fun editorialInitials(name: String, lastName: String): String =
     listOf(name, lastName)

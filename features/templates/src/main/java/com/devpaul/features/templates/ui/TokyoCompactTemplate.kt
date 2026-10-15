@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeTextFormatting
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 
 private val TokyoInk = Color(0xFF20242B)
@@ -57,19 +59,19 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
 
         if (resume.summary.isNotBlank()) {
             TokyoSectionGap()
-            TokyoSectionTitle("SOBRE MÍ")
+            TokyoSectionTitle(stringResource(R.string.ui_about_me_d15068))
             TokyoFormattedBody(resume.summary, resume.summaryFormatting)
         }
 
         if (resume.experiences.isNotEmpty()) {
             TokyoSectionGap()
-            TokyoSectionTitle("EXPERIENCIA LABORAL")
+            TokyoSectionTitle(stringResource(R.string.ui_work_experience_1706e7))
             resume.experiences.forEachIndexed { index, experience ->
                 TokyoEntry(
                     title = experience.position,
                     organization = experience.company,
                     location = experience.city,
-                    date = tokyoDate(experience.startYear, experience.displayEndYear),
+                    date = tokyoDate(experience.startYear, experience.localizedEndYear()),
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
                 )
@@ -79,7 +81,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
 
         if (resume.education.isNotEmpty()) {
             TokyoSectionGap()
-            TokyoSectionTitle("EDUCACIÓN")
+            TokyoSectionTitle(stringResource(R.string.ui_education_4e9a5f))
             resume.education.forEachIndexed { index, education ->
                 TokyoEntry(
                     title = education.degree,
@@ -93,7 +95,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
 
         if (resume.skills.isNotEmpty()) {
             TokyoSectionGap()
-            TokyoSectionTitle("HABILIDADES")
+            TokyoSectionTitle(stringResource(R.string.ui_skills_0794df))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(11.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -105,7 +107,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
         val showLanguages = ResumeOptionalSection.Languages in resume.optionalSections && resume.languages.isNotEmpty()
         if (showLanguages) {
             TokyoSectionGap()
-            TokyoSectionTitle("IDIOMAS")
+            TokyoSectionTitle(stringResource(R.string.ui_languages_c765ac))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -124,7 +126,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
         val showCourses = ResumeOptionalSection.Courses in resume.optionalSections && resume.courses.isNotEmpty()
         if (showCourses) {
             TokyoSectionGap()
-            TokyoSectionTitle("CURSOS")
+            TokyoSectionTitle(stringResource(R.string.ui_courses_177a73))
             resume.courses.forEachIndexed { index, course ->
                 TokyoEntry(
                     title = course.name,
@@ -139,7 +141,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
         val showReferences = ResumeOptionalSection.References in resume.optionalSections && resume.references.isNotEmpty()
         if (showReferences) {
             TokyoSectionGap()
-            TokyoSectionTitle("REFERENCIAS")
+            TokyoSectionTitle(stringResource(R.string.ui_references_9e4676))
             resume.references.forEachIndexed { index, reference ->
                 Text(
                     text = listOf(reference.name, reference.company, reference.phone, reference.email)
@@ -166,7 +168,7 @@ private fun TokyoHeader(resume: ResumeDocument) {
             text = listOf(contact.name, contact.lastName)
                 .filter(String::isNotBlank)
                 .joinToString(" ")
-                .ifBlank { "TU NOMBRE" }
+                .ifBlank { stringResource(R.string.ui_your_name_f308e7) }
                 .uppercase(),
             color = TokyoInk,
             fontSize = 23.sp,

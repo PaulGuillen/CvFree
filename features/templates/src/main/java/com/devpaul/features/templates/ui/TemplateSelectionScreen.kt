@@ -4,14 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateDefinition
 import com.devpaul.features.templates.ResumeTemplateRenderer
@@ -73,13 +75,13 @@ fun TemplateSelectionScreen(
         TemplateTopBar(onBack = onBack)
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Selecciona una plantilla",
+                text = stringResource(R.string.ui_choose_a_template_4d9458),
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
-                text = "El diseño define tanto la vista previa como el archivo PDF.",
+                text = stringResource(R.string.ui_the_design_applies_to_both_the_preview_and_the_pdf_file_529017),
                 modifier = Modifier.padding(horizontal = 20.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
@@ -115,7 +117,7 @@ fun TemplateSelectionScreen(
                 .height(54.dp),
             shape = RoundedCornerShape(12.dp),
         ) {
-            Text("Continuar a la vista previa", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.ui_continue_to_preview_b47de1), style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -146,7 +148,7 @@ private fun TemplateOption(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = template.displayName,
+                text = template.localizedName(),
                 modifier = Modifier.heightIn(min = 20.dp),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
@@ -155,7 +157,7 @@ private fun TemplateOption(
             )
             Spacer(modifier = Modifier.height(3.dp))
             Text(
-                text = template.description,
+                text = template.localizedDescription(),
                 modifier = Modifier.heightIn(min = 38.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -166,7 +168,7 @@ private fun TemplateOption(
             Box(modifier = Modifier.height(20.dp)) {
                 if (selected) {
                     Text(
-                        text = "Seleccionada",
+                        text = stringResource(R.string.ui_selected_ec2675),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     )
@@ -448,12 +450,12 @@ private fun TemplateTopBar(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.ui_back_84a715),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
         Text(
-            text = "Plantillas",
+            text = stringResource(R.string.ui_templates_0b4c44),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
         )

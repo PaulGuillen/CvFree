@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
@@ -39,21 +40,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
- import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.devpaul.core.domain.resume.ResumeContact
-import com.devpaul.core.domain.resume.ResumeCourse
 import com.devpaul.core.domain.resume.ResumeDocument
-import com.devpaul.core.domain.resume.ResumeEducation
-import com.devpaul.core.domain.resume.ResumeExperience
-import com.devpaul.core.domain.resume.ResumeLanguage
-import com.devpaul.core.domain.resume.ResumeLink
 import com.devpaul.core.domain.resume.ResumeOptionalSection
-import com.devpaul.core.domain.resume.ResumeReference
 import com.devpaul.core.domain.resume.ResumeTextAlignment
 import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.core.domain.resume.reflowSoftLineBreaks
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
 
@@ -128,7 +123,7 @@ private fun BudapestSidebar(
         val showReferences = ResumeOptionalSection.References in resume.optionalSections && resume.references.isNotEmpty()
 
         if (resume.summary.isNotBlank()) {
-            SidebarTitle("SOBRE MÍ")
+            SidebarTitle(stringResource(R.string.ui_about_me_d15068))
             Text(
                 text = formattedText(resume.summary, resume.summaryFormatting),
                 color = SidebarText,
@@ -138,7 +133,7 @@ private fun BudapestSidebar(
             if (showLinks || showLanguages || showReferences) SidebarDivider()
         }
         if (showLinks) {
-            SidebarTitle("ENLACES")
+            SidebarTitle(stringResource(R.string.ui_links_d38518))
             resume.links.forEachIndexed { index, link ->
                 Text(
                     text = buildAnnotatedString {
@@ -160,7 +155,7 @@ private fun BudapestSidebar(
             if (showLanguages || showReferences) SidebarDivider()
         }
         if (showLanguages) {
-            SidebarTitle("IDIOMAS")
+            SidebarTitle(stringResource(R.string.ui_languages_c765ac))
             resume.languages.forEachIndexed { index, language ->
                 Text(
                     text = language.language.uppercase(),
@@ -177,7 +172,7 @@ private fun BudapestSidebar(
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(languageProgress(language.level))
+                            .fillMaxWidth(languageProficiency(language.level))
                             .fillMaxHeight()
                             .background(Color.White),
                     )
@@ -187,7 +182,7 @@ private fun BudapestSidebar(
             if (showReferences) SidebarDivider()
         }
         if (showReferences) {
-            SidebarTitle("REFERENCIAS")
+            SidebarTitle(stringResource(R.string.ui_references_9e4676))
             resume.references.forEachIndexed { index, reference ->
                 Text(
                     text = reference.name.uppercase(),
@@ -198,7 +193,7 @@ private fun BudapestSidebar(
                 )
                 CompactSidebarText(reference.company)
                 CompactSidebarText(reference.phone, prefix = "T:")
-                CompactSidebarText(reference.email, prefix = "C:")
+                CompactSidebarText(reference.email, prefix = stringResource(R.string.resume_email_prefix))
                 if (index != resume.references.lastIndex) Spacer(Modifier.height(12.dp))
             }
         }
@@ -219,12 +214,12 @@ private fun ClassicMainContent(
         Spacer(Modifier.height(16.dp))
 
         if (resume.experiences.isNotEmpty()) {
-            MainSectionTitle("EXPERIENCIA LABORAL")
+            MainSectionTitle(stringResource(R.string.ui_work_experience_1706e7))
             resume.experiences.forEach { experience ->
                 TimelineEntry(
                     organization = experience.company.uppercase(),
                     location = experience.city,
-                    date = compactDate(experience.startYear, experience.displayEndYear),
+                    date = compactDate(experience.startYear, experience.localizedEndYear()),
                     title = experience.position,
                     description = experience.achievements,
                     descriptionFormatting = experience.achievementsFormatting,
@@ -233,7 +228,7 @@ private fun ClassicMainContent(
         }
         if (resume.skills.isNotEmpty()) {
             SectionGap()
-            MainSectionTitle("HABILIDADES")
+            MainSectionTitle(stringResource(R.string.ui_skills_0794df))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
                 verticalArrangement = Arrangement.spacedBy(3.dp),
@@ -243,7 +238,7 @@ private fun ClassicMainContent(
         }
         if (ResumeOptionalSection.Courses in resume.optionalSections && resume.courses.isNotEmpty()) {
             SectionGap()
-            MainSectionTitle("CURSOS")
+            MainSectionTitle(stringResource(R.string.ui_courses_177a73))
             resume.courses.forEach { course ->
                 TimelineEntry(
                     organization = course.institution.uppercase(),
@@ -255,7 +250,7 @@ private fun ClassicMainContent(
         }
         if (resume.education.isNotEmpty()) {
             SectionGap()
-            MainSectionTitle("EDUCACIÓN")
+            MainSectionTitle(stringResource(R.string.ui_education_4e9a5f))
             resume.education.forEach { education ->
                 TimelineEntry(
                     organization = education.institution.uppercase(),
@@ -482,13 +477,6 @@ private fun SectionGap() = Spacer(Modifier.height(14.dp))
 private fun compactDate(start: String, end: String): String =
     listOf(start, end).filter(String::isNotBlank).joinToString(" - ")
 
-private fun languageProgress(level: String): Float = when (level.lowercase()) {
-    "nativo" -> 1f
-    "avanzado" -> 0.85f
-    "intermedio" -> 0.65f
-    else -> 0.4f
-}
-
 internal fun formattedText(text: String, formatting: ResumeTextFormatting): AnnotatedString {
     val displayText = if (formatting.spans.isEmpty() && formatting.paragraphs.isEmpty()) {
         reflowSoftLineBreaks(text)
@@ -552,58 +540,3 @@ private fun ResumeTemplateDocumentPreview() {
         modifier = Modifier.fillMaxWidth(),
     )
 }
-
-fun previewDocument() = ResumeDocument(
-    optionalSections = setOf(
-        ResumeOptionalSection.Courses,
-        ResumeOptionalSection.Links,
-        ResumeOptionalSection.Languages,
-        ResumeOptionalSection.References,
-    ),
-    contact = ResumeContact(
-        name = "Elena",
-        lastName = "Vargas",
-        professionalTitle = "Desarrolladora Android",
-        email = "elena.vargas@example.com",
-        phone = "+51 900 000 000",
-        city = "Arequipa",
-        address = "Arequipa, Perú",
-    ),
-    summary = "Desarrollador Android Senior con experiencia creando aplicaciones nativas, escalables y mantenibles con Kotlin y Jetpack Compose.",
-    links = listOf(
-        ResumeLink("LinkedIn", "https://linkedin.com/in/elena-vargas-demo"),
-        ResumeLink("GitHub", "https://github.com/elena-vargas-demo"),
-        ResumeLink("Portafolio", "https://portfolio.example.com"),
-    ),
-    languages = listOf(
-        ResumeLanguage("Español", "Nativo"),
-        ResumeLanguage("Inglés", "Intermedio"),
-    ),
-    references = listOf(
-        ResumeReference("Camila Rojas", "Líder Técnica", "+51 900 000 001", "camila.rojas@example.com"),
-        ResumeReference("Diego Fernández", "Nexo Digital", "+51 900 000 002", "diego.fernandez@example.com"),
-    ),
-    experiences = listOf(
-        ResumeExperience(
-            position = "Mobile Developer - APP",
-            company = "Nexo Digital",
-            city = "Arequipa",
-            startYear = "2022",
-            endYear = "Actualidad",
-            achievements = "Desarrollo de aplicaciones nativas con Kotlin y arquitectura limpia. Implementación de nuevas funcionalidades y pruebas automatizadas.",
-        ),
-    ),
-    skills = listOf("Kotlin", "Android", "Jetpack Compose", "Clean Architecture", "Git"),
-    courses = listOf(
-        ResumeCourse("Android Avanzado", "IDAT", "2024", "2025"),
-    ),
-    education = listOf(
-        ResumeEducation(
-            institution = "Universidad Nacional",
-            degree = "Ingeniería de Sistemas",
-            city = "Arequipa",
-            startYear = "2016",
-            endYear = "2021",
-        ),
-    ),
-)

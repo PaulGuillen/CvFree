@@ -1,5 +1,6 @@
 package com.devpaul.features.templates.ui
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -41,28 +42,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.layer.drawLayer
-import androidx.compose.ui.graphics.layer.GraphicsLayer
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import android.util.Log
+import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
-import com.devpaul.core.domain.resume.ResumeContact
-import com.devpaul.core.domain.resume.ResumeDocument
-import com.devpaul.core.domain.resume.ResumeEducation
-import com.devpaul.core.domain.resume.ResumeExperience
+import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.pdf.ResumePdfExporter
-import kotlinx.coroutines.launch
 import kotlin.math.ceil
+import kotlinx.coroutines.launch
 
 @Composable
 fun ResumePreviewScreen(
@@ -79,6 +78,10 @@ fun ResumePreviewScreen(
     var isExporting by remember { mutableStateOf(false) }
     var isSaving by remember { mutableStateOf(false) }
     var pendingPreview by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    val pdfSavedMessage = stringResource(R.string.ui_pdf_saved_successfully_e80449)
+    val pdfGenerationError = stringResource(R.string.ui_the_pdf_couldn_t_be_generated_183c0d)
+    val previewCaptureError = stringResource(R.string.ui_the_preview_couldn_t_be_captured_9102da)
+    val resumeSaveError = stringResource(R.string.ui_the_resume_couldn_t_be_saved_8205c7)
     val createPdf = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/pdf"),
     ) { destination ->
@@ -89,19 +92,19 @@ fun ResumePreviewScreen(
         }
         scope.launch {
             val exportResult = runCatching {
-                val bitmap = checkNotNull(pendingPreview) { "No se pudo capturar la vista previa" }
+                val bitmap = checkNotNull(pendingPreview) { previewCaptureError }
                 ResumePdfExporter.export(context, destination, bitmap, resume)
             }
             pendingPreview = null
             isExporting = false
             if (exportResult.isSuccess) {
                 runCatching { onExported() }
-                    .onFailure { error -> Log.e("ResumePreview", "No se pudo guardar el CV", error) }
-                snackbarHostState.showSnackbar("PDF guardado correctamente")
+                    .onFailure { error -> Log.e("ResumePreview", resumeSaveError, error) }
+                snackbarHostState.showSnackbar(pdfSavedMessage)
             } else {
                 val error = exportResult.exceptionOrNull()
-                Log.e("ResumePreview", "No se pudo generar el PDF", error)
-                snackbarHostState.showSnackbar("No se pudo generar el PDF")
+                Log.e("ResumePreview", pdfGenerationError, error)
+                snackbarHostState.showSnackbar(pdfGenerationError)
             }
         }
     }
@@ -123,7 +126,7 @@ fun ResumePreviewScreen(
                     .verticalScroll(rememberScrollState()),
             ) {
                 Text(
-                    text = "Tu currículum está listo",
+                    text = stringResource(R.string.ui_your_resume_is_ready_0d5cd6),
                     modifier = Modifier.padding(start = 20.dp, top = 6.dp, end = 20.dp, bottom = 12.dp),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.headlineLarge,
@@ -154,8 +157,8 @@ fun ResumePreviewScreen(
                                 createPdf.launch(ResumePdfExporter.suggestedFileName(resume))
                             }.onFailure { error ->
                                 isExporting = false
-                                Log.e("ResumePreview", "No se pudo capturar la vista previa", error)
-                                snackbarHostState.showSnackbar("No se pudo capturar la vista previa")
+                                Log.e("ResumePreview", previewCaptureError, error)
+                                snackbarHostState.showSnackbar(previewCaptureError)
                             }
                         }
                     },
@@ -171,7 +174,7 @@ fun ResumePreviewScreen(
                         Icon(Icons.Outlined.Download, contentDescription = null)
                     }
                     Spacer(Modifier.width(6.dp))
-                    Text(if (isExporting) "Generando" else "Descargar PDF")
+                    Text(if (isExporting) stringResource(R.string.ui_generating_55c32a) else stringResource(R.string.ui_download_pdf_40863e))
                 }
                 Button(
                     onClick = {
@@ -179,8 +182,8 @@ fun ResumePreviewScreen(
                         scope.launch {
                             runCatching { onSave() }
                                 .onFailure { error ->
-                                    Log.e("ResumePreview", "No se pudo guardar el CV", error)
-                                    snackbarHostState.showSnackbar("No se pudo guardar el CV")
+                                    Log.e("ResumePreview", resumeSaveError, error)
+                                    snackbarHostState.showSnackbar(resumeSaveError)
                                 }
                             isSaving = false
                         }
@@ -195,7 +198,7 @@ fun ResumePreviewScreen(
                         CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(6.dp))
                     }
-                    Text(if (isSaving) "Guardando" else "Guardar CV", style = MaterialTheme.typography.labelLarge)
+                    Text(if (isSaving) stringResource(R.string.ui_saving_92902e) else stringResource(R.string.ui_save_resume_8c58fc), style = MaterialTheme.typography.labelLarge)
                 }
             }
         }
@@ -215,9 +218,7 @@ fun TemplateExamplePreviewScreen(
     modifier: Modifier = Modifier,
 ) {
     val template = ResumeTemplateCatalog.find(templateId)
-    val exampleResume = remember(template.id) {
-        previewDocument().copy(templateName = template.id)
-    }
+    val exampleResume = rememberPreviewDocument(template.id)
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
 
@@ -230,7 +231,7 @@ fun TemplateExamplePreviewScreen(
     ) {
         PreviewTopBar(
             onBack = onBack,
-            title = template.displayName,
+            title = template.localizedName(),
         )
         Column(
             modifier = Modifier
@@ -238,7 +239,7 @@ fun TemplateExamplePreviewScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             Text(
-                text = "Vista previa con información de ejemplo",
+                text = stringResource(R.string.ui_preview_with_sample_information_ab7559),
                 modifier = Modifier.padding(start = 20.dp, top = 6.dp, end = 20.dp, bottom = 12.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
@@ -306,7 +307,7 @@ private fun ScaledResumeDocument(
 @Composable
 private fun PreviewTopBar(
     onBack: () -> Unit,
-    title: String = "Vista previa",
+    title: String = stringResource(R.string.ui_preview_432932),
 ) {
     Row(
         modifier = Modifier
@@ -318,7 +319,7 @@ private fun PreviewTopBar(
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.ui_back_84a715),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -329,38 +330,6 @@ private fun PreviewTopBar(
         )
     }
 }
-
-private fun previewResume() = ResumeDocument(
-    contact = ResumeContact(
-        name = "Elena",
-        lastName = "Vargas Salazar",
-        professionalTitle = "Desarrolladora Android",
-        email = "elena.vargas@example.com",
-        phone = "+51 900 000 000",
-        city = "Arequipa",
-    ),
-    summary = "Ingeniero experto desarrollador Android Senior en reactivo que sea escalable y mantenible.",
-    experiences = listOf(
-        ResumeExperience(
-            position = "Senior Android Developer",
-            company = "Nexo Digital",
-            city = "Arequipa",
-            startYear = "2022",
-            endYear = "Actualidad",
-            achievements = "Desarrollo de aplicaciones con Kotlin y Jetpack Compose.\nArquitectura limpia y pruebas automatizadas.",
-        ),
-    ),
-    education = listOf(
-        ResumeEducation(
-            institution = "Universidad Nacional",
-            degree = "Ingeniería de Sistemas",
-            city = "Arequipa",
-            startYear = "2017",
-            endYear = "2022",
-        ),
-    ),
-    skills = listOf("Kotlin", "Jetpack Compose", "Clean Architecture", "Firebase"),
-)
 
 @Preview(showBackground = true)
 @Composable
