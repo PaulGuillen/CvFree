@@ -4,33 +4,40 @@ import com.devpaul.core.domain.resume.ResumeDocument
 
 internal data class ResumeProgress(
     val percent: Int,
-    val message: String,
+    val missingSection: ResumeProgressSection?,
+    val nextPercent: Int,
 )
+
+internal enum class ResumeProgressSection {
+    Contact,
+    Experience,
+    Education,
+    Skills,
+    Summary,
+}
 
 internal fun resumeProgress(resume: ResumeDocument): ResumeProgress {
     val sections = listOf(
-        "Información de contacto" to (
+        ResumeProgressSection.Contact to (
             resume.contact.name.isNotBlank() &&
                 resume.contact.professionalTitle.isNotBlank() &&
                 (resume.contact.email.isNotBlank() || resume.contact.phone.isNotBlank())
             ),
-        "Experiencia laboral" to resume.experiences.any {
+        ResumeProgressSection.Experience to resume.experiences.any {
             it.position.isNotBlank() && it.company.isNotBlank()
         },
-        "Educación" to resume.education.any {
+        ResumeProgressSection.Education to resume.education.any {
             it.institution.isNotBlank() && it.degree.isNotBlank()
         },
-        "Habilidades" to resume.skills.any(String::isNotBlank),
-        "Resumen profesional" to resume.summary.isNotBlank(),
+        ResumeProgressSection.Skills to resume.skills.any(String::isNotBlank),
+        ResumeProgressSection.Summary to resume.summary.isNotBlank(),
     )
     val completed = sections.count { it.second }
     val percent = completed * 100 / sections.size
     val missingSection = sections.firstOrNull { !it.second }?.first
-    val message = if (missingSection == null) {
-        "Tu perfil está completo"
-    } else {
-        val nextPercent = (completed + 1) * 100 / sections.size
-        "Completa «$missingSection» para llegar al $nextPercent%"
-    }
-    return ResumeProgress(percent = percent, message = message)
+    return ResumeProgress(
+        percent = percent,
+        missingSection = missingSection,
+        nextPercent = ((completed + 1).coerceAtMost(sections.size) * 100 / sections.size),
+    )
 }

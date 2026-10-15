@@ -14,7 +14,8 @@ class ResumeProgressTest {
         val progress = resumeProgress(ResumeDocument())
 
         assertEquals(0, progress.percent)
-        assertEquals("Completa «Información de contacto» para llegar al 20%", progress.message)
+        assertEquals(ResumeProgressSection.Contact, progress.missingSection)
+        assertEquals(20, progress.nextPercent)
     }
 
     @Test
@@ -24,7 +25,8 @@ class ResumeProgressTest {
         val progress = resumeProgress(resume)
 
         assertEquals(80, progress.percent)
-        assertEquals("Completa «Resumen profesional» para llegar al 100%", progress.message)
+        assertEquals(ResumeProgressSection.Summary, progress.missingSection)
+        assertEquals(100, progress.nextPercent)
     }
 
     @Test
@@ -32,7 +34,8 @@ class ResumeProgressTest {
         val progress = resumeProgress(completeResume())
 
         assertEquals(100, progress.percent)
-        assertEquals("Tu perfil está completo", progress.message)
+        assertEquals(null, progress.missingSection)
+        assertEquals(100, progress.nextPercent)
     }
 
     private fun completeResume() = ResumeDocument(

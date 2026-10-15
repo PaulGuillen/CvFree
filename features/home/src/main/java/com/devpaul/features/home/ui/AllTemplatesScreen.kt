@@ -31,11 +31,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.features.home.R
+import com.devpaul.features.home.ui.util.localizedDescription
+import com.devpaul.features.home.ui.util.localizedName
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateDefinition
 import com.devpaul.features.templates.ui.TemplateThumbnail
@@ -68,11 +72,11 @@ fun AllTemplatesScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = "Volver",
+                        contentDescription = stringResource(R.string.ui_back_84a715),
                     )
                 }
                 Text(
-                    text = "Todas las plantillas",
+                    text = stringResource(R.string.home_all_templates),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
@@ -116,14 +120,14 @@ private fun AllTemplateCard(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = template.displayName,
+            text = template.localizedName(),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
-            text = template.description,
+            text = template.localizedDescription(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 2,
@@ -142,7 +146,7 @@ private fun AllTemplateCard(
                 contentDescription = null,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Ver")
+            Text(stringResource(R.string.home_view))
         }
     }
 }
