@@ -3,6 +3,8 @@ package com.devpaul.features.resume
 import com.devpaul.features.resume.R
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
@@ -30,6 +32,7 @@ import com.devpaul.features.templates.ui.ResumePreviewScreen
 import com.devpaul.features.templates.ui.TemplateSelectionScreen
 import com.devpaul.navigation.route.ResumeRoute
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 fun NavGraphBuilder.resumeGraph(
     navController: NavHostController,
@@ -93,7 +96,7 @@ fun NavGraphBuilder.resumeGraph(
                 navController.navigate(ResumeRoute.Preview)
             },
             onDeleteResume = { resume ->
-                coroutineScope.launch { repository.delete(resume.id) }
+                coroutineScope.launch { draftState.delete(resume.id) }
             },
             onNavigateToHome = onNavigateToHome,
             onNavigateToSettings = onNavigateToSettings,
@@ -103,11 +106,11 @@ fun NavGraphBuilder.resumeGraph(
         composable<ResumeRoute.Importing> { backStackEntry ->
         val route = backStackEntry.toRoute<ResumeRoute.Importing>()
         ResumeImportScreen(
-            documentUri = android.net.Uri.parse(route.uri),
+            documentUri = route.uri.toUri(),
             importPolicy = importPolicy,
             onBack = { navController.popBackStack() },
             onComplete = { importedResume ->
-                draftState.load(importedResume)
+                draftState.importResume(importedResume)
                 navController.navigate(ResumeRoute.SectionSelection) {
                     popUpTo(ResumeRoute.ResumeList) { inclusive = false }
                 }
@@ -116,7 +119,11 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.SectionSelection> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Sections)
         SectionSelectionScreen(
+            onDraftChange = { sections ->
+                draftState.updatePending(ResumeDraftSection.Sections, draftState.document.copy(optionalSections = sections))
+            },
             initialSections = draftState.document.optionalSections,
             onBack = { navController.popBackStack() },
             onConfirm = { sections ->
@@ -127,7 +134,11 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Contact> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Contact)
         ContactScreen(
+            onDraftChange = { contact ->
+                draftState.updatePending(ResumeDraftSection.Contact, draftState.document.copy(contact = contact))
+            },
             totalSteps = totalSteps(),
             initialData = draftState.document.contact,
             onBack = { navController.popBackStack() },
@@ -139,7 +150,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Experience> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Experience)
         ExperienceScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.Experience,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            experiences = draftState.document.experiences.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.Experience) },
             totalSteps = totalSteps(),
             experiences = draftState.document.experiences,
             onExperiencesChange = draftState::updateExperiences,
@@ -151,7 +174,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Education> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Education)
         EducationScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.Education,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            education = draftState.document.education.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.Education) },
             totalSteps = totalSteps(),
             education = draftState.document.education,
             onEducationChange = draftState::updateEducation,
@@ -163,7 +198,11 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Skills> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Skills)
         SkillsScreen(
+            onDraftChange = { skills ->
+                draftState.updatePending(ResumeDraftSection.Skills, draftState.document.copy(skills = skills))
+            },
             totalSteps = totalSteps(),
             initialSkills = draftState.document.skills,
             onBack = { navController.popBackStack() },
@@ -175,7 +214,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Courses> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Courses)
         CoursesScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.Courses,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            courses = draftState.document.courses.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.Courses) },
             step = optionalStep(ResumeOptionalSection.Courses),
             totalSteps = totalSteps(),
             actionText = stringResource(R.string.ui_continue_4ad2b3),
@@ -187,7 +238,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Links> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Links)
         LinksScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.Links,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            links = draftState.document.links.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.Links) },
             step = optionalStep(ResumeOptionalSection.Links),
             totalSteps = totalSteps(),
             actionText = stringResource(R.string.ui_continue_4ad2b3),
@@ -199,7 +262,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Languages> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Languages)
         LanguagesScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.Languages,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            languages = draftState.document.languages.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.Languages) },
             step = optionalStep(ResumeOptionalSection.Languages),
             totalSteps = totalSteps(),
             actionText = stringResource(R.string.ui_continue_4ad2b3),
@@ -211,7 +286,19 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.References> {
+        KeepResumeDraft(draftState, ResumeDraftSection.References)
         ReferencesScreen(
+            onDraftChange = { pending ->
+                draftState.updatePending(
+                    ResumeDraftSection.References,
+                    pending?.let { entry ->
+                        draftState.document.copy(
+                            references = draftState.document.references.withDraft(entry) { it.id },
+                        )
+                    },
+                )
+            },
+            onDraftFinished = { draftState.commitPending(ResumeDraftSection.References) },
             step = optionalStep(ResumeOptionalSection.References),
             totalSteps = totalSteps(),
             actionText = stringResource(R.string.ui_continue_4ad2b3),
@@ -223,7 +310,14 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Summary> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Summary)
         SummaryScreen(
+            onDraftChange = { summary, formatting ->
+                draftState.updatePending(
+                    ResumeDraftSection.Summary,
+                    draftState.document.copy(summary = summary, summaryFormatting = formatting),
+                )
+            },
             step = totalSteps(),
             totalSteps = totalSteps(),
             initialSummary = draftState.document.summary,
@@ -237,7 +331,11 @@ fun NavGraphBuilder.resumeGraph(
         }
 
         composable<ResumeRoute.Template> {
+        KeepResumeDraft(draftState, ResumeDraftSection.Template)
         TemplateSelectionScreen(
+            onDraftChange = { template ->
+                draftState.updatePending(ResumeDraftSection.Template, draftState.document.copy(templateName = template))
+            },
             initialTemplate = draftState.document.templateName,
             onBack = { navController.popBackStack() },
             onContinue = { template ->
@@ -252,19 +350,33 @@ fun NavGraphBuilder.resumeGraph(
             resume = draftState.document,
             onBack = { navController.popBackStack() },
             onSave = {
-                val savedResume = draftState.snapshotForSave()
-                repository.save(savedResume)
-                draftState.load(savedResume)
+                draftState.save()
                 onResumeSaved()
                 navController.popBackStack(ResumeRoute.ResumeList, inclusive = false)
             },
             onExported = {
-                val savedResume = draftState.snapshotForSave()
-                repository.save(savedResume)
-                draftState.load(savedResume)
+                draftState.save()
                 onResumeSaved()
             },
         )
         }
     }
 }
+
+@Composable
+private fun KeepResumeDraft(state: ResumeDraftState, section: ResumeDraftSection) {
+    val session = state.sessionId
+    DisposableEffect(state, section, session) {
+        onDispose {
+            state.commitPending(section, session)
+            state.flushAutoSave()
+        }
+    }
+}
+
+private fun <Entry> List<Entry>.withDraft(entry: Entry, idOf: (Entry) -> String): List<Entry> =
+    if (any { idOf(it) == idOf(entry) }) {
+        map { if (idOf(it) == idOf(entry)) entry else it }
+    } else {
+        listOf(entry) + this
+    }

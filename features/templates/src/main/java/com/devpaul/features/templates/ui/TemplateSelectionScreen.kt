@@ -31,6 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -58,10 +60,13 @@ fun TemplateSelectionScreen(
     onContinue: (String) -> Unit,
     modifier: Modifier = Modifier,
     initialTemplate: String = ResumeTemplateCatalog.BUDAPEST_ID,
+    onDraftChange: (String) -> Unit = {},
 ) {
     var selectedId by rememberSaveable(initialTemplate) {
         mutableStateOf(ResumeTemplateCatalog.find(initialTemplate).id)
     }
+    val currentOnDraftChange by rememberUpdatedState(onDraftChange)
+    LaunchedEffect(selectedId) { currentOnDraftChange(selectedId) }
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 

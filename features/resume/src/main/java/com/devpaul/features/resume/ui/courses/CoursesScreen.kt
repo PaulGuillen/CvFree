@@ -23,6 +23,7 @@ import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
@@ -39,6 +40,8 @@ fun CoursesScreen(
     modifier: Modifier = Modifier,
     courses: List<ResumeCourse> = emptyList(),
     onCoursesChange: (List<ResumeCourse>) -> Unit = {},
+    onDraftChange: (ResumeCourse?) -> Unit = {},
+    onDraftFinished: () -> Unit = {},
 ) {
     var editingId by rememberSaveable { mutableStateOf(if (courses.isEmpty()) NewEntryId else null) }
     var courseName by rememberSaveable { mutableStateOf("") }
@@ -56,11 +59,13 @@ fun CoursesScreen(
     }
 
     fun startNew() {
+        onDraftFinished()
         resetEditor()
         editingId = NewEntryId
     }
 
     fun startEditing(item: ResumeCourse) {
+        onDraftFinished()
         courseName = item.name
         institution = item.institution
         startDate = item.startDate
@@ -70,6 +75,24 @@ fun CoursesScreen(
     }
 
     fun hasPendingInput() = listOf(courseName, institution, startDate, endDate).any(String::isNotBlank)
+
+    val draftEntryId = rememberSaveable(editingId) { newResumeEntryId() }
+    if (editingId != null) {
+        val pendingEntry = if (hasPendingInput() || editingId != NewEntryId) {
+            ResumeCourse(
+                name = courseName,
+                institution = institution,
+                startDate = startDate,
+                endDate = endDate,
+                id = editingId?.takeUnless { it == NewEntryId } ?: draftEntryId,
+            )
+        } else {
+            null
+        }
+        TrackResumeDraft(pendingEntry, onDraftChange)
+    } else {
+        TrackResumeDraft(Unit) { onDraftFinished() }
+    }
 
     fun saveEditor(): Boolean {
         showErrors = true
@@ -82,7 +105,7 @@ fun CoursesScreen(
             institution = institution.trim(),
             startDate = startDate.trim(),
             endDate = endDate.trim(),
-            id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
+            id = currentId?.takeUnless { it == NewEntryId } ?: draftEntryId,
         )
         onCoursesChange(
             if (currentId == NewEntryId) listOf(value) + courses
@@ -132,7 +155,7 @@ fun CoursesScreen(
                         endDate = endDate,
                         onEndDateChange = { endDate = it },
                         showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                         onSave = ::saveEditor,
                     )
                 }
@@ -165,7 +188,7 @@ fun CoursesScreen(
                                 endDate = endDate,
                                 onEndDateChange = { endDate = it },
                                 showErrors = showErrors,
-                                onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
                             )
                         }

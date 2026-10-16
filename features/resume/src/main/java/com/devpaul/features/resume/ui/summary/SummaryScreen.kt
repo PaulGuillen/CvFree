@@ -17,6 +17,7 @@ import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 
 private const val SummaryMaxLength = 1_000
 
@@ -29,12 +30,17 @@ fun SummaryScreen(
     totalSteps: Int = 5,
     initialSummary: String = "",
     initialFormatting: ResumeTextFormatting = ResumeTextFormatting(),
+    onDraftChange: (String, ResumeTextFormatting) -> Unit = { _, _ -> },
 ) {
     val editor = rememberRichTextEditorState(
         initialText = initialSummary,
         initialFormatting = initialFormatting,
         maxLength = SummaryMaxLength,
     )
+
+    TrackResumeDraft(editor.value.text to editor.formatting) { (text, formatting) ->
+        onDraftChange(text, formatting)
+    }
 
     BuilderPage(
         onBack = onBack,

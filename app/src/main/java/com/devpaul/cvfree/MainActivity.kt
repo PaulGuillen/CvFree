@@ -30,6 +30,7 @@ import com.devpaul.core.platform.theme.AppAppearanceManager
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.locale.AppLanguageManager
 import com.devpaul.core.platform.locale.AppLanguage
+import com.devpaul.core.platform.preferences.ResumePreferences
 import com.devpaul.cvfree.notifications.ResumeNotificationManager
 import com.devpaul.cvfree.ui.ForceUpdateScreen
 import com.devpaul.cvfree.ui.UpdateState
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private var appLanguage by mutableStateOf(AppLanguage.Spanish)
     private var appAppearance by mutableStateOf(AppAppearance.System)
     private var notificationsEnabled by mutableStateOf(false)
+    private var autoSaveEnabled by mutableStateOf(true)
     private var openMyCvsRequested by mutableStateOf(false)
     private var pendingSaveNotification = false
 
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         appLanguage = AppLanguageManager.current(this)
         appAppearance = AppAppearanceManager.current(this)
+        autoSaveEnabled = ResumePreferences.autoSaveEnabled(this)
         resumeNotifications = ResumeNotificationManager(applicationContext)
         resumeNotifications.ensureChannel()
         refreshNotificationState()
@@ -116,6 +119,11 @@ class MainActivity : ComponentActivity() {
                                         appLanguage = appLanguage,
                                         appAppearance = appAppearance,
                                         notificationsEnabled = notificationsEnabled,
+                                        autoSaveEnabled = autoSaveEnabled,
+                                        onAutoSaveEnabledChange = { enabled ->
+                                            ResumePreferences.setAutoSaveEnabled(this@MainActivity, enabled)
+                                            autoSaveEnabled = enabled
+                                        },
                                         onNotificationsEnabledChange = ::onNotificationsEnabledChange,
                                         onResumeSaved = ::onResumeSaved,
                                         openMyCvsRequested = openMyCvsRequested,

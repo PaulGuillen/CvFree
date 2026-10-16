@@ -23,6 +23,7 @@ import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
@@ -39,6 +40,8 @@ fun ReferencesScreen(
     modifier: Modifier = Modifier,
     references: List<ResumeReference> = emptyList(),
     onReferencesChange: (List<ResumeReference>) -> Unit = {},
+    onDraftChange: (ResumeReference?) -> Unit = {},
+    onDraftFinished: () -> Unit = {},
 ) {
     var editingId by rememberSaveable { mutableStateOf(if (references.isEmpty()) NewEntryId else null) }
     var name by rememberSaveable { mutableStateOf("") }
@@ -56,11 +59,13 @@ fun ReferencesScreen(
     }
 
     fun startNew() {
+        onDraftFinished()
         resetEditor()
         editingId = NewEntryId
     }
 
     fun startEditing(item: ResumeReference) {
+        onDraftFinished()
         name = item.name
         company = item.company
         phone = item.phone
@@ -70,6 +75,24 @@ fun ReferencesScreen(
     }
 
     fun hasPendingInput() = listOf(name, company, phone, email).any(String::isNotBlank)
+
+    val draftEntryId = rememberSaveable(editingId) { newResumeEntryId() }
+    if (editingId != null) {
+        val pendingEntry = if (hasPendingInput() || editingId != NewEntryId) {
+            ResumeReference(
+                name = name,
+                company = company,
+                phone = phone,
+                email = email,
+                id = editingId?.takeUnless { it == NewEntryId } ?: draftEntryId,
+            )
+        } else {
+            null
+        }
+        TrackResumeDraft(pendingEntry, onDraftChange)
+    } else {
+        TrackResumeDraft(Unit) { onDraftFinished() }
+    }
 
     fun saveEditor(): Boolean {
         showErrors = true
@@ -81,7 +104,7 @@ fun ReferencesScreen(
             company = company.trim(),
             phone = phone.trim(),
             email = email.trim(),
-            id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
+            id = currentId?.takeUnless { it == NewEntryId } ?: draftEntryId,
         )
         onReferencesChange(
             if (currentId == NewEntryId) listOf(value) + references
@@ -131,7 +154,7 @@ fun ReferencesScreen(
                         email = email,
                         onEmailChange = { email = it },
                         showErrors = showErrors,
-                        onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                         onSave = ::saveEditor,
                     )
                 }
@@ -164,7 +187,7 @@ fun ReferencesScreen(
                                 email = email,
                                 onEmailChange = { email = it },
                                 showErrors = showErrors,
-                                onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
                             )
                         }

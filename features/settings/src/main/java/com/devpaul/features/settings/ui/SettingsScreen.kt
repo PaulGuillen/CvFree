@@ -77,9 +77,10 @@ fun SettingsScreen(
     onAppearanceSelected: (AppAppearance) -> Unit,
     notificationsEnabled: Boolean,
     onNotificationsEnabledChange: (Boolean) -> Unit,
+    autoSaveEnabled: Boolean,
+    onAutoSaveEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var autoSaveEnabled by rememberSaveable { mutableStateOf(true) }
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -183,7 +184,7 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_autosave),
                             subtitle = stringResource(R.string.settings_autosave_subtitle),
                             checked = autoSaveEnabled,
-                            onCheckedChange = { autoSaveEnabled = it },
+                            onCheckedChange = onAutoSaveEnabledChange,
                         )
                     }
                 }

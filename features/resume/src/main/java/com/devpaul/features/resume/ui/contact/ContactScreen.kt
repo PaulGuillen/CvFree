@@ -20,6 +20,7 @@ import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
 import com.devpaul.features.resume.ui.components.BuilderTextField
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.isValidEmailOrBlank
 
 @Composable
@@ -37,6 +38,7 @@ fun ContactScreen(
         city = "Lima",
         address = "Lima, Peru",
     ),
+    onDraftChange: (ResumeContact) -> Unit = {},
 ) {
     var name by rememberSaveable(initialData.name) { mutableStateOf(initialData.name) }
     var lastName by rememberSaveable(initialData.lastName) { mutableStateOf(initialData.lastName) }
@@ -46,6 +48,8 @@ fun ContactScreen(
     var city by rememberSaveable(initialData.city) { mutableStateOf(initialData.city) }
     var address by rememberSaveable(initialData.address) { mutableStateOf(initialData.address) }
     var showErrors by rememberSaveable { mutableStateOf(false) }
+
+    TrackResumeDraft(ResumeContact(name, lastName, professionalTitle, email, phone, city, address), onDraftChange)
 
     fun submit() {
         showErrors = true

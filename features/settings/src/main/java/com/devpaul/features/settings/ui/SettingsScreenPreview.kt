@@ -10,7 +10,7 @@ import com.devpaul.core.platform.theme.AppAppearance
 @Composable
 private fun SettingsLightPreview() {
     CvFreeTheme(darkTheme = false) {
-        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {}, AppAppearance.Light, {}, true, {})
+        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {}, AppAppearance.Light, {}, true, {}, true, {})
     }
 }
 
@@ -18,6 +18,6 @@ private fun SettingsLightPreview() {
 @Composable
 private fun SettingsDarkPreview() {
     CvFreeTheme(darkTheme = true) {
-        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {}, AppAppearance.Dark, {}, true, {})
+        SettingsScreen({}, {}, {}, "Elena Vargas", "elena@example.com", { null }, AppLanguage.Spanish, {}, AppAppearance.Dark, {}, true, {}, true, {})
     }
 }

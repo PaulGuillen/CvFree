@@ -53,6 +53,7 @@ import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.resume.R
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderTopBar
 
 @Composable
@@ -61,6 +62,7 @@ fun SectionSelectionScreen(
     onConfirm: (Set<ResumeOptionalSection>) -> Unit,
     modifier: Modifier = Modifier,
     initialSections: Set<ResumeOptionalSection> = emptySet(),
+    onDraftChange: (Set<ResumeOptionalSection>) -> Unit = {},
 ) {
     var courses by rememberSaveable(initialSections) {
         mutableStateOf(ResumeOptionalSection.Courses in initialSections)
@@ -74,6 +76,15 @@ fun SectionSelectionScreen(
     var references by rememberSaveable(initialSections) {
         mutableStateOf(ResumeOptionalSection.References in initialSections)
     }
+    TrackResumeDraft(
+        buildSet {
+            if (courses) add(ResumeOptionalSection.Courses)
+            if (links) add(ResumeOptionalSection.Links)
+            if (languages) add(ResumeOptionalSection.Languages)
+            if (references) add(ResumeOptionalSection.References)
+        },
+        onDraftChange,
+    )
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 

@@ -29,6 +29,7 @@ import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
@@ -45,6 +46,8 @@ fun LinksScreen(
     modifier: Modifier = Modifier,
     links: List<ResumeLink> = emptyList(),
     onLinksChange: (List<ResumeLink>) -> Unit = {},
+    onDraftChange: (ResumeLink?) -> Unit = {},
+    onDraftFinished: () -> Unit = {},
 ) {
     var editingId by rememberSaveable { mutableStateOf(if (links.isEmpty()) NewEntryId else null) }
     var linkName by rememberSaveable { mutableStateOf("") }
@@ -58,11 +61,13 @@ fun LinksScreen(
     }
 
     fun startNew() {
+        onDraftFinished()
         resetEditor()
         editingId = NewEntryId
     }
 
     fun startEditing(item: ResumeLink) {
+        onDraftFinished()
         linkName = item.name
         url = item.url
         showErrors = false
@@ -70,6 +75,22 @@ fun LinksScreen(
     }
 
     fun hasPendingInput() = linkName.isNotBlank() || url.isNotBlank()
+
+    val draftEntryId = rememberSaveable(editingId) { newResumeEntryId() }
+    if (editingId != null) {
+        val pendingEntry = if (hasPendingInput() || editingId != NewEntryId) {
+            ResumeLink(
+                name = linkName,
+                url = url,
+                id = editingId?.takeUnless { it == NewEntryId } ?: draftEntryId,
+            )
+        } else {
+            null
+        }
+        TrackResumeDraft(pendingEntry, onDraftChange)
+    } else {
+        TrackResumeDraft(Unit) { onDraftFinished() }
+    }
 
     fun saveEditor(): Boolean {
         showErrors = true
@@ -80,7 +101,7 @@ fun LinksScreen(
         val value = ResumeLink(
             name = linkName.trim(),
             url = url.trim(),
-            id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
+            id = currentId?.takeUnless { it == NewEntryId } ?: draftEntryId,
         )
         onLinksChange(
             if (currentId == NewEntryId) listOf(value) + links
@@ -131,7 +152,7 @@ fun LinksScreen(
                             linkName = name
                             url = presetUrl
                         },
-                        onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                         onSave = ::saveEditor,
                     )
                 }
@@ -166,7 +187,7 @@ fun LinksScreen(
                                     linkName = name
                                     url = presetUrl
                                 },
-                                onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
                             )
                         }

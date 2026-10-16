@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.kotlinx.coroutines.test)
     implementation(project(":features:templates"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)

@@ -1,10 +1,16 @@
 package com.devpaul.cvfree
 
-import androidx.compose.ui.platform.LocalResources
-
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -43,6 +49,8 @@ fun MainGraph(
     onAppearanceSelected: (AppAppearance) -> Unit,
     notificationsEnabled: Boolean,
     onNotificationsEnabledChange: (Boolean) -> Unit,
+    autoSaveEnabled: Boolean,
+    onAutoSaveEnabledChange: (Boolean) -> Unit,
     onResumeSaved: () -> Unit,
     openMyCvsRequested: Boolean,
     onOpenMyCvsHandled: () -> Unit,
@@ -53,6 +61,30 @@ fun MainGraph(
     val featureAccessController: FeatureAccessController = koinInject()
     val featureAccess by featureAccessController.state.collectAsStateWithLifecycle()
     val resumeDraftState: ResumeDraftState = viewModel()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    SideEffect {
+        resumeDraftState.configureAutoSave(resumeRepository, autoSaveEnabled)
+    }
+    DisposableEffect(lifecycleOwner, resumeDraftState) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) resumeDraftState.flushAutoSave()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            resumeDraftState.flushAutoSave()
+        }
+    }
+    LaunchedEffect(resumeDraftState.autoSaveErrorCount) {
+        if (resumeDraftState.autoSaveErrorCount > 0) {
+            Toast.makeText(
+                context,
+                resources.getString(com.devpaul.features.resume.R.string.resume_autosave_error),
+                Toast.LENGTH_LONG,
+            ).show()
+        }
+    }
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val resumeImportPolicy = ResumeImportPolicy(
         aiEnhancementEnabled = featureAccess.aiResumeImportEnabled,
@@ -158,6 +190,8 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            autoSaveEnabled = autoSaveEnabled,
+            onAutoSaveEnabledChange = onAutoSaveEnabledChange,
             notificationsEnabled = notificationsEnabled,
             onNotificationsEnabledChange = onNotificationsEnabledChange,
             appAppearance = appAppearance,
@@ -174,6 +208,7 @@ fun MainGraph(
                 navController.navigateToMainDestination(ResumeRoute.Graph)
             },
             onLogout = {
+                resumeDraftState.startNew(emptySet())
                 authSessionViewModel.logout()
                 navController.navigate(AuthRoute.Graph) {
                     popUpTo<HomeRoute.Graph> { inclusive = true }

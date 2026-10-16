@@ -38,6 +38,7 @@ import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderFormCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 
 private const val MaxSkillLength = 40
 @Composable
@@ -48,11 +49,20 @@ fun SkillsScreen(
     totalSteps: Int = 5,
     actionText: String = stringResource(R.string.ui_continue_to_professional_summary_c7a0cf),
     initialSkills: List<String> = listOf("Kotlin", "Jetpack Compose"),
+    onDraftChange: (List<String>) -> Unit = {},
 ) {
     val suggestedSkills = listOf("Docker", "GraphQL", stringResource(R.string.ui_agile_methodologies_cc0fae), "Git", "Figma")
     var input by rememberSaveable { mutableStateOf("") }
     var skills by rememberSaveable(initialSkills) { mutableStateOf(initialSkills.distinct()) }
     var inputError by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val pendingSkill = input.trim()
+    val draftSkills = if (pendingSkill.isNotEmpty() && skills.none { it.equals(pendingSkill, ignoreCase = true) }) {
+        skills + pendingSkill
+    } else {
+        skills
+    }
+    TrackResumeDraft(draftSkills, onDraftChange)
 
     val skillLengthError = stringResource(R.string.skill_max_length, MaxSkillLength)
     val duplicateSkillError = stringResource(R.string.ui_this_skill_has_already_been_added_340179)

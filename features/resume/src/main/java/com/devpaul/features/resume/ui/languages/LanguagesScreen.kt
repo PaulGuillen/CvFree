@@ -37,6 +37,7 @@ import com.devpaul.features.resume.ui.components.BuilderAddButton
 import com.devpaul.features.resume.ui.components.BuilderEditorActions
 import com.devpaul.features.resume.ui.components.BuilderNewEntryCard
 import com.devpaul.features.resume.ui.components.BuilderPage
+import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.NewEntryId
 import com.devpaul.features.resume.ui.components.replaceById
@@ -51,6 +52,8 @@ fun LanguagesScreen(
     modifier: Modifier = Modifier,
     selectedLanguages: List<ResumeLanguage> = emptyList(),
     onLanguagesChange: (List<ResumeLanguage>) -> Unit = {},
+    onDraftChange: (ResumeLanguage?) -> Unit = {},
+    onDraftFinished: () -> Unit = {},
 ) {
     var editingId by rememberSaveable {
         mutableStateOf(if (selectedLanguages.isEmpty()) NewEntryId else null)
@@ -68,16 +71,34 @@ fun LanguagesScreen(
     }
 
     fun startNew() {
+        onDraftFinished()
         resetEditor()
         editingId = NewEntryId
     }
 
     fun startEditing(item: ResumeLanguage) {
+        onDraftFinished()
         selectedLanguage = item.language
         selectedLevel = item.level
         editorTouched = true
         showErrors = false
         editingId = item.id
+    }
+
+    val draftEntryId = rememberSaveable(editingId) { newResumeEntryId() }
+    if (editingId != null) {
+        val pendingEntry = if (editorTouched || editingId != NewEntryId) {
+            ResumeLanguage(
+                language = selectedLanguage,
+                level = selectedLevel,
+                id = editingId?.takeUnless { it == NewEntryId } ?: draftEntryId,
+            )
+        } else {
+            null
+        }
+        TrackResumeDraft(pendingEntry, onDraftChange)
+    } else {
+        TrackResumeDraft(Unit) { onDraftFinished() }
     }
 
     fun saveEditor(): Boolean {
@@ -91,7 +112,7 @@ fun LanguagesScreen(
         val value = ResumeLanguage(
             language = selectedLanguage,
             level = selectedLevel,
-            id = currentId?.takeUnless { it == NewEntryId } ?: newResumeEntryId(),
+            id = currentId?.takeUnless { it == NewEntryId } ?: draftEntryId,
         )
         onLanguagesChange(
             if (currentId == NewEntryId) listOf(value) + selectedLanguages
@@ -145,7 +166,7 @@ fun LanguagesScreen(
                         duplicate = showErrors && selectedLanguages.any {
                             sameLanguage(it.language, selectedLanguage)
                         },
-                        onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                         onSave = ::saveEditor,
                     )
                 }
@@ -181,7 +202,7 @@ fun LanguagesScreen(
                                 duplicate = showErrors && selectedLanguages.any {
                                     it.id != editingId && sameLanguage(it.language, selectedLanguage)
                                 },
-                                onCancel = { editingId = null; resetEditor() },
+                        onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
                             )
                         }
