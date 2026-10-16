@@ -2,7 +2,6 @@ package com.devpaul.features.home.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +57,7 @@ import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.home.R
 import com.devpaul.features.home.ui.model.resumeProgress
 import com.devpaul.features.home.ui.util.formatRecentEdit
@@ -81,7 +81,7 @@ fun HomeScreen(
     recentResume: ResumeDocument? = null,
 ) {
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Scaffold(
         modifier = modifier,

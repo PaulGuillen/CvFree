@@ -2,7 +2,6 @@ package com.devpaul.features.settings.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,7 +45,11 @@ import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
 import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.platform.locale.AppLanguage
+import com.devpaul.core.platform.theme.AppAppearance
+import com.devpaul.features.settings.ui.components.AppearanceSelectionDialog
+import com.devpaul.features.settings.ui.util.subtitleRes
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.settings.R
 import com.devpaul.features.settings.ui.components.EditNameDialog
 import com.devpaul.features.settings.ui.components.LanguageSelectionDialog
@@ -70,6 +73,8 @@ fun SettingsScreen(
     onUpdateName: suspend (String) -> String?,
     appLanguage: AppLanguage,
     onLanguageSelected: (AppLanguage) -> Unit,
+    appAppearance: AppAppearance,
+    onAppearanceSelected: (AppAppearance) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
@@ -79,6 +84,7 @@ fun SettingsScreen(
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
     var isSavingName by rememberSaveable { mutableStateOf(false) }
     var isChoosingLanguage by rememberSaveable { mutableStateOf(false) }
+    var isChoosingAppearance by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -87,7 +93,7 @@ fun SettingsScreen(
     val invalidNameMessage = stringResource(R.string.settings_invalid_name)
     val background = MaterialTheme.colorScheme.background
 
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Scaffold(
         modifier = modifier,
@@ -158,9 +164,9 @@ fun SettingsScreen(
                         SettingsLinkRow(
                             icon = Icons.Outlined.DarkMode,
                             title = stringResource(R.string.settings_appearance),
-                            subtitle = stringResource(R.string.settings_appearance_subtitle),
-                            value = stringResource(R.string.settings_system),
-                            onClick = {},
+                            subtitle = stringResource(appAppearance.subtitleRes()),
+                            value = stringResource(appAppearance.labelRes()),
+                            onClick = { isChoosingAppearance = true },
                         )
                         SettingsDivider()
                         SettingsSwitchRow(
@@ -271,6 +277,19 @@ fun SettingsScreen(
                             nameError = updateNameErrorMessage
                         }
                     }
+                }
+            },
+        )
+    }
+
+    if (isChoosingAppearance) {
+        AppearanceSelectionDialog(
+            selectedAppearance = appAppearance,
+            onDismiss = { isChoosingAppearance = false },
+            onAppearanceSelected = { appearance ->
+                isChoosingAppearance = false
+                if (appearance != appAppearance) {
+                    onAppearanceSelected(appearance)
                 }
             },
         )

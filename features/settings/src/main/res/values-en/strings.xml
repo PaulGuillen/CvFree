@@ -9,6 +9,11 @@
     <string name="settings_appearance">Appearance</string>
     <string name="settings_appearance_subtitle">Use the system theme</string>
     <string name="settings_system">System</string>
+    <string name="settings_choose_appearance">Select appearance</string>
+    <string name="settings_appearance_light">Light</string>
+    <string name="settings_appearance_dark">Dark</string>
+    <string name="settings_appearance_light_subtitle">Use the light theme</string>
+    <string name="settings_appearance_dark_subtitle">Use the dark theme</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_notifications_subtitle">Tips and reminders</string>
     <string name="settings_autosave">Autosave</string>

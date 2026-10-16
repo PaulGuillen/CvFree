@@ -5,6 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalAppDarkTheme = staticCompositionLocalOf { false }
 
 private val DarkColorScheme = darkColorScheme(
     primary = CvBlueDark,
@@ -65,9 +69,11 @@ fun CvFreeTheme(
     // Dynamic colors are intentionally ignored so the CV Free palette stays stable.
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = CvFreeTypography,
-        content = content,
-    )
+    CompositionLocalProvider(LocalAppDarkTheme provides darkTheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = CvFreeTypography,
+            content = content,
+        )
+    }
 }

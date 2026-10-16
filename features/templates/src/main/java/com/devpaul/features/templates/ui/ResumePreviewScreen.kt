@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.pdf.ResumePdfExporter
@@ -109,7 +109,7 @@ fun ResumePreviewScreen(
         }
     }
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Box(
         modifier = modifier
@@ -220,7 +220,7 @@ fun TemplateExamplePreviewScreen(
     val template = ResumeTemplateCatalog.find(templateId)
     val exampleResume = rememberPreviewDocument(template.id)
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Column(
         modifier = modifier

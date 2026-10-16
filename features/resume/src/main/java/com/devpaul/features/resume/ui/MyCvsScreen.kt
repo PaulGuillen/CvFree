@@ -9,7 +9,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,6 +77,7 @@ import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.importing.ResumeImportPolicy
 import com.devpaul.features.resume.ui.model.CvFilter
@@ -203,7 +203,7 @@ fun MyCvsScreen(
         }
     val background = MaterialTheme.colorScheme.background
 
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Scaffold(
         modifier = modifier,

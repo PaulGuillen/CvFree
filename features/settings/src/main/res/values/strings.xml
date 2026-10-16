@@ -9,6 +9,11 @@
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_appearance_subtitle">Usar el tema del sistema</string>
     <string name="settings_system">Sistema</string>
+    <string name="settings_choose_appearance">Seleccionar apariencia</string>
+    <string name="settings_appearance_light">Claro</string>
+    <string name="settings_appearance_dark">Oscuro</string>
+    <string name="settings_appearance_light_subtitle">Usar el tema claro</string>
+    <string name="settings_appearance_dark_subtitle">Usar el tema oscuro</string>
     <string name="settings_notifications">Notificaciones</string>
     <string name="settings_notifications_subtitle">Consejos y recordatorios</string>
     <string name="settings_autosave">Guardado automático</string>

@@ -8,7 +8,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.importing.ResumeImportException
 import com.devpaul.features.resume.importing.ResumeImportPolicy
@@ -86,7 +86,7 @@ fun ResumeImportScreen(
         label = "Progreso de importación",
     )
 
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     LaunchedEffect(documentUri, attempt) {
         errorMessage = null

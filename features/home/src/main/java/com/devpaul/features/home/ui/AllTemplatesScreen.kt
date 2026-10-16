@@ -2,7 +2,6 @@ package com.devpaul.features.home.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.home.R
 import com.devpaul.features.home.ui.util.localizedDescription
 import com.devpaul.features.home.ui.util.localizedName
@@ -52,7 +52,7 @@ fun AllTemplatesScreen(
     templates: List<ResumeTemplateDefinition> = ResumeTemplateCatalog.templates,
 ) {
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Column(
         modifier = modifier

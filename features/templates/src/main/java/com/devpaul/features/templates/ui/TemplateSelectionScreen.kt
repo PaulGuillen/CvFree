@@ -2,7 +2,6 @@ package com.devpaul.features.templates.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateDefinition
@@ -63,7 +63,7 @@ fun TemplateSelectionScreen(
         mutableStateOf(ResumeTemplateCatalog.find(initialTemplate).id)
     }
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Column(
         modifier = modifier

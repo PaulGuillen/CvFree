@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.AppAppearance
+import com.devpaul.core.platform.theme.AppAppearanceManager
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.locale.AppLanguageManager
 import com.devpaul.core.platform.locale.AppLanguage
@@ -48,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
     private var updateState by mutableStateOf<UpdateState>(UpdateState.Loading)
     private var appLanguage by mutableStateOf(AppLanguage.Spanish)
+    private var appAppearance by mutableStateOf(AppAppearance.System)
 
     private val immediateUpdateLauncher =
         registerForActivityResult(StartIntentSenderForResult()) { result ->
@@ -61,12 +64,13 @@ class MainActivity : ComponentActivity() {
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
         appLanguage = AppLanguageManager.current(this)
+        appAppearance = AppAppearanceManager.current(this)
         enableEdgeToEdge()
 
         validateAppUpdate()
 
         setContent {
-            val isDarkTheme = isSystemInDarkTheme()
+            val isDarkTheme = appAppearance.isDarkTheme(isSystemInDarkTheme())
             val statusBarColor = if (isDarkTheme) Color.Black else Color.White
             val navController = rememberNavController()
             val localizedContext = remember(appLanguage) {
@@ -88,6 +92,11 @@ class MainActivity : ComponentActivity() {
                                     MainGraph(
                                         navController = navController,
                                         appLanguage = appLanguage,
+                                        appAppearance = appAppearance,
+                                        onAppearanceSelected = { appearance ->
+                                            AppAppearanceManager.set(this@MainActivity, appearance)
+                                            appAppearance = appearance
+                                        },
                                         onLanguageSelected = { language ->
                                             AppLanguageManager.set(this@MainActivity, language)
                                             appLanguage = language

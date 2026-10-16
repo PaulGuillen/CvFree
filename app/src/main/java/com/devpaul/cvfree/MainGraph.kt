@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.core.platform.locale.AppLanguage
+import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.cvfree.access.FeatureAccessController
 import com.devpaul.features.auth.authGraph
 import com.devpaul.features.auth.ui.session.AuthSessionViewModel
@@ -34,6 +35,8 @@ fun MainGraph(
     navController: NavHostController,
     appLanguage: AppLanguage,
     onLanguageSelected: (AppLanguage) -> Unit,
+    appAppearance: AppAppearance,
+    onAppearanceSelected: (AppAppearance) -> Unit,
 ) {
     val resources = LocalResources.current
     val resumeRepository: ResumeRepository = koinInject()
@@ -144,6 +147,8 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            appAppearance = appAppearance,
+            onAppearanceSelected = onAppearanceSelected,
             appLanguage = appLanguage,
             onLanguageSelected = onLanguageSelected,
             userName = authSessionViewModel.userName,

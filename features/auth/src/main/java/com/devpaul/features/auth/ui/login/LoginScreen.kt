@@ -1,7 +1,6 @@
 package com.devpaul.features.auth.ui.login
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.auth.R
 import com.devpaul.features.auth.ui.components.AccountPrompt
 import com.devpaul.features.auth.ui.components.AuthBrandHeader
@@ -60,7 +60,7 @@ fun LoginScreen(
     var password by rememberSaveable { mutableStateOf("") }
     val background = MaterialTheme.colorScheme.background
 
-    SetStatusBarColor(color = background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(color = background, darkIcons = !LocalAppDarkTheme.current)
 
     Box(
         modifier = modifier

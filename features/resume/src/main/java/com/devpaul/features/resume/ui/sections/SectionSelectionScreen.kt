@@ -2,7 +2,6 @@ package com.devpaul.features.resume.ui.sections
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.ui.components.BuilderTopBar
 
@@ -75,7 +75,7 @@ fun SectionSelectionScreen(
         mutableStateOf(ResumeOptionalSection.References in initialSections)
     }
     val background = MaterialTheme.colorScheme.background
-    SetStatusBarColor(background, darkIcons = !isSystemInDarkTheme())
+    SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
     Column(
         modifier = modifier

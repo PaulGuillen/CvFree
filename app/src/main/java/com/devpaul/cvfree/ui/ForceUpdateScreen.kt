@@ -54,6 +54,7 @@ import com.devpaul.core.platform.theme.BrandAccent
 import com.devpaul.core.platform.theme.BrickRed
 import com.devpaul.core.platform.theme.ColorHorizontalDivider
 import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.core.platform.theme.GrayBlack
 import com.devpaul.core.platform.theme.GreenDark
 import com.devpaul.core.platform.theme.SlateGray
@@ -64,7 +65,7 @@ import com.devpaul.cvfree.R
 
 @Composable
 fun ForceUpdateScreen(onOpenStore: () -> Unit) {
-    val isDark = isSystemInDarkTheme()
+    val isDark = LocalAppDarkTheme.current
     val colors = rememberForceUpdateColors(isDark)
 
     val transition = rememberInfiniteTransition(label = "pulse")

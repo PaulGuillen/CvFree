@@ -1,7 +1,6 @@
 package com.devpaul.features.splash.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.splash.R
 import kotlinx.coroutines.delay
 
@@ -40,7 +40,7 @@ fun SplashScreen(
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val darkTheme = isSystemInDarkTheme()
+    val darkTheme = LocalAppDarkTheme.current
     val background = if (darkTheme) {
         MaterialTheme.colorScheme.background
     } else {
