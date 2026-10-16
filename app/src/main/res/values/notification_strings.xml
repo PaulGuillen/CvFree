@@ -1,0 +1,6 @@
+<resources>
+    <string name="notification_saved_channel">CV guardados</string>
+    <string name="notification_saved_channel_description">Confirmaciones al guardar tus CV</string>
+    <string name="notification_resume_saved_title">CV guardado</string>
+    <string name="notification_resume_saved_body">Tu CV se guardó correctamente. Toca para ver tus CV.</string>
+</resources>

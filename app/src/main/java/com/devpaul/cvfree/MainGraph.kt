@@ -3,11 +3,15 @@ package com.devpaul.cvfree
 import androidx.compose.ui.platform.LocalResources
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
@@ -37,6 +41,11 @@ fun MainGraph(
     onLanguageSelected: (AppLanguage) -> Unit,
     appAppearance: AppAppearance,
     onAppearanceSelected: (AppAppearance) -> Unit,
+    notificationsEnabled: Boolean,
+    onNotificationsEnabledChange: (Boolean) -> Unit,
+    onResumeSaved: () -> Unit,
+    openMyCvsRequested: Boolean,
+    onOpenMyCvsHandled: () -> Unit,
 ) {
     val resources = LocalResources.current
     val resumeRepository: ResumeRepository = koinInject()
@@ -44,6 +53,7 @@ fun MainGraph(
     val featureAccessController: FeatureAccessController = koinInject()
     val featureAccess by featureAccessController.state.collectAsStateWithLifecycle()
     val resumeDraftState: ResumeDraftState = viewModel()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val resumeImportPolicy = ResumeImportPolicy(
         aiEnhancementEnabled = featureAccess.aiResumeImportEnabled,
         aiModelName = featureAccess.aiModelName,
@@ -135,6 +145,7 @@ fun MainGraph(
             },
         )
         resumeGraph(
+            onResumeSaved = onResumeSaved,
             navController = navController,
             repository = resumeRepository,
             draftState = resumeDraftState,
@@ -147,6 +158,8 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            notificationsEnabled = notificationsEnabled,
+            onNotificationsEnabledChange = onNotificationsEnabledChange,
             appAppearance = appAppearance,
             onAppearanceSelected = onAppearanceSelected,
             appLanguage = appLanguage,
@@ -168,6 +181,21 @@ fun MainGraph(
                 }
             },
         )
+    }
+
+    LaunchedEffect(openMyCvsRequested, currentBackStackEntry) {
+        val destination = currentBackStackEntry?.destination ?: return@LaunchedEffect
+        val isMainDestination = destination.hierarchy.any {
+            it.hasRoute<HomeRoute.Graph>() || it.hasRoute<ResumeRoute.Graph>() ||
+                it.hasRoute<SettingsRoute.Graph>()
+        }
+        if (openMyCvsRequested && isMainDestination && authSessionViewModel.isAuthenticated()) {
+            navController.navigate(ResumeRoute.Graph) {
+                popUpTo<HomeRoute.Graph>()
+                launchSingleTop = true
+            }
+            onOpenMyCvsHandled()
+        }
     }
 }
 

@@ -1,0 +1,6 @@
+<resources>
+    <string name="notification_saved_channel">Saved resumes</string>
+    <string name="notification_saved_channel_description">Confirmations when you save your resumes</string>
+    <string name="notification_resume_saved_title">Resume saved</string>
+    <string name="notification_resume_saved_body">Your resume was saved successfully. Tap to view your resumes.</string>
+</resources>

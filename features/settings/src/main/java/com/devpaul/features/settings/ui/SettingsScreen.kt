@@ -75,9 +75,10 @@ fun SettingsScreen(
     onLanguageSelected: (AppLanguage) -> Unit,
     appAppearance: AppAppearance,
     onAppearanceSelected: (AppAppearance) -> Unit,
+    notificationsEnabled: Boolean,
+    onNotificationsEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     var autoSaveEnabled by rememberSaveable { mutableStateOf(true) }
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -174,7 +175,7 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_notifications),
                             subtitle = stringResource(R.string.settings_notifications_subtitle),
                             checked = notificationsEnabled,
-                            onCheckedChange = { notificationsEnabled = it },
+                            onCheckedChange = onNotificationsEnabledChange,
                         )
                         SettingsDivider()
                         SettingsSwitchRow(

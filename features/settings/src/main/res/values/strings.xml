@@ -15,7 +15,7 @@
     <string name="settings_appearance_light_subtitle">Usar el tema claro</string>
     <string name="settings_appearance_dark_subtitle">Usar el tema oscuro</string>
     <string name="settings_notifications">Notificaciones</string>
-    <string name="settings_notifications_subtitle">Consejos y recordatorios</string>
+    <string name="settings_notifications_subtitle">Avisos al guardar tus CV</string>
     <string name="settings_autosave">Guardado automático</string>
     <string name="settings_autosave_subtitle">Conserva los cambios del CV</string>
     <string name="settings_account_support">Cuenta y soporte</string>

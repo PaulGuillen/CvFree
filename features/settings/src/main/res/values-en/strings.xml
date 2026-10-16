@@ -15,7 +15,7 @@
     <string name="settings_appearance_light_subtitle">Use the light theme</string>
     <string name="settings_appearance_dark_subtitle">Use the dark theme</string>
     <string name="settings_notifications">Notifications</string>
-    <string name="settings_notifications_subtitle">Tips and reminders</string>
+    <string name="settings_notifications_subtitle">Alerts when you save your resumes</string>
     <string name="settings_autosave">Autosave</string>
     <string name="settings_autosave_subtitle">Keep your resume changes</string>
     <string name="settings_account_support">Account and support</string>

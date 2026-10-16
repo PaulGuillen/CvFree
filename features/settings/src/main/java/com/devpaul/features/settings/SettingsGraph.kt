@@ -22,6 +22,8 @@ fun NavGraphBuilder.settingsGraph(
     onLanguageSelected: (AppLanguage) -> Unit,
     appAppearance: AppAppearance,
     onAppearanceSelected: (AppAppearance) -> Unit,
+    notificationsEnabled: Boolean,
+    onNotificationsEnabledChange: (Boolean) -> Unit,
 ) {
     navigation<SettingsRoute.Graph>(
         startDestination = SettingsRoute.Settings,
@@ -39,6 +41,8 @@ fun NavGraphBuilder.settingsGraph(
                 appLanguage = appLanguage,
                 appAppearance = appAppearance,
                 onAppearanceSelected = onAppearanceSelected,
+                notificationsEnabled = notificationsEnabled,
+                onNotificationsEnabledChange = onNotificationsEnabledChange,
                 onLanguageSelected = onLanguageSelected,
             )
         }

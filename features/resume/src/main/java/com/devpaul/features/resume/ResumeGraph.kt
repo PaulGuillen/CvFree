@@ -38,6 +38,7 @@ fun NavGraphBuilder.resumeGraph(
     importPolicy: ResumeImportPolicy = ResumeImportPolicy(),
     onNavigateToHome: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onResumeSaved: () -> Unit,
 ) {
     fun selectedSections() = draftState.document.optionalSections
 
@@ -254,12 +255,14 @@ fun NavGraphBuilder.resumeGraph(
                 val savedResume = draftState.snapshotForSave()
                 repository.save(savedResume)
                 draftState.load(savedResume)
+                onResumeSaved()
                 navController.popBackStack(ResumeRoute.ResumeList, inclusive = false)
             },
             onExported = {
                 val savedResume = draftState.snapshotForSave()
                 repository.save(savedResume)
                 draftState.load(savedResume)
+                onResumeSaved()
             },
         )
         }
