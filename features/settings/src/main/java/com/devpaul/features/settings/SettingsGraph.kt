@@ -2,15 +2,19 @@ package com.devpaul.features.settings
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.devpaul.features.settings.ui.SettingsScreen
 import com.devpaul.features.settings.ui.HelpCenterScreen
+import com.devpaul.features.settings.ui.RatingViewModel
+import com.devpaul.features.settings.ui.components.RatingDialog
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.navigation.route.SettingsRoute
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.settingsGraph(
     onNavigateToHome: () -> Unit,
@@ -34,6 +38,8 @@ fun NavGraphBuilder.settingsGraph(
         startDestination = SettingsRoute.Settings,
     ) {
         composable<SettingsRoute.Settings> {
+            val ratingViewModel: RatingViewModel = koinViewModel()
+            val ratingState by ratingViewModel.state.collectAsStateWithLifecycle()
             val currentUserName by userName.collectAsState()
             val currentUserEmail by userEmail.collectAsState()
             SettingsScreen(
@@ -52,6 +58,14 @@ fun NavGraphBuilder.settingsGraph(
                 onNotificationsEnabledChange = onNotificationsEnabledChange,
                 onLanguageSelected = onLanguageSelected,
                 onNavigateToHelp = onNavigateToHelp,
+                onRateApp = ratingViewModel::open,
+            )
+            RatingDialog(
+                state = ratingState,
+                onStarsSelected = ratingViewModel::selectStars,
+                onCommentChange = ratingViewModel::updateComment,
+                onSubmit = ratingViewModel::submit,
+                onDismiss = ratingViewModel::dismiss,
             )
         }
         composable<SettingsRoute.HelpCenter> {

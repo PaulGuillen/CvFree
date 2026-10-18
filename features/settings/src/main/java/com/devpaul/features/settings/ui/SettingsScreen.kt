@@ -81,6 +81,7 @@ fun SettingsScreen(
     onAutoSaveEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToHelp: () -> Unit = {},
+    onRateApp: () -> Unit = {},
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -211,7 +212,7 @@ fun SettingsScreen(
                             icon = Icons.Outlined.StarOutline,
                             title = stringResource(R.string.settings_rate),
                             subtitle = stringResource(R.string.settings_rate_subtitle),
-                            onClick = {},
+                            onClick = onRateApp,
                         )
                         SettingsDivider()
                         SettingsLinkRow(
