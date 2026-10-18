@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.devpaul.features.settings.ui.SettingsScreen
 import com.devpaul.features.settings.ui.HelpCenterScreen
+import com.devpaul.features.settings.ui.PrivacyScreen
 import com.devpaul.features.settings.ui.RatingViewModel
 import com.devpaul.features.settings.ui.components.RatingDialog
 import com.devpaul.core.platform.locale.AppLanguage
@@ -32,6 +33,7 @@ fun NavGraphBuilder.settingsGraph(
     autoSaveEnabled: Boolean,
     onAutoSaveEnabledChange: (Boolean) -> Unit,
     onNavigateToHelp: () -> Unit,
+    onNavigateToPrivacy: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
     navigation<SettingsRoute.Graph>(
@@ -59,6 +61,7 @@ fun NavGraphBuilder.settingsGraph(
                 onLanguageSelected = onLanguageSelected,
                 onNavigateToHelp = onNavigateToHelp,
                 onRateApp = ratingViewModel::open,
+                onNavigateToPrivacy = onNavigateToPrivacy,
             )
             RatingDialog(
                 state = ratingState,
@@ -70,6 +73,9 @@ fun NavGraphBuilder.settingsGraph(
         }
         composable<SettingsRoute.HelpCenter> {
             HelpCenterScreen(onBack = onNavigateBack)
+        }
+        composable<SettingsRoute.Privacy> {
+            PrivacyScreen(onBack = onNavigateBack)
         }
     }
 }

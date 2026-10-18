@@ -190,6 +190,11 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            onNavigateToPrivacy = {
+                navController.navigate(SettingsRoute.Privacy) {
+                    launchSingleTop = true
+                }
+            },
             onNavigateToHelp = {
                 navController.navigate(SettingsRoute.HelpCenter) {
                     launchSingleTop = true

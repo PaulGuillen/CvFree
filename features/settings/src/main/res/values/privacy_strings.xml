@@ -1,0 +1,20 @@
+<resources>
+    <string name="privacy_back">Volver a Ajustes</string>
+    <string name="privacy_intro_title">Tu información, con claridad</string>
+    <string name="privacy_intro_body">Conoce qué datos utiliza CV Free, para qué se necesitan y cómo puedes gestionar la información de tu currículum.</string>
+    <string name="privacy_account_title">Datos de tu cuenta</string>
+    <string name="privacy_account_body">Al registrarte, se guardan tu nombre, correo electrónico, identificador de usuario (UID) y fecha de creación del perfil en Firebase. El registro, el inicio de sesión y la recuperación de contraseña se gestionan mediante Firebase Authentication. Estos datos permiten identificar tu cuenta y mostrar tu perfil.</string>
+    <string name="privacy_resume_title">Información de tu currículum</string>
+    <string name="privacy_resume_body">Tú eliges qué información incluir: contacto, experiencia laboral, educación, habilidades, resumen profesional y secciones opcionales. Los CV editables se guardan en el almacenamiento de la aplicación en tu dispositivo. Si activas el guardado automático, se conservan los cambios mientras completas o editas el CV. Incluye datos de otras personas, como referencias, solo si cuentas con su autorización.</string>
+    <string name="privacy_import_title">Importación e inteligencia artificial</string>
+    <string name="privacy_import_body">Al importar un PDF o un documento escaneado, se extrae información para completar tu currículum. Cuando la importación con IA está habilitada y se ejecuta, el texto del documento y los datos del borrador se envían a servicios de Google mediante Firebase AI Logic y Gemini para organizar la información. Ese procesamiento se realiza fuera del dispositivo. Evita incluir información sensible innecesaria y revisa el resultado antes de guardarlo.</string>
+    <string name="privacy_ratings_title">Calificaciones y comentarios</string>
+    <string name="privacy_ratings_body">Si calificas CV Free, se guardan en Cloud Firestore las estrellas elegidas, tu comentario opcional, el UID de tu cuenta, la fecha del servidor y un identificador del envío. Se conserva la última calificación y un historial de opiniones para conocer tu experiencia con la app. El UID también permite limitar los envíos a uno cada 24 horas. Evita escribir datos sensibles en el comentario.</string>
+    <string name="privacy_services_title">Servicios de Google y Firebase</string>
+    <string name="privacy_services_body">CV Free utiliza servicios de Google y Firebase para autenticar usuarios, almacenar perfiles y opiniones, configurar funciones y procesar importaciones con IA. La app también integra Firebase Analytics y SDK de Firebase que pueden tratar eventos de uso, información del dispositivo e identificadores de instalación según su configuración. Estos servicios pueden procesar información fuera de tu país conforme a sus propias condiciones y políticas de privacidad.</string>
+    <string name="privacy_files_title">Archivos y copias de seguridad</string>
+    <string name="privacy_files_body">Los PDF exportados se guardan en la ubicación que eliges con Android. Estos archivos son independientes de los CV editables de la app. Las copias de seguridad y transferencias de Android dependen de la configuración de tu dispositivo. Eliminar un CV de Mis CV no borra sus PDF exportados ni las copias que hayas compartido.</string>
+    <string name="privacy_control_title">Cómo gestionar tu información</string>
+    <string name="privacy_control_body">Puedes editar el nombre de tu perfil desde Ajustes y modificar o eliminar tus currículums desde Mis CV. También puedes cambiar las preferencias de guardado automático y notificaciones. Cerrar sesión no elimina tu cuenta, tu perfil ni tus opiniones guardadas en Firebase. Borrar los datos de la app en Android elimina sus datos locales, pero no elimina automáticamente los datos guardados en Firebase ni los PDF exportados.</string>
+    <string name="privacy_developer">CV Free\nDesarrollado por Paul Guillen Acuña</string>
+</resources>

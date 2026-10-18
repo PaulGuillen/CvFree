@@ -82,6 +82,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onNavigateToHelp: () -> Unit = {},
     onRateApp: () -> Unit = {},
+    onNavigateToPrivacy: () -> Unit = {},
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -219,7 +220,7 @@ fun SettingsScreen(
                             icon = Icons.Outlined.PrivacyTip,
                             title = stringResource(R.string.settings_privacy),
                             subtitle = stringResource(R.string.settings_privacy_subtitle),
-                            onClick = {},
+                            onClick = onNavigateToPrivacy,
                         )
                     }
                 }

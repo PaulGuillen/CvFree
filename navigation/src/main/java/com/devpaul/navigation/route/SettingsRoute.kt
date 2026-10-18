@@ -12,4 +12,7 @@ sealed interface SettingsRoute : AppRoute {
 
     @Serializable
     data object HelpCenter : SettingsRoute, DestinationRoute
+
+    @Serializable
+    data object Privacy : SettingsRoute, DestinationRoute
 }
