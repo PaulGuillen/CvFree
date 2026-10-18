@@ -63,10 +63,8 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun CvFreeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    // Dynamic colors are intentionally ignored so the CV Free palette stays stable.
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     CompositionLocalProvider(LocalAppDarkTheme provides darkTheme) {

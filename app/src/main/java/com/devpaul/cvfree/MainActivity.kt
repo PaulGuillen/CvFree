@@ -112,7 +112,7 @@ class MainActivity : ComponentActivity() {
 
             key(appLanguage) {
                 CompositionLocalProvider(LocalResources provides localizedContext.resources) {
-                    CvFreeTheme(darkTheme = isDarkTheme, dynamicColor = false) {
+                    CvFreeTheme(darkTheme = isDarkTheme) {
                         Surface(color = MaterialTheme.colorScheme.background) {
                             when (updateState) {
                                 UpdateState.Required -> {

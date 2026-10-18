@@ -349,7 +349,6 @@ fun openPlayStore(context: Context) {
 fun ForceUpdatePreview() {
     CvFreeTheme(
         darkTheme = isSystemInDarkTheme(),
-        dynamicColor = false
     ) {
         ForceUpdateScreenDefault()
     }

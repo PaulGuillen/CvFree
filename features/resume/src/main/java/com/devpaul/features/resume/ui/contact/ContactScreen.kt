@@ -2,7 +2,6 @@ package com.devpaul.features.resume.ui.contact
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import com.devpaul.core.platform.analytics.AppAnalytics

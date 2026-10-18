@@ -42,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
@@ -96,7 +95,6 @@ fun SettingsScreen(
     var isChoosingAppearance by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val nameUpdatedMessage = stringResource(R.string.settings_name_updated)
     val updateNameErrorMessage = stringResource(R.string.settings_update_name_error)
     val invalidNameMessage = stringResource(R.string.settings_invalid_name)
