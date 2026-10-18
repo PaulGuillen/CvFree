@@ -17,12 +17,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.cvfree.access.FeatureAccessController
 import com.devpaul.cvfree.access.AccessPlan
+import com.devpaul.cvfree.notifications.NotificationHistoryStore
+import com.devpaul.cvfree.notifications.NotificationHistoryScreen
 import com.devpaul.features.auth.authGraph
 import com.devpaul.features.auth.ui.session.AuthSessionViewModel
 import com.devpaul.features.home.homeGraph
@@ -53,6 +56,7 @@ fun MainGraph(
     autoSaveEnabled: Boolean,
     onAutoSaveEnabledChange: (Boolean) -> Unit,
     onResumeSaved: () -> Unit,
+    notificationHistory: NotificationHistoryStore,
     openMyCvsRequested: Boolean,
     onOpenMyCvsHandled: () -> Unit,
 ) {
@@ -155,6 +159,9 @@ fun MainGraph(
             },
         )
         homeGraph(
+            onNavigateToNotifications = {
+                navController.navigate(HomeRoute.Notifications) { launchSingleTop = true }
+            },
             repository = resumeRepository,
             userName = authSessionViewModel.userName,
             onNavigateToMyCvs = {
@@ -177,6 +184,14 @@ fun MainGraph(
                 navController.navigate(ResumeRoute.SectionSelection)
             },
         )
+        composable<HomeRoute.Notifications> {
+            val entries by notificationHistory.entries.collectAsStateWithLifecycle()
+            NotificationHistoryScreen(
+                entries = entries,
+                onBack = { navController.popBackStack() },
+                onOpenMyCvs = { navController.navigateToMainDestination(ResumeRoute.Graph) },
+            )
+        }
         resumeGraph(
             onResumeSaved = onResumeSaved,
             navController = navController,
@@ -235,7 +250,7 @@ fun MainGraph(
         val destination = currentBackStackEntry?.destination ?: return@LaunchedEffect
         val isMainDestination = destination.hierarchy.any {
             it.hasRoute<HomeRoute.Graph>() || it.hasRoute<ResumeRoute.Graph>() ||
-                it.hasRoute<SettingsRoute.Graph>()
+                it.hasRoute<SettingsRoute.Graph>() || it.hasRoute<HomeRoute.Notifications>()
         }
         if (openMyCvsRequested && isMainDestination && authSessionViewModel.isAuthenticated()) {
             navController.navigate(ResumeRoute.Graph) {

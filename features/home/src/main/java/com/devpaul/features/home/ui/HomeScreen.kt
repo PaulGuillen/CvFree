@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -79,6 +80,7 @@ fun HomeScreen(
     userName: String = "",
     templates: List<ResumeTemplateDefinition> = ResumeTemplateCatalog.templates.take(3),
     recentResume: ResumeDocument? = null,
+    onNavigateToNotifications: () -> Unit = {},
 ) {
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
@@ -111,7 +113,7 @@ fun HomeScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            item { HomeHeader(userName = userName) }
+            item { HomeHeader(userName = userName, onNotifications = onNavigateToNotifications) }
             item { AchievementBanner() }
             item {
                 FeaturedTemplatesSection(
@@ -132,7 +134,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeHeader(userName: String) {
+private fun HomeHeader(userName: String, onNotifications: () -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -163,12 +165,14 @@ private fun HomeHeader(userName: String) {
                 style = MaterialTheme.typography.headlineMedium,
             )
             Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                imageVector = Icons.Outlined.AutoAwesome,
-                contentDescription = null,
-                modifier = Modifier.size(30.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
+            IconButton(onClick = onNotifications) {
+                Icon(
+                    imageVector = Icons.Outlined.Notifications,
+                    contentDescription = stringResource(R.string.home_notifications),
+                    modifier = Modifier.size(30.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(

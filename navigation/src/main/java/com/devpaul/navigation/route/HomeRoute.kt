@@ -11,6 +11,9 @@ sealed interface HomeRoute : AppRoute {
     data object Home : HomeRoute, DestinationRoute
 
     @Serializable
+    data object Notifications : HomeRoute, DestinationRoute
+
+    @Serializable
     data object Templates : HomeRoute, DestinationRoute
 
     @Serializable

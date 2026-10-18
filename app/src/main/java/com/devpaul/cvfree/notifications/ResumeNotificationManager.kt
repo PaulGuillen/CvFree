@@ -19,6 +19,9 @@ import com.devpaul.cvfree.MainActivity
 import com.devpaul.cvfree.R
 
 class ResumeNotificationManager(private val context: Context) {
+    val history = NotificationHistoryStore(
+        context.getSharedPreferences("notification_history", Context.MODE_PRIVATE),
+    )
     private val preferences = context.getSharedPreferences("app_notifications", Context.MODE_PRIVATE)
     private val notifications = NotificationManagerCompat.from(context)
 

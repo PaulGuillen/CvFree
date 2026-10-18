@@ -1,4 +1,5 @@
 <resources>
+    <string name="home_notifications">Notifications</string>
     <string name="home_greeting">Hello.</string>
     <string name="home_greeting_name">Hello, %1$s.</string>
     <string name="home_question">What would you like to achieve today?</string>

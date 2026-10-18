@@ -126,6 +126,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onNotificationsEnabledChange = ::onNotificationsEnabledChange,
                                         onResumeSaved = ::onResumeSaved,
+                                        notificationHistory = resumeNotifications.history,
                                         openMyCvsRequested = openMyCvsRequested,
                                         onOpenMyCvsHandled = {
                                             openMyCvsRequested = false
@@ -199,6 +200,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun onResumeSaved() {
+        resumeNotifications.history.recordResumeSaved()
         if (!resumeNotifications.enabled) return
         if (resumeNotifications.canPostNotifications()) {
             resumeNotifications.showResumeSaved()
