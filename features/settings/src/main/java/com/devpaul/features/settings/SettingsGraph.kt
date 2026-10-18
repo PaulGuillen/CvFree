@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.devpaul.features.settings.ui.SettingsScreen
+import com.devpaul.features.settings.ui.HelpCenterScreen
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.navigation.route.SettingsRoute
@@ -26,6 +27,8 @@ fun NavGraphBuilder.settingsGraph(
     onNotificationsEnabledChange: (Boolean) -> Unit,
     autoSaveEnabled: Boolean,
     onAutoSaveEnabledChange: (Boolean) -> Unit,
+    onNavigateToHelp: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     navigation<SettingsRoute.Graph>(
         startDestination = SettingsRoute.Settings,
@@ -48,7 +51,11 @@ fun NavGraphBuilder.settingsGraph(
                 onAutoSaveEnabledChange = onAutoSaveEnabledChange,
                 onNotificationsEnabledChange = onNotificationsEnabledChange,
                 onLanguageSelected = onLanguageSelected,
+                onNavigateToHelp = onNavigateToHelp,
             )
+        }
+        composable<SettingsRoute.HelpCenter> {
+            HelpCenterScreen(onBack = onNavigateBack)
         }
     }
 }

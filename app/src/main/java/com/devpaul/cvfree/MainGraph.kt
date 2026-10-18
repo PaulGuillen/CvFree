@@ -190,6 +190,12 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            onNavigateToHelp = {
+                navController.navigate(SettingsRoute.HelpCenter) {
+                    launchSingleTop = true
+                }
+            },
+            onNavigateBack = { navController.popBackStack() },
             autoSaveEnabled = autoSaveEnabled,
             onAutoSaveEnabledChange = onAutoSaveEnabledChange,
             notificationsEnabled = notificationsEnabled,

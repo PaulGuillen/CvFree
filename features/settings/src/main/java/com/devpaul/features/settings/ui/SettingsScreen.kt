@@ -80,6 +80,7 @@ fun SettingsScreen(
     autoSaveEnabled: Boolean,
     onAutoSaveEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateToHelp: () -> Unit = {},
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -203,7 +204,7 @@ fun SettingsScreen(
                             icon = Icons.AutoMirrored.Outlined.HelpOutline,
                             title = stringResource(R.string.settings_help),
                             subtitle = stringResource(R.string.settings_help_subtitle),
-                            onClick = {},
+                            onClick = onNavigateToHelp,
                         )
                         SettingsDivider()
                         SettingsLinkRow(
