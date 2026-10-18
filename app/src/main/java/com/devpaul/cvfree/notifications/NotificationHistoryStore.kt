@@ -1,6 +1,7 @@
 package com.devpaul.cvfree.notifications
 
 import android.content.SharedPreferences
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.core.content.edit
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,8 @@ class NotificationHistoryStore(private val preferences: SharedPreferences) {
                 if (id.isNotBlank() && savedAt >= 0) add(SavedResumeNotification(id, savedAt))
             }
         }.sortedByDescending(SavedResumeNotification::savedAt)
-    } catch (_: JSONException) {
+    } catch (error: JSONException) {
+        AppAnalytics.error("load_notification_history", error)
         emptyList()
     }
 }

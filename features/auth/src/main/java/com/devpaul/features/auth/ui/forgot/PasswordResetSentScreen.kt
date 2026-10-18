@@ -1,5 +1,6 @@
 package com.devpaul.features.auth.ui.forgot
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -90,7 +91,7 @@ fun PasswordResetSentScreen(
         Spacer(modifier = Modifier.height(36.dp))
         PrimaryAuthButton(
             text = stringResource(R.string.ui_back_to_home_1afb11),
-            onClick = onBackToLogin,
+            onClick = trackedClick("back_to_login", onBackToLogin),
             modifier = Modifier.widthIn(max = 420.dp),
         )
     }

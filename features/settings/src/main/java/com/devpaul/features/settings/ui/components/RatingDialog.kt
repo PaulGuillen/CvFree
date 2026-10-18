@@ -1,5 +1,8 @@
 package com.devpaul.features.settings.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.core.platform.analytics.TrackAnalyticsView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +47,7 @@ internal fun RatingDialog(
     onDismiss: () -> Unit,
 ) {
     if (state.status == RatingDialogStatus.Closed) return
+    TrackAnalyticsView("rating_dialog")
     val isChecking = state.status == RatingDialogStatus.Checking
     val isSending = state.status == RatingDialogStatus.Sending
     val isBusy = isChecking || isSending
@@ -88,7 +92,10 @@ internal fun RatingDialog(
                                             selected = state.stars == stars,
                                             enabled = !isSending,
                                             role = Role.RadioButton,
-                                            onClick = { onStarsSelected(stars) },
+                                            onClick = trackedClick("select_rating") {
+                                                AppAnalytics.selection("rating_stars", stars.toString())
+                                                onStarsSelected(stars)
+                                            },
                                         ),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -131,9 +138,9 @@ internal fun RatingDialog(
         },
         confirmButton = {
             if (isNotice) {
-                TextButton(onClick = onDismiss) { Text(stringResource(R.string.rating_ok)) }
+                TextButton(onClick = trackedClick("close_rating", onDismiss)) { Text(stringResource(R.string.rating_ok)) }
             } else if (!isChecking) {
-                Button(onClick = onSubmit, enabled = !isSending && state.stars in 1..5) {
+                Button(onClick = trackedClick("submit_rating", onSubmit), enabled = !isSending && state.stars in 1..5) {
                     if (isSending) {
                         CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -144,7 +151,7 @@ internal fun RatingDialog(
         },
         dismissButton = {
             if (!isNotice && !isChecking) {
-                TextButton(onClick = onDismiss, enabled = !isSending) {
+                TextButton(onClick = trackedClick("cancel_rating", onDismiss), enabled = !isSending) {
                     Text(stringResource(R.string.settings_cancel))
                 }
             }

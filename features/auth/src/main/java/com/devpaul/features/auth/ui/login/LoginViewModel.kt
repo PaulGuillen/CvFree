@@ -1,6 +1,7 @@
 package com.devpaul.features.auth.ui.login
 
 import com.devpaul.core.domain.result.UseCaseResult
+import com.devpaul.core.platform.analytics.AppAnalytics
 import com.devpaul.core.platform.lifecycle.StatefulViewModel
 import com.devpaul.features.auth.domain.exception.AuthFailure
 import com.devpaul.features.auth.domain.exception.AuthFailureType
@@ -26,6 +27,7 @@ class LoginViewModel(
         updateUiState { it.copy(isLoading = true, errorMessage = null) }
         when (val result = signInUseCase(email, password)) {
             is UseCaseResult.Success -> {
+                AppAnalytics.outcome("login", "success")
                 updateUiState { LoginUiState() }
                 emitUiEvent(LoginUiEvent.Authenticated)
             }
@@ -35,6 +37,7 @@ class LoginViewModel(
     }
 
     private suspend fun handleError(failure: AuthFailure) {
+        AppAnalytics.error("login", code = failure.error.name.lowercase())
         val message = failure.error.toMessageResource()
         updateUiState {
             it.copy(

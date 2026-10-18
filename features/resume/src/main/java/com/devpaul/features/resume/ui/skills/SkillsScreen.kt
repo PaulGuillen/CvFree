@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.skills
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
@@ -75,6 +77,7 @@ fun SkillsScreen(
             skills.any { it.equals(skill, ignoreCase = true) } -> duplicateSkillError
             else -> null
         }
+        if (inputError != null) AppAnalytics.error("validate_skill", code = "invalid_or_duplicate_skill")
         return if (inputError == null) listOf(skill) + skills else null
     }
 
@@ -132,7 +135,7 @@ fun SkillsScreen(
                 )
                 Spacer(Modifier.width(8.dp))
                 Button(
-                    onClick = ::addPendingSkill,
+                    onClick = trackedClick("add_skill", ::addPendingSkill),
                     modifier = Modifier.height(48.dp),
                     shape = RoundedCornerShape(8.dp),
                 ) {
@@ -178,7 +181,7 @@ fun SkillsScreen(
 @Composable
 private fun SelectedSkillChip(label: String, onRemove: () -> Unit) {
     Surface(
-        onClick = onRemove,
+        onClick = trackedClick("remove_skill", onRemove),
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
@@ -201,7 +204,7 @@ private fun SelectedSkillChip(label: String, onRemove: () -> Unit) {
 @Composable
 private fun SuggestedSkillChip(label: String, onAdd: () -> Unit) {
     Surface(
-        onClick = onAdd,
+        onClick = trackedClick("add_suggested_skill", onAdd),
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentColor = MaterialTheme.colorScheme.onSurface,

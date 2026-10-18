@@ -1,5 +1,8 @@
 package com.devpaul.features.resume.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.core.platform.analytics.TrackAnalyticsView
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -127,7 +130,7 @@ fun MyCvsScreen(
                     uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION,
                 )
-            }
+            }.onFailure { AppAnalytics.error("persist_import_permission", it) }
             onImportPdf(uri)
         }
     }
@@ -152,6 +155,7 @@ fun MyCvsScreen(
             if (scannedPdf != null) {
                 onImportPdf(scannedPdf)
             } else {
+                AppAnalytics.error("scan_resume", code = "missing_pdf")
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(scannedPdfError)
                 }
@@ -162,6 +166,7 @@ fun MyCvsScreen(
     fun launchScanner() {
         val hostActivity = activity
         if (hostActivity == null) {
+            AppAnalytics.error("scan_resume", code = "missing_activity")
             coroutineScope.launch {
                 snackbarHostState.showSnackbar(scannerUnavailableError)
             }
@@ -171,7 +176,8 @@ fun MyCvsScreen(
             .addOnSuccessListener { intentSender ->
                 scannerLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
             }
-            .addOnFailureListener {
+            .addOnFailureListener { error ->
+                AppAnalytics.error("open_document_scanner", error)
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(scannerOpenError)
                 }
@@ -223,7 +229,7 @@ fun MyCvsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showCreateOptions = true },
+                onClick = trackedClick("open_create_options") { showCreateOptions = true },
                 modifier = Modifier.size(64.dp),
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -280,7 +286,10 @@ fun MyCvsScreen(
                         FilterChip(
                             filter = filter,
                             selected = filter == selectedFilter,
-                            onClick = { selectedFilterName = filter.name },
+                            onClick = trackedClick("filter_resumes") {
+                                AppAnalytics.selection("resume_filter", filter.name.lowercase())
+                                selectedFilterName = filter.name
+                            },
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -313,6 +322,7 @@ fun MyCvsScreen(
     }
 
     if (showCreateOptions) {
+        TrackAnalyticsView("create_resume_sheet")
         ModalBottomSheet(onDismissRequest = { showCreateOptions = false }) {
             Column(
                 modifier = Modifier
@@ -335,7 +345,7 @@ fun MyCvsScreen(
                     icon = Icons.Outlined.EditNote,
                     title = stringResource(R.string.ui_start_from_scratch_fad4a9),
                     description = stringResource(R.string.ui_complete_each_section_step_by_step_af5b50),
-                    onClick = {
+                    onClick = trackedClick("create_resume") {
                         showCreateOptions = false
                         onCreateCv()
                     },
@@ -348,7 +358,7 @@ fun MyCvsScreen(
                     icon = Icons.Outlined.DocumentScanner,
                     title = stringResource(R.string.ui_scan_document_c873c8),
                     description = stringResource(R.string.ui_capture_crop_and_enhance_multiple_pages_automatically_5952c0),
-                    onClick = { requestImport(ImportAction.Scan) },
+                    onClick = trackedClick("scan_resume") { requestImport(ImportAction.Scan) },
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -362,15 +372,16 @@ fun MyCvsScreen(
                     } else {
                         stringResource(R.string.ui_extract_and_organize_the_content_directly_on_the_device_1ea11b)
                     },
-                    onClick = { requestImport(ImportAction.Pdf) },
+                    onClick = trackedClick("import_pdf") { requestImport(ImportAction.Pdf) },
                 )
             }
         }
     }
 
     pendingImportAction?.let { action ->
+        TrackAnalyticsView("ai_import_confirmation")
         AlertDialog(
-            onDismissRequest = { pendingImportAction = null },
+            onDismissRequest = trackedClick("dismiss_ai_import") { pendingImportAction = null },
             title = { Text(stringResource(R.string.ui_smart_processing_a52050)) },
             text = {
                 Text(
@@ -379,7 +390,7 @@ fun MyCvsScreen(
             },
             confirmButton = {
                 TextButton(
-                    onClick = {
+                    onClick = trackedClick("confirm_ai_import") {
                         pendingImportAction = null
                         launchImport(action)
                     },
@@ -388,7 +399,7 @@ fun MyCvsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { pendingImportAction = null }) {
+                TextButton(onClick = trackedClick("cancel_ai_import") { pendingImportAction = null }) {
                     Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
@@ -396,8 +407,9 @@ fun MyCvsScreen(
     }
 
     pendingDelete?.let { resume ->
+        TrackAnalyticsView("delete_resume_dialog")
         AlertDialog(
-            onDismissRequest = { pendingDelete = null },
+            onDismissRequest = trackedClick("dismiss_delete_resume") { pendingDelete = null },
             title = { Text(stringResource(R.string.ui_delete_resume_daf230)) },
             text = {
                 Text(
@@ -406,7 +418,7 @@ fun MyCvsScreen(
             },
             confirmButton = {
                 TextButton(
-                    onClick = {
+                    onClick = trackedClick("confirm_delete_resume") {
                         pendingDelete = null
                         onDeleteResume(resume)
                     },
@@ -416,7 +428,7 @@ fun MyCvsScreen(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) {
+                TextButton(onClick = trackedClick("cancel_delete_resume") { pendingDelete = null }) {
                     Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
@@ -541,7 +553,7 @@ private fun ResumeCard(
                     }
                 }
                 Box {
-                    IconButton(onClick = { showActionsMenu = true }) {
+                    IconButton(onClick = trackedClick("open_resume_menu") { showActionsMenu = true }) {
                         Icon(
                             imageVector = Icons.Outlined.MoreVert,
                             contentDescription = stringResource(R.string.resume_more_options, resume.displayName),
@@ -560,7 +572,7 @@ private fun ResumeCard(
                                     tint = MaterialTheme.colorScheme.error,
                                 )
                             },
-                            onClick = {
+                            onClick = trackedClick("delete_resume") {
                                 showActionsMenu = false
                                 onDelete()
                             },
@@ -576,7 +588,7 @@ private fun ResumeCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Button(
-                    onClick = onEdit,
+                    onClick = trackedClick("edit_resume", onEdit),
                     modifier = Modifier
                         .weight(1f)
                         .height(46.dp),
@@ -588,7 +600,7 @@ private fun ResumeCard(
                     Text(stringResource(R.string.ui_edit_2b5f23))
                 }
                 FilledTonalButton(
-                    onClick = onView,
+                    onClick = trackedClick("view_resume", onView),
                     modifier = Modifier
                         .weight(1f)
                         .height(46.dp),

@@ -20,6 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.devpaul.core.domain.resume.ResumeRepository
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.cvfree.analytics.analyticsScreenName
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.cvfree.access.FeatureAccessController
@@ -91,6 +93,9 @@ fun MainGraph(
         }
     }
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    LaunchedEffect(currentBackStackEntry) {
+        currentBackStackEntry?.destination?.analyticsScreenName()?.let(AppAnalytics::screenView)
+    }
     val resumeImportPolicy = ResumeImportPolicy(
         aiEnhancementEnabled = featureAccess.aiResumeImportEnabled,
         aiModelName = featureAccess.aiModelName,

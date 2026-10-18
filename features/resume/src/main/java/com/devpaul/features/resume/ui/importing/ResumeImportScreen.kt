@@ -1,6 +1,8 @@
 package com.devpaul.features.resume.ui.importing
 
+import com.devpaul.core.platform.analytics.trackedClick
 import android.net.Uri
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -92,15 +94,20 @@ fun ResumeImportScreen(
         errorMessage = null
         progress = 0
         stage = ResumeImportStage.Preparing
+        AppAnalytics.outcome("import_resume", "started")
         try {
             ResumePdfImporter.import(context, documentUri, importPolicy) { nextProgress, nextStage ->
                 progress = nextProgress
                 stage = nextStage
             }
-                .also(onComplete)
+                .also {
+                    AppAnalytics.outcome("import_resume", "success")
+                    onComplete(it)
+                }
         } catch (error: CancellationException) {
             throw error
         } catch (error: Exception) {
+            AppAnalytics.error("import_resume", error)
             errorMessage = (error as? ResumeImportException)?.messageRes ?: R.string.ui_we_couldn_t_analyze_this_pdf_bac5b0
         }
     }
@@ -113,7 +120,7 @@ fun ResumeImportScreen(
             .navigationBarsPadding(),
     ) {
         IconButton(
-            onClick = onBack,
+            onClick = trackedClick("cancel_import", onBack),
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(8.dp),
@@ -290,10 +297,10 @@ private fun ImportErrorContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = trackedClick("back", onBack), modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.ui_back_84a715))
             }
-            Button(onClick = onRetry, modifier = Modifier.weight(1f)) {
+            Button(onClick = trackedClick("retry_import", onRetry), modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.ui_try_again_adec7b))
             }
         }

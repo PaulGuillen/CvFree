@@ -1,5 +1,6 @@
 package com.devpaul.features.settings.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,7 +85,7 @@ internal fun ProfileCard(
                 AccountPlanBadge(isPremium = isPremium)
             }
             OutlinedButton(
-                onClick = onEdit,
+                onClick = trackedClick("edit_profile_name", onEdit),
                 contentPadding = PaddingValues(horizontal = 14.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             ) {

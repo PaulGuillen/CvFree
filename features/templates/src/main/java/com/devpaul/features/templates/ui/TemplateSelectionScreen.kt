@@ -1,5 +1,7 @@
 package com.devpaul.features.templates.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -108,14 +110,17 @@ fun TemplateSelectionScreen(
                     TemplateOption(
                         template = template,
                         selected = template.id == selectedId,
-                        onClick = { selectedId = template.id },
+                        onClick = trackedClick("select_template") {
+                            AppAnalytics.selection("resume_template", template.id)
+                            selectedId = template.id
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
         }
         Button(
-            onClick = { onContinue(selectedId) },
+            onClick = trackedClick("continue") { onContinue(selectedId) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -452,7 +457,7 @@ private fun TemplateTopBar(onBack: () -> Unit) {
             .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onBack) {
+        IconButton(onClick = trackedClick("back", onBack)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = stringResource(R.string.ui_back_84a715),

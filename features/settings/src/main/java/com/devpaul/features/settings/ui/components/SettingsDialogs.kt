@@ -1,5 +1,6 @@
 package com.devpaul.features.settings.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +50,7 @@ internal fun EditNameDialog(
             )
         },
         confirmButton = {
-            Button(onClick = onSave, enabled = !isSaving) {
+            Button(onClick = trackedClick("save_profile_name", onSave), enabled = !isSaving) {
                 if (isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(8.dp))
@@ -62,7 +63,7 @@ internal fun EditNameDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !isSaving) {
+            TextButton(onClick = trackedClick("cancel_profile_name", onDismiss), enabled = !isSaving) {
                 Text(stringResource(R.string.settings_cancel))
             }
         },
@@ -82,7 +83,7 @@ internal fun LanguageSelectionDialog(
             Column {
                 AppLanguage.entries.forEach { language ->
                     Surface(
-                        onClick = { onLanguageSelected(language) },
+                        onClick = trackedClick("select_language") { onLanguageSelected(language) },
                         color = MaterialTheme.colorScheme.surface,
                     ) {
                         Row(
@@ -93,7 +94,7 @@ internal fun LanguageSelectionDialog(
                         ) {
                             RadioButton(
                                 selected = language == selectedLanguage,
-                                onClick = { onLanguageSelected(language) },
+                                onClick = trackedClick("select_language") { onLanguageSelected(language) },
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(language.labelRes()), style = MaterialTheme.typography.bodyLarge)

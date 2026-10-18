@@ -1,5 +1,6 @@
 package com.devpaul.features.auth.ui.forgot
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +72,7 @@ fun ForgotPasswordScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 16.dp),
         ) {
-            IconButton(onClick = onNavigateBack) {
+            IconButton(onClick = trackedClick("back", onNavigateBack)) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = stringResource(R.string.ui_back_84a715),
@@ -113,7 +114,7 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     PrimaryAuthButton(
                         text = stringResource(R.string.ui_send_a91a95),
-                        onClick = { onSend(email.trim()) },
+                        onClick = trackedClick("send_password_reset") { onSend(email.trim()) },
                         isLoading = uiState.isLoading,
                     )
                 }

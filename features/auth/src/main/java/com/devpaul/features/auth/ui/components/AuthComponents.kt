@@ -1,5 +1,6 @@
 package com.devpaul.features.auth.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -137,7 +138,7 @@ fun AuthTextField(
             },
             trailingIcon = if (isPassword) {
                 {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(onClick = trackedClick("toggle_password_visibility") { passwordVisible = !passwordVisible }) {
                         Icon(
                             imageVector = if (passwordVisible) {
                                 Icons.Outlined.VisibilityOff

@@ -1,6 +1,7 @@
 package com.devpaul.features.resume.importing
 
 import com.devpaul.features.resume.R
+import com.devpaul.core.platform.analytics.AppAnalytics
 
 import android.content.Context
 import android.net.Uri
@@ -56,7 +57,8 @@ internal object ResumePdfImporter {
                 ResumeAiExtractor.enhance(content, document, policy.aiModelName)
             } catch (error: CancellationException) {
                 throw error
-            } catch (_: Exception) {
+            } catch (error: Exception) {
+                AppAnalytics.error("ai_resume_extraction", error)
                 null
             }
         } else {

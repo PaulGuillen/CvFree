@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.links
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -95,7 +97,10 @@ fun LinksScreen(
     fun saveEditor(): Boolean {
         showErrors = true
         val duplicate = links.any { it.id != editingId && it.url.equals(url.trim(), ignoreCase = true) }
-        if (linkName.isBlank() || !url.isValidWebUrl() || duplicate) return false
+        if (linkName.isBlank() || !url.isValidWebUrl() || duplicate) {
+            AppAnalytics.error("validate_link", code = if (duplicate) "duplicate_link" else "invalid_fields")
+            return false
+        }
 
         val currentId = editingId
         val value = ResumeLink(
@@ -220,7 +225,7 @@ private fun LinkEditor(
         LinkPreset.entries.forEach { preset ->
             val presetName = stringResource(preset.label)
             OutlinedButton(
-                onClick = { onPreset(presetName, preset.url) },
+                onClick = trackedClick("select_link_preset") { onPreset(presetName, preset.url) },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
             ) {

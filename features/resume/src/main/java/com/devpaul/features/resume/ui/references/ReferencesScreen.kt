@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -96,7 +97,10 @@ fun ReferencesScreen(
 
     fun saveEditor(): Boolean {
         showErrors = true
-        if (name.isBlank() || (phone.isBlank() && email.isBlank()) || !email.isValidEmailOrBlank()) return false
+        if (name.isBlank() || (phone.isBlank() && email.isBlank()) || !email.isValidEmailOrBlank()) {
+            AppAnalytics.error("validate_reference", code = "invalid_fields")
+            return false
+        }
 
         val currentId = editingId
         val value = ResumeReference(

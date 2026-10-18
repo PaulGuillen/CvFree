@@ -1,5 +1,6 @@
 package com.devpaul.core.designsystem.component
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,7 +87,7 @@ fun CvBottomNavigation(
             bottomNavigationItems.forEach { item ->
                 val selected = item.destination == selectedDestination
                 Surface(
-                    onClick = { onDestinationSelected(item.destination) },
+                    onClick = trackedClick("navigate_${item.destination.name.lowercase()}") { onDestinationSelected(item.destination) },
                     modifier = Modifier
                         .weight(1f)
                         .height(64.dp)

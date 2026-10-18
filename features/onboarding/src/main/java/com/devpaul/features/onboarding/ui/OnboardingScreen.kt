@@ -1,5 +1,8 @@
 package com.devpaul.features.onboarding.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,6 +64,9 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
     val coroutineScope = rememberCoroutineScope()
     val background = MaterialTheme.colorScheme.background
+    LaunchedEffect(pagerState.settledPage) {
+        AppAnalytics.selection("onboarding_page", pagerState.settledPage.toString())
+    }
 
     SetStatusBarColor(color = background, darkIcons = background.luminance() > 0.5f)
 
@@ -72,7 +78,7 @@ fun OnboardingScreen(
             .navigationBarsPadding(),
     ) {
         TextButton(
-            onClick = onFinished,
+            onClick = trackedClick("skip_onboarding", onFinished),
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(horizontal = 16.dp, vertical = 4.dp),
@@ -116,7 +122,7 @@ fun OnboardingScreen(
         }
 
         Button(
-            onClick = {
+            onClick = trackedClick("next_onboarding") {
                 if (pagerState.currentPage == onboardingPages.lastIndex) {
                     onFinished()
                 } else {

@@ -1,6 +1,7 @@
 package com.devpaul.features.resume
 
 import androidx.compose.runtime.Stable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,7 +27,8 @@ import kotlinx.serialization.json.Json
 class ResumeDraftState(private val savedStateHandle: SavedStateHandle = SavedStateHandle()) : ViewModel() {
     var document by mutableStateOf(
         savedStateHandle.get<String>(DRAFT_KEY)?.let { saved ->
-            runCatching { Json.decodeFromString<ResumeDocument>(saved) }.getOrNull()
+            runCatching { Json.decodeFromString<ResumeDocument>(saved) }
+                .onFailure { AppAnalytics.error("restore_resume_draft", it) }.getOrNull()
         } ?: defaultResume(),
     )
         private set
@@ -74,6 +76,7 @@ class ResumeDraftState(private val savedStateHandle: SavedStateHandle = SavedSta
     suspend fun save(): ResumeDocument {
         val snapshot = snapshotForSave()
         checkNotNull(autoSaver).save(snapshot)
+        AppAnalytics.outcome("save_resume", "success")
         document = editingDocument.copy(id = snapshot.id, updatedAt = snapshot.updatedAt)
         pendingEdits = emptyMap()
         hasChanges = false

@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.languages
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -106,7 +108,10 @@ fun LanguagesScreen(
         val duplicate = selectedLanguages.any {
             it.id != editingId && sameLanguage(it.language, selectedLanguage)
         }
-        if (duplicate) return false
+        if (duplicate) {
+            AppAnalytics.error("validate_language", code = "duplicate_language")
+            return false
+        }
 
         val currentId = editingId
         val value = ResumeLanguage(
@@ -244,7 +249,7 @@ private fun LanguageEditor(
     Spacer(Modifier.height(8.dp))
     Box(modifier = Modifier.fillMaxWidth()) {
         Surface(
-            onClick = { menuExpanded = true },
+            onClick = trackedClick("open_language_options") { menuExpanded = true },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp),
             color = MaterialTheme.colorScheme.surface,
@@ -265,7 +270,7 @@ private fun LanguageEditor(
             availableLanguages.forEach { language ->
                 DropdownMenuItem(
                     text = { Text(languageLabel(language)) },
-                    onClick = {
+                    onClick = trackedClick("select_language") {
                         onLanguageChange(language)
                         menuExpanded = false
                     },
@@ -292,7 +297,7 @@ private fun LanguageEditor(
                 rowLevels.forEach { level ->
                     val selected = sameProficiency(level, selectedLevel)
                     Surface(
-                        onClick = { onLevelChange(level) },
+                        onClick = trackedClick("select_language_level") { onLevelChange(level) },
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(8.dp),
                         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,

@@ -1,5 +1,7 @@
 package com.devpaul.features.home.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -69,7 +71,7 @@ fun AllTemplatesScreen(
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = onBack) {
+                IconButton(onClick = trackedClick("back", onBack)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = stringResource(R.string.ui_back_84a715),
@@ -93,7 +95,10 @@ fun AllTemplatesScreen(
             items(templates, key = ResumeTemplateDefinition::id) { template ->
                 AllTemplateCard(
                     template = template,
-                    onClick = { onPreviewTemplate(template.id) },
+                    onClick = trackedClick("preview_template") {
+                        AppAnalytics.selection("preview_template", template.id)
+                        onPreviewTemplate(template.id)
+                    },
                 )
             }
         }

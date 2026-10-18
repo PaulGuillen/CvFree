@@ -1,6 +1,7 @@
 package com.devpaul.features.resume
 
 import com.devpaul.core.domain.resume.ResumeDocument
+import com.devpaul.core.platform.analytics.AppAnalytics
 import com.devpaul.core.domain.resume.ResumeRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -43,6 +44,7 @@ internal class ResumeAutoSaver(
                         }
                         is Delete -> {
                             repository.delete(operation.resumeId)
+                            AppAnalytics.outcome("delete_resume", "success")
                             operation.completion.complete(Unit)
                         }
                     }
@@ -50,6 +52,11 @@ internal class ResumeAutoSaver(
                     operation.completion?.cancel(error)
                     throw error
                 } catch (error: Exception) {
+                    val action = when (operation) {
+                        is Save -> if (operation.completion == null) "auto_save_resume" else "save_resume"
+                        is Delete -> "delete_resume"
+                    }
+                    AppAnalytics.error(action, error)
                     operation.completion?.completeExceptionally(error) ?: onAutoSaveError()
                 }
             }

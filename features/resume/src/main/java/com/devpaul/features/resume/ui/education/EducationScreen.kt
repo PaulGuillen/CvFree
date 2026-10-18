@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -103,6 +104,7 @@ fun EducationScreen(
         if (institution.isBlank() || degree.isBlank() ||
             !startYear.isValidYearOrBlank() || !endYear.isValidYearOrBlank()
         ) {
+            AppAnalytics.error("validate_education", code = "invalid_fields")
             return false
         }
         val currentId = editingId

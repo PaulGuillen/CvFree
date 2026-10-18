@@ -1,6 +1,7 @@
 package com.devpaul.cvfree.notifications
 
 import android.Manifest
+import com.devpaul.core.platform.analytics.AppAnalytics
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -85,7 +86,9 @@ class ResumeNotificationManager(private val context: Context) {
             .build()
         try {
             notifications.notify(SAVED_NOTIFICATION_ID, notification)
-        } catch (_: SecurityException) {
+            AppAnalytics.outcome("saved_notification", "posted")
+        } catch (error: SecurityException) {
+            AppAnalytics.error("saved_notification", error)
             return
         }
     }

@@ -1,6 +1,7 @@
 package com.devpaul.features.auth.ui.forgot
 
 import com.devpaul.core.domain.result.UseCaseResult
+import com.devpaul.core.platform.analytics.AppAnalytics
 import com.devpaul.core.platform.lifecycle.StatefulViewModel
 import com.devpaul.features.auth.domain.exception.AuthFailure
 import com.devpaul.features.auth.domain.exception.AuthFailureType
@@ -28,6 +29,7 @@ class ForgotPasswordViewModel(
         updateUiState { it.copy(isLoading = true, errorMessage = null) }
         when (val result = sendPasswordResetUseCase(email)) {
             is UseCaseResult.Success -> {
+                AppAnalytics.outcome("password_reset", "success")
                 updateUiState { ForgotPasswordUiState() }
                 emitUiEvent(ForgotPasswordUiEvent.PasswordResetSent(email))
             }
@@ -37,6 +39,7 @@ class ForgotPasswordViewModel(
     }
 
     private suspend fun handleError(failure: AuthFailure) {
+        AppAnalytics.error("password_reset", code = failure.error.name.lowercase())
         val message = failure.error.toMessageResource()
         updateUiState {
             it.copy(

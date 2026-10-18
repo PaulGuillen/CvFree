@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +56,7 @@ fun ContactScreen(
         showErrors = true
         val valid = name.isNotBlank() && professionalTitle.isNotBlank() &&
             (email.isNotBlank() || phone.isNotBlank()) && email.isValidEmailOrBlank()
+        if (!valid) AppAnalytics.error("validate_contact", code = "invalid_fields")
         if (valid) {
             onContinue(
                 ResumeContact(

@@ -1,6 +1,8 @@
 package com.devpaul.cvfree
 
 import android.app.Application
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.cvfree.analytics.FirebaseAnalyticsReporter
 import com.devpaul.core.platform.log.TimberFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -11,9 +13,10 @@ class AndroidApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        timberInitializer()
+        AppAnalytics.initialize(FirebaseAnalyticsReporter(this))
         AppCheckProviderInstaller.install(this)
         koinInitializer()
-        timberInitializer()
     }
 
     private fun koinInitializer() = startKoin {

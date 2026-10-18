@@ -1,5 +1,6 @@
 package com.devpaul.features.resume.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -122,7 +123,7 @@ fun BuilderTopBar(
             .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onBack) {
+        IconButton(onClick = trackedClick("back", onBack)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = stringResource(R.string.ui_back_84a715),
@@ -257,7 +258,7 @@ fun BuilderPrimaryButton(
     enabled: Boolean = true,
 ) {
     Button(
-        onClick = onClick,
+        onClick = trackedClick("continue", onClick),
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
@@ -280,7 +281,7 @@ fun BuilderAddButton(
     enabled: Boolean = true,
 ) {
     OutlinedButton(
-        onClick = onClick,
+        onClick = trackedClick("add_entry", onClick),
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()

@@ -1,6 +1,7 @@
 plugins {
     id("plugin.application")
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -54,6 +55,7 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.config)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.androidx.lifecycle.runtime.compose)
     debugImplementation(libs.firebase.appcheck.debug)
 }

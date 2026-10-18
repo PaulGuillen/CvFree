@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.TrackAnalyticsView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
@@ -71,7 +73,7 @@ fun BuilderSavedEntryCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onEdit)
+                    .clickable(onClick = trackedClick("edit_entry", onEdit))
                     .padding(start = 16.dp, top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -102,13 +104,13 @@ fun BuilderSavedEntryCard(
                         )
                     }
                 }
-                IconButton(onClick = onEdit) {
+                IconButton(onClick = trackedClick("edit_entry", onEdit)) {
                     Icon(
                         imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.Edit,
                         contentDescription = (if (expanded) stringResource(R.string.ui_collapse_29bd1f) else stringResource(R.string.ui_edit_2b5f23)),
                     )
                 }
-                IconButton(onClick = { deleteConfirmationVisible = true }) {
+                IconButton(onClick = trackedClick("request_delete_entry") { deleteConfirmationVisible = true }) {
                     Icon(
                         imageVector = Icons.Outlined.DeleteOutline,
                         contentDescription = stringResource(R.string.ui_delete_54e140),
@@ -126,13 +128,14 @@ fun BuilderSavedEntryCard(
     }
 
     if (deleteConfirmationVisible) {
+        TrackAnalyticsView("delete_entry_dialog")
         AlertDialog(
             onDismissRequest = { deleteConfirmationVisible = false },
             title = { Text(stringResource(R.string.ui_delete_this_item_a1cd1e)) },
             text = { Text(stringResource(R.string.ui_this_action_will_remove_the_item_from_the_resume_38cf20)) },
             confirmButton = {
                 TextButton(
-                    onClick = {
+                    onClick = trackedClick("confirm_delete_entry") {
                         deleteConfirmationVisible = false
                         onDelete()
                     },
@@ -141,7 +144,7 @@ fun BuilderSavedEntryCard(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { deleteConfirmationVisible = false }) {
+                TextButton(onClick = trackedClick("cancel_delete_entry") { deleteConfirmationVisible = false }) {
                     Text(stringResource(R.string.ui_cancel_c111e0))
                 }
             },
@@ -193,11 +196,11 @@ fun BuilderEditorActions(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        OutlinedButton(onClick = onCancel) {
+        OutlinedButton(onClick = trackedClick("cancel_entry", onCancel)) {
             Text(stringResource(R.string.ui_cancel_c111e0))
         }
         Spacer(Modifier.width(10.dp))
-        Button(onClick = onSave, enabled = saveEnabled) {
+        Button(onClick = trackedClick("save_entry", onSave), enabled = saveEnabled) {
             Text(stringResource(R.string.ui_save_a0b626))
         }
     }

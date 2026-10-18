@@ -1,6 +1,7 @@
 package com.devpaul.core.data.resume
 
 import android.content.Context
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -42,7 +43,10 @@ class DataStoreResumeRepository(
 
     override val resumes: Flow<List<ResumeDocument>> = context.resumeDataStore.data
         .map { preferences -> decode(preferences[resumesKey]) }
-        .catch { emit(emptyList()) }
+        .catch {
+            AppAnalytics.error("load_resumes", it)
+            emit(emptyList())
+        }
 
     override suspend fun save(resume: ResumeDocument) {
         context.resumeDataStore.edit { preferences ->
@@ -65,7 +69,7 @@ class DataStoreResumeRepository(
         } else {
             runCatching {
                 json.decodeFromString<List<StoredResume>>(value).map(StoredResume::toDomain)
-            }.getOrDefault(emptyList())
+            }.onFailure { AppAnalytics.error("decode_resumes", it) }.getOrDefault(emptyList())
         }
 }
 

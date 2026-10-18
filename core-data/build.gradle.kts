@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(project(":core-domain"))
+    implementation(project(":core-platform"))
     implementation(project(":session"))
     implementation(libs.kotlinx.serialization.json)
     retrofitImplementation()

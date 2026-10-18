@@ -1,6 +1,8 @@
 package com.devpaul.features.templates.ui
 
-import android.util.Log
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
+import timber.log.Timber
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -98,12 +100,14 @@ fun ResumePreviewScreen(
             pendingPreview = null
             isExporting = false
             if (exportResult.isSuccess) {
+                AppAnalytics.outcome("export_pdf", "success")
                 runCatching { onExported() }
-                    .onFailure { error -> Log.e("ResumePreview", resumeSaveError, error) }
+                    .onFailure { error -> Timber.tag("ResumePreview").e(error, "%s", resumeSaveError) }
                 snackbarHostState.showSnackbar(pdfSavedMessage)
             } else {
                 val error = exportResult.exceptionOrNull()
-                Log.e("ResumePreview", pdfGenerationError, error)
+                AppAnalytics.error("export_pdf", error)
+                Timber.tag("ResumePreview").e(error, "%s", pdfGenerationError)
                 snackbarHostState.showSnackbar(pdfGenerationError)
             }
         }
@@ -145,7 +149,7 @@ fun ResumePreviewScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 OutlinedButton(
-                    onClick = {
+                    onClick = trackedClick("download_pdf") {
                         isExporting = true
                         scope.launch {
                             runCatching {
@@ -157,7 +161,8 @@ fun ResumePreviewScreen(
                                 createPdf.launch(ResumePdfExporter.suggestedFileName(resume))
                             }.onFailure { error ->
                                 isExporting = false
-                                Log.e("ResumePreview", previewCaptureError, error)
+                                AppAnalytics.error("capture_resume_preview", error)
+                                Timber.tag("ResumePreview").e(error, "%s", previewCaptureError)
                                 snackbarHostState.showSnackbar(previewCaptureError)
                             }
                         }
@@ -177,12 +182,12 @@ fun ResumePreviewScreen(
                     Text(if (isExporting) stringResource(R.string.ui_generating_55c32a) else stringResource(R.string.ui_download_pdf_40863e))
                 }
                 Button(
-                    onClick = {
+                    onClick = trackedClick("save_resume") {
                         isSaving = true
                         scope.launch {
                             runCatching { onSave() }
                                 .onFailure { error ->
-                                    Log.e("ResumePreview", resumeSaveError, error)
+                                    Timber.tag("ResumePreview").e(error, "%s", resumeSaveError)
                                     snackbarHostState.showSnackbar(resumeSaveError)
                                 }
                             isSaving = false
@@ -316,7 +321,7 @@ private fun PreviewTopBar(
             .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onBack) {
+        IconButton(onClick = trackedClick("back", onBack)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = stringResource(R.string.ui_back_84a715),

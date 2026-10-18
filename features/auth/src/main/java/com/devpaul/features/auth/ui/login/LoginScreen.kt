@@ -1,5 +1,6 @@
 package com.devpaul.features.auth.ui.login
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -107,7 +108,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        TextButton(onClick = onForgotPassword) {
+                        TextButton(onClick = trackedClick("forgot_password", onForgotPassword)) {
                             Text(
                                 text = stringResource(R.string.ui_forgot_your_password_28ca3f),
                                 color = MaterialTheme.colorScheme.primary,
@@ -133,14 +134,14 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     PrimaryAuthButton(
                         text = stringResource(R.string.ui_sign_in_9c18b1),
-                        onClick = { onLogin(email.trim(), password) },
+                        onClick = trackedClick("login") { onLogin(email.trim(), password) },
                         isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     AccountPrompt(
                         message = stringResource(R.string.ui_don_t_have_an_account_0cb9ce),
                         action = stringResource(R.string.ui_create_account_11bd80),
-                        onClick = onNavigateToRegister,
+                        onClick = trackedClick("open_register", onNavigateToRegister),
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package com.devpaul.cvfree.notifications
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,7 @@ fun NotificationHistoryScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.notification_history_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = trackedClick("back", onBack)) {
                         Icon(
                             Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.notification_history_back),
@@ -98,7 +99,7 @@ fun NotificationHistoryScreen(
                 }
                 items(entries, key = SavedResumeNotification::id) { entry ->
                     Card(
-                        onClick = onOpenMyCvs,
+                        onClick = trackedClick("open_my_cvs", onOpenMyCvs),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                     ) {

@@ -1,5 +1,6 @@
 package com.devpaul.features.settings.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -91,7 +92,7 @@ fun HelpCenterScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = trackedClick("back", onBack)) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.help_back),
@@ -148,7 +149,7 @@ fun HelpCenterScreen(
                 HelpQuestionCard(
                     question = question,
                     expanded = expandedQuestion == question.question,
-                    onClick = {
+                    onClick = trackedClick("toggle_help_question") {
                         expandedQuestion = if (expandedQuestion == question.question) null else question.question
                     },
                 )

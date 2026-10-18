@@ -1,6 +1,7 @@
 package com.devpaul.features.resume.ui.experience
 
 import androidx.compose.foundation.clickable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -136,6 +137,7 @@ fun ExperienceScreen(
         if (position.isBlank() || company.isBlank() ||
             !startYear.isValidYearOrBlank() || (!isCurrent && !endYear.isValidYearOrBlank())
         ) {
+            AppAnalytics.error("validate_experience", code = "invalid_fields")
             return false
         }
         val currentId = editingId
@@ -331,7 +333,10 @@ private fun ExperienceEditor(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onIsCurrentChange(!isCurrent) },
+            .clickable {
+                AppAnalytics.selection("current_job", (!isCurrent).toString())
+                onIsCurrentChange(!isCurrent)
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(

@@ -3,6 +3,7 @@ package com.devpaul.features.auth.ui.session
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.core.domain.result.UseCaseResult
+import com.devpaul.core.platform.analytics.AppAnalytics
 import com.devpaul.features.auth.domain.usecase.GetCurrentUserUseCase
 import com.devpaul.features.auth.domain.usecase.GetCurrentUserProfileUseCase
 import com.devpaul.features.auth.domain.usecase.SignOutUseCase
@@ -42,7 +43,8 @@ class AuthSessionViewModel(
                 getCurrentUserProfileUseCase()
             } catch (error: CancellationException) {
                 throw error
-            } catch (_: Exception) {
+            } catch (error: Exception) {
+                AppAnalytics.error("load_user_profile", error)
                 getCurrentUserUseCase()
             }
             _userName.value = user?.name.orEmpty()
@@ -54,11 +56,15 @@ class AuthSessionViewModel(
         loadUserJob?.cancel()
         return when (val result = updateUserNameUseCase(name)) {
             is UseCaseResult.Success -> {
+                AppAnalytics.outcome("update_profile_name", "success")
                 _userName.value = result.value.name
                 _userEmail.value = result.value.email
                 null
             }
-            is UseCaseResult.Error -> result.error.error.toMessageResource()
+            is UseCaseResult.Error -> {
+                AppAnalytics.error("update_profile_name", code = result.error.error.name.lowercase())
+                result.error.error.toMessageResource()
+            }
         }
     }
 
@@ -67,5 +73,6 @@ class AuthSessionViewModel(
         _userName.value = ""
         _userEmail.value = ""
         signOutUseCase()
+        AppAnalytics.outcome("logout", "success")
     }
 }

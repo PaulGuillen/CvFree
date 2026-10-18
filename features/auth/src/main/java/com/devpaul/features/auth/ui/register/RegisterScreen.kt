@@ -1,5 +1,6 @@
 package com.devpaul.features.auth.ui.register
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -132,14 +133,14 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.height(26.dp))
                     PrimaryAuthButton(
                         text = stringResource(R.string.ui_sign_up_be32fb),
-                        onClick = { onRegister(name.trim(), email.trim(), password) },
+                        onClick = trackedClick("register") { onRegister(name.trim(), email.trim(), password) },
                         isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     AccountPrompt(
                         message = stringResource(R.string.ui_already_have_an_account_65b418),
                         action = stringResource(R.string.ui_sign_in_9c18b1),
-                        onClick = onNavigateToLogin,
+                        onClick = trackedClick("open_login", onNavigateToLogin),
                     )
                 }
             }

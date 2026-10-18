@@ -1,6 +1,7 @@
 package com.devpaul.features.settings.ui
 
 import androidx.lifecycle.ViewModel
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.lifecycle.viewModelScope
 import com.devpaul.core.domain.rating.MAX_RATING_COMMENT_LENGTH
 import com.devpaul.core.domain.rating.RatingRepository
@@ -45,7 +46,8 @@ class RatingViewModel(private val repository: RatingRepository) : ViewModel() {
                 mutableState.value = mutableState.value.copy(status = status)
             } catch (error: CancellationException) {
                 throw error
-            } catch (_: Exception) {
+            } catch (error: Exception) {
+                AppAnalytics.error("check_rating_availability", error)
                 mutableState.value = mutableState.value.copy(status = RatingDialogStatus.Editing, hasError = true)
             }
         }
@@ -75,6 +77,7 @@ class RatingViewModel(private val repository: RatingRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val result = repository.submit(current.stars, current.comment)
+                AppAnalytics.outcome("submit_rating", if (result == RatingResult.Submitted) "success" else "daily_limit")
                 mutableState.value = if (result == RatingResult.Submitted) {
                     RatingUiState(status = RatingDialogStatus.Submitted)
                 } else {
@@ -82,7 +85,8 @@ class RatingViewModel(private val repository: RatingRepository) : ViewModel() {
                 }
             } catch (error: CancellationException) {
                 throw error
-            } catch (_: Exception) {
+            } catch (error: Exception) {
+                AppAnalytics.error("submit_rating", error)
                 mutableState.value = current.copy(hasError = true)
             }
         }

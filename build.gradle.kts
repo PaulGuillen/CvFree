@@ -7,4 +7,5 @@ plugins {
     id("com.google.devtools.ksp") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
     alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }

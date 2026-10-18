@@ -1,5 +1,7 @@
 package com.devpaul.cvfree.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -206,7 +208,7 @@ private fun ForceUpdateBody(
         Spacer(Modifier.height(12.dp))
 
         Button(
-            onClick = onOpenStore,
+            onClick = trackedClick("open_store", onOpenStore),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -322,7 +324,8 @@ fun openPlayStore(context: Context) {
             Intent(Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri())
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
-    } catch (_: Exception) {
+    } catch (error: Exception) {
+        AppAnalytics.error("open_play_store", error)
         context.startActivity(
             Intent(
                 Intent.ACTION_VIEW,

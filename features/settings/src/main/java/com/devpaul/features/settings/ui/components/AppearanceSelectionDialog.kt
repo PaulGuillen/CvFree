@@ -1,5 +1,6 @@
 package com.devpaul.features.settings.ui.components
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +41,7 @@ internal fun AppearanceSelectionDialog(
                             .selectable(
                                 selected = appearance == selectedAppearance,
                                 role = Role.RadioButton,
-                                onClick = { onAppearanceSelected(appearance) },
+                                onClick = trackedClick("select_appearance") { onAppearanceSelected(appearance) },
                             )
                             .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,

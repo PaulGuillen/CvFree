@@ -1,6 +1,7 @@
 package com.devpaul.features.auth.data.repository
 
 import com.devpaul.features.auth.data.datasource.mapper.toDomain
+import com.devpaul.core.platform.analytics.AppAnalytics
 import com.devpaul.features.auth.data.datasource.remote.FirebaseAuthDataSource
 import com.devpaul.features.auth.domain.entity.AuthUser
 import com.devpaul.features.auth.domain.exception.AuthError
@@ -54,6 +55,7 @@ class AuthRepositoryImpl(
     } catch (error: CancellationException) {
         throw error
     } catch (error: Exception) {
+        AppAnalytics.error("auth_request", error)
         throw error.toDomainException()
     }
 

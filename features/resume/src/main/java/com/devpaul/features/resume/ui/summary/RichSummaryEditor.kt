@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.summary
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.TrackAnalyticsView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -271,6 +273,7 @@ internal fun RichTextEditor(
     }
 
     if (linkDialogVisible) {
+        TrackAnalyticsView("format_link_dialog")
         AlertDialog(
             onDismissRequest = { linkDialogVisible = false },
             title = { Text(stringResource(R.string.ui_add_link_44d638)) },
@@ -284,7 +287,7 @@ internal fun RichTextEditor(
             },
             confirmButton = {
                 TextButton(
-                    onClick = {
+                    onClick = trackedClick("apply_link") {
                         state.setLink(linkUrl)
                         linkUrl = ""
                         linkDialogVisible = false
@@ -292,7 +295,7 @@ internal fun RichTextEditor(
                     enabled = linkUrl.isNotBlank(),
                 ) { Text(stringResource(R.string.ui_add_87ebee)) }
             },
-            dismissButton = { TextButton(onClick = { linkDialogVisible = false }) { Text(stringResource(R.string.ui_cancel_c111e0)) } },
+            dismissButton = { TextButton(onClick = trackedClick("cancel_link") { linkDialogVisible = false }) { Text(stringResource(R.string.ui_cancel_c111e0)) } },
         )
     }
 }
@@ -357,7 +360,7 @@ private fun ToolbarButton(
     onClick: () -> Unit,
 ) {
     IconButton(
-        onClick = onClick,
+        onClick = trackedClick("format_${icon.name.substringAfterLast('.').lowercase()}", onClick),
         modifier = Modifier
             .size(42.dp)
             .then(
@@ -385,7 +388,7 @@ private fun ColorToolbarButton(
             Row(Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 colors.forEach { color ->
                     IconButton(
-                        onClick = { onColor(color); expanded = false },
+                        onClick = trackedClick("select_format_color") { onColor(color); expanded = false },
                         modifier = Modifier.size(30.dp).background(Color(color), CircleShape),
                     ) {}
                 }

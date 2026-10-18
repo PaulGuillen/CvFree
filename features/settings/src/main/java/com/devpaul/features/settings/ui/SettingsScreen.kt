@@ -1,5 +1,8 @@
 package com.devpaul.features.settings.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.core.platform.analytics.TrackAnalyticsView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -165,7 +168,7 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_language),
                             subtitle = stringResource(R.string.settings_language_subtitle),
                             value = stringResource(appLanguage.labelRes()),
-                            onClick = { isChoosingLanguage = true },
+                            onClick = trackedClick("open_language_dialog") { isChoosingLanguage = true },
                         )
                         SettingsDivider()
                         SettingsLinkRow(
@@ -173,7 +176,7 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_appearance),
                             subtitle = stringResource(appAppearance.subtitleRes()),
                             value = stringResource(appAppearance.labelRes()),
-                            onClick = { isChoosingAppearance = true },
+                            onClick = trackedClick("open_appearance_dialog") { isChoosingAppearance = true },
                         )
                         SettingsDivider()
                         SettingsSwitchRow(
@@ -208,28 +211,28 @@ fun SettingsScreen(
                             icon = Icons.AutoMirrored.Outlined.HelpOutline,
                             title = stringResource(R.string.settings_help),
                             subtitle = stringResource(R.string.settings_help_subtitle),
-                            onClick = onNavigateToHelp,
+                            onClick = trackedClick("open_help", onNavigateToHelp),
                         )
                         SettingsDivider()
                         SettingsLinkRow(
                             icon = Icons.Outlined.StarOutline,
                             title = stringResource(R.string.settings_rate),
                             subtitle = stringResource(R.string.settings_rate_subtitle),
-                            onClick = onRateApp,
+                            onClick = trackedClick("open_rating_dialog", onRateApp),
                         )
                         SettingsDivider()
                         SettingsLinkRow(
                             icon = Icons.Outlined.PrivacyTip,
                             title = stringResource(R.string.settings_privacy),
                             subtitle = stringResource(R.string.settings_privacy_subtitle),
-                            onClick = onNavigateToPrivacy,
+                            onClick = trackedClick("open_privacy", onNavigateToPrivacy),
                         )
                     }
                 }
             }
             item {
                 OutlinedButton(
-                    onClick = onLogout,
+                    onClick = trackedClick("logout", onLogout),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -259,6 +262,7 @@ fun SettingsScreen(
     }
 
     if (isEditingName) {
+        TrackAnalyticsView("edit_profile_name_dialog")
         EditNameDialog(
             name = editedName,
             errorMessage = nameError,
@@ -271,6 +275,7 @@ fun SettingsScreen(
             onSave = {
                 val normalizedName = editedName.trim()
                 if (!isValidProfileName(normalizedName)) {
+                    AppAnalytics.error("update_profile_name", code = "invalid_name")
                     nameError = invalidNameMessage
                 } else {
                     scope.launch {
@@ -290,6 +295,7 @@ fun SettingsScreen(
     }
 
     if (isChoosingAppearance) {
+        TrackAnalyticsView("appearance_dialog")
         AppearanceSelectionDialog(
             selectedAppearance = appAppearance,
             onDismiss = { isChoosingAppearance = false },
@@ -303,6 +309,7 @@ fun SettingsScreen(
     }
 
     if (isChoosingLanguage) {
+        TrackAnalyticsView("language_dialog")
         LanguageSelectionDialog(
             selectedLanguage = appLanguage,
             onDismiss = { isChoosingLanguage = false },

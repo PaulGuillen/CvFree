@@ -1,5 +1,7 @@
 package com.devpaul.features.home.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -165,7 +167,7 @@ private fun HomeHeader(userName: String, onNotifications: () -> Unit) {
                 style = MaterialTheme.typography.headlineMedium,
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = onNotifications) {
+            IconButton(onClick = trackedClick("open_notifications", onNotifications)) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = stringResource(R.string.home_notifications),
@@ -243,7 +245,7 @@ private fun FeaturedTemplatesSection(
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = onViewAll) {
+            TextButton(onClick = trackedClick("view_all_templates", onViewAll)) {
                 Text(stringResource(R.string.home_view_all), style = MaterialTheme.typography.labelLarge)
             }
         }
@@ -254,7 +256,10 @@ private fun FeaturedTemplatesSection(
             items(templates) { template ->
                 TemplateCard(
                     template = template,
-                    onClick = { onPreviewTemplate(template.id) },
+                    onClick = trackedClick("preview_template") {
+                        AppAnalytics.selection("preview_template", template.id)
+                        onPreviewTemplate(template.id)
+                    },
                 )
             }
         }
@@ -366,7 +371,7 @@ private fun RecentResumeCard(
                     )
                 }
                 Box {
-                    IconButton(onClick = { showActions = true }) {
+                    IconButton(onClick = trackedClick("open_recent_resume_menu") { showActions = true }) {
                         Icon(
                             imageVector = Icons.Outlined.MoreVert,
                             contentDescription = stringResource(R.string.home_more_options),
@@ -380,7 +385,7 @@ private fun RecentResumeCard(
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.home_continue_editing)) },
                             leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
-                            onClick = {
+                            onClick = trackedClick("continue_recent_resume") {
                                 showActions = false
                                 onContinue()
                             },
@@ -388,7 +393,7 @@ private fun RecentResumeCard(
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.home_view_my_resumes)) },
                             leadingIcon = { Icon(Icons.Outlined.FolderOpen, contentDescription = null) },
-                            onClick = {
+                            onClick = trackedClick("view_recent_resume") {
                                 showActions = false
                                 onNavigateToMyCvs()
                             },
@@ -428,7 +433,7 @@ private fun RecentResumeCard(
             )
             Spacer(modifier = Modifier.height(18.dp))
             Button(
-                onClick = onContinue,
+                onClick = trackedClick("continue_recent_resume", onContinue),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -476,7 +481,7 @@ private fun EmptyRecentActivityCard(onNavigateToMyCvs: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(modifier = Modifier.height(14.dp))
-            Button(onClick = onNavigateToMyCvs) {
+            Button(onClick = trackedClick("open_my_cvs", onNavigateToMyCvs)) {
                 Text(stringResource(R.string.home_go_to_my_resumes))
             }
         }

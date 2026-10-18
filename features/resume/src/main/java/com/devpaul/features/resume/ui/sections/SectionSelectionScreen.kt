@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.ui.sections
 
+import com.devpaul.core.platform.analytics.trackedClick
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -124,7 +126,7 @@ fun SectionSelectionScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedButton(
-                onClick = {
+                onClick = trackedClick("restore_sections") {
                     courses = ResumeOptionalSection.Courses in initialSections
                     links = ResumeOptionalSection.Links in initialSections
                     languages = ResumeOptionalSection.Languages in initialSections
@@ -138,7 +140,7 @@ fun SectionSelectionScreen(
                 Text(stringResource(R.string.ui_restore_f9cdc1), style = MaterialTheme.typography.labelLarge)
             }
             Button(
-                onClick = {
+                onClick = trackedClick("confirm_sections") {
                     onConfirm(
                         buildSet {
                             if (courses) add(ResumeOptionalSection.Courses)
@@ -178,7 +180,12 @@ private fun SectionRow(
     required: Boolean = false,
 ) {
     Surface(
-        onClick = { if (!required) onCheckedChange(!checked) },
+        onClick = trackedClick("toggle_section") {
+            if (!required) {
+                AppAnalytics.selection("section_${icon.name.substringAfterLast('.').lowercase()}", (!checked).toString())
+                onCheckedChange(!checked)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 10.dp),
@@ -212,7 +219,10 @@ private fun SectionRow(
             )
             Checkbox(
                 checked = checked,
-                onCheckedChange = if (required) null else onCheckedChange,
+                onCheckedChange = if (required) null else { checked ->
+                    AppAnalytics.selection("section_${icon.name.substringAfterLast('.').lowercase()}", checked.toString())
+                    onCheckedChange(checked)
+                },
                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
             )
         }

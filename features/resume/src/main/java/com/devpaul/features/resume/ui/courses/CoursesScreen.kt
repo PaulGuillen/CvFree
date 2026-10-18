@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -97,6 +98,7 @@ fun CoursesScreen(
     fun saveEditor(): Boolean {
         showErrors = true
         if (courseName.isBlank() || !startDate.isValidMonthYearOrBlank() || !endDate.isValidMonthYearOrBlank()) {
+            AppAnalytics.error("validate_course", code = "invalid_fields")
             return false
         }
         val currentId = editingId

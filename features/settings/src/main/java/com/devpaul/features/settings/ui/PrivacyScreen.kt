@@ -1,5 +1,6 @@
 package com.devpaul.features.settings.ui
 
+import com.devpaul.core.platform.analytics.trackedClick
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -84,7 +85,7 @@ fun PrivacyScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = trackedClick("back", onBack)) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.privacy_back),

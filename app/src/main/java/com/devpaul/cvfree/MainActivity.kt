@@ -31,6 +31,8 @@ import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.locale.AppLanguageManager
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.preferences.ResumePreferences
+import com.devpaul.core.platform.analytics.AppAnalytics
+import androidx.compose.runtime.LaunchedEffect
 import com.devpaul.cvfree.notifications.ResumeNotificationManager
 import com.devpaul.cvfree.ui.ForceUpdateScreen
 import com.devpaul.cvfree.ui.UpdateState
@@ -64,6 +66,7 @@ class MainActivity : ComponentActivity() {
     private var pendingSaveNotification = false
 
     private val notificationPermissionLauncher = registerForActivityResult(RequestPermission()) { granted ->
+        AppAnalytics.outcome("notification_permission", if (granted) "granted" else "denied")
         resumeNotifications.enabled = granted
         refreshNotificationState()
         if (granted && pendingSaveNotification) resumeNotifications.showResumeSaved()
@@ -95,6 +98,9 @@ class MainActivity : ComponentActivity() {
         validateAppUpdate()
 
         setContent {
+            LaunchedEffect(updateState) {
+                if (updateState == UpdateState.Required) AppAnalytics.screenView("force_update")
+            }
             val isDarkTheme = appAppearance.isDarkTheme(isSystemInDarkTheme())
             val statusBarColor = if (isDarkTheme) Color.Black else Color.White
             val navController = rememberNavController()
@@ -121,6 +127,7 @@ class MainActivity : ComponentActivity() {
                                         notificationsEnabled = notificationsEnabled,
                                         autoSaveEnabled = autoSaveEnabled,
                                         onAutoSaveEnabledChange = { enabled ->
+                                            AppAnalytics.selection("auto_save", enabled.toString())
                                             ResumePreferences.setAutoSaveEnabled(this@MainActivity, enabled)
                                             autoSaveEnabled = enabled
                                         },
@@ -133,10 +140,12 @@ class MainActivity : ComponentActivity() {
                                             intent.removeExtra(ResumeNotificationManager.EXTRA_OPEN_MY_CVS)
                                         },
                                         onAppearanceSelected = { appearance ->
+                                            AppAnalytics.selection("app_appearance", appearance.name.lowercase())
                                             AppAppearanceManager.set(this@MainActivity, appearance)
                                             appAppearance = appearance
                                         },
                                         onLanguageSelected = { language ->
+                                            AppAnalytics.selection("app_language", language.name.lowercase())
                                             AppLanguageManager.set(this@MainActivity, language)
                                             appLanguage = language
                                             resumeNotifications.ensureChannel()
@@ -185,6 +194,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun onNotificationsEnabledChange(enabled: Boolean) {
+        AppAnalytics.selection("notifications_enabled", enabled.toString())
         resumeNotifications.enabled = enabled
         if (enabled) {
             if (!resumeNotifications.hasPermission() &&
@@ -236,7 +246,8 @@ class MainActivity : ComponentActivity() {
                 hasUpdate && immediateAllowed -> UpdateState.Required
                 else -> UpdateState.NotRequired
             }
-        } catch (_: Exception) {
+        } catch (error: Exception) {
+            AppAnalytics.error("check_app_update", error)
             UpdateState.NotRequired
         }
     }
@@ -255,7 +266,8 @@ class MainActivity : ComponentActivity() {
                 if (!started) {
                     openPlayStore(this@MainActivity)
                 }
-            } catch (_: Exception) {
+            } catch (error: Exception) {
+                AppAnalytics.error("start_app_update", error)
                 openPlayStore(this@MainActivity)
             }
         }
