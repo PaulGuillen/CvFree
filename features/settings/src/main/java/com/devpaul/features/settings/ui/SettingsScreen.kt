@@ -83,6 +83,7 @@ fun SettingsScreen(
     onNavigateToHelp: () -> Unit = {},
     onRateApp: () -> Unit = {},
     onNavigateToPrivacy: () -> Unit = {},
+    isPremium: Boolean = false,
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -141,6 +142,7 @@ fun SettingsScreen(
                 ProfileCard(
                     userName = userName,
                     userEmail = userEmail,
+                    isPremium = isPremium,
                     onEdit = {
                         editedName = userName
                         nameError = null

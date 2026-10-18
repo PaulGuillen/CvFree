@@ -1,0 +1,4 @@
+<resources>
+    <string name="settings_plan_free">Plan Free</string>
+    <string name="settings_plan_premium">Plan Premium</string>
+</resources>

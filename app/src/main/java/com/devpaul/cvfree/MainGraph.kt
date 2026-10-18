@@ -22,6 +22,7 @@ import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.cvfree.access.FeatureAccessController
+import com.devpaul.cvfree.access.AccessPlan
 import com.devpaul.features.auth.authGraph
 import com.devpaul.features.auth.ui.session.AuthSessionViewModel
 import com.devpaul.features.home.homeGraph
@@ -190,6 +191,7 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            isPremium = featureAccess.plan == AccessPlan.Premium,
             onNavigateToPrivacy = {
                 navController.navigate(SettingsRoute.Privacy) {
                     launchSingleTop = true
