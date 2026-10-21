@@ -14,13 +14,25 @@ import org.koin.core.annotation.Single
 
 @Single([RatingRepository::class])
 class FirestoreRatingRepository(
+    auth: FirebaseAuth,
+    firestore: FirebaseFirestore,
+) : RatingRepository {
+    private val store = FirestoreFeedbackStore(auth, firestore, "app_ratings")
+
+    override suspend fun availability(): RatingResult = store.availability()
+
+    override suspend fun submit(stars: Int, comment: String): RatingResult = store.submit(stars, comment)
+}
+
+internal class FirestoreFeedbackStore(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
+    private val collection: String,
 ) : RatingRepository {
 
     override suspend fun availability(): RatingResult {
         val uid = checkNotNull(auth.currentUser) { "No authenticated user" }.uid
-        val latest = firestore.collection("app_ratings").document(uid).get(Source.SERVER).await()
+        val latest = firestore.collection(collection).document(uid).get(Source.SERVER).await()
         return if (isRatingOnCooldown(latest.getTimestamp("submittedAt")?.toDate()?.time, System.currentTimeMillis())) {
             RatingResult.DailyLimitReached
         } else {
@@ -33,7 +45,7 @@ class FirestoreRatingRepository(
         val normalizedComment = comment.trim()
         require(normalizedComment.length <= MAX_RATING_COMMENT_LENGTH)
         val uid = checkNotNull(auth.currentUser) { "No authenticated user" }.uid
-        val latestRef = firestore.collection("app_ratings").document(uid)
+        val latestRef = firestore.collection(collection).document(uid)
         val submissionRef = latestRef.collection("submissions").document()
 
         return try {
