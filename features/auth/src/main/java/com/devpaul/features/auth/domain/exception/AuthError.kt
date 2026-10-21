@@ -9,6 +9,7 @@ enum class AuthError {
     INVALID_CREDENTIALS,
     USER_DISABLED,
     TOO_MANY_REQUESTS,
+    ATTEMPT_LIMIT_REACHED,
     NETWORK,
     UNKNOWN,
 }

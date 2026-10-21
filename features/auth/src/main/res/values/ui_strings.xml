@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="auth_attempt_limit_reached">Alcanzaste el límite de 3 intentos en 15 minutos para esta acción. Inténtalo más tarde.</string>
     <string name="ui_build_your_professional_future_today_6af353">Crea tu futuro profesional hoy</string>
     <string name="ui_hide_password_a0e898">Ocultar contraseña</string>
     <string name="ui_show_password_3d04be">Mostrar contraseña</string>

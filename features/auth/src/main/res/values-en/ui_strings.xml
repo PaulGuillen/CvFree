@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="auth_attempt_limit_reached">You reached the limit of 3 attempts in 15 minutes for this action. Try again later.</string>
     <string name="ui_build_your_professional_future_today_6af353">Build your professional future today</string>
     <string name="ui_hide_password_a0e898">Hide password</string>
     <string name="ui_show_password_3d04be">Show password</string>
