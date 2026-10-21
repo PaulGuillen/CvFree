@@ -11,6 +11,9 @@ sealed interface SettingsRoute : AppRoute {
     data object Settings : SettingsRoute, DestinationRoute
 
     @Serializable
+    data object MyPlan : SettingsRoute, DestinationRoute
+
+    @Serializable
     data object HelpCenter : SettingsRoute, DestinationRoute
 
     @Serializable

@@ -2,11 +2,14 @@ package com.devpaul.features.settings
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.devpaul.features.settings.ui.SettingsScreen
+import com.devpaul.features.settings.ui.MyPlanScreen
+import com.devpaul.features.settings.ui.PremiumFeedbackViewModel
 import com.devpaul.features.settings.ui.HelpCenterScreen
 import com.devpaul.features.settings.ui.PrivacyScreen
 import com.devpaul.features.settings.ui.RatingViewModel
@@ -36,6 +39,7 @@ fun NavGraphBuilder.settingsGraph(
     onNavigateToHelp: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToMyPlan: () -> Unit,
 ) {
     navigation<SettingsRoute.Graph>(
         startDestination = SettingsRoute.Settings,
@@ -52,6 +56,7 @@ fun NavGraphBuilder.settingsGraph(
                 userName = currentUserName,
                 userEmail = currentUserEmail,
                 isPremium = isPremium,
+                onNavigateToMyPlan = onNavigateToMyPlan,
                 onUpdateName = onUpdateName,
                 appLanguage = appLanguage,
                 appAppearance = appAppearance,
@@ -71,6 +76,18 @@ fun NavGraphBuilder.settingsGraph(
                 onCommentChange = ratingViewModel::updateComment,
                 onSubmit = ratingViewModel::submit,
                 onDismiss = ratingViewModel::dismiss,
+            )
+        }
+        composable<SettingsRoute.MyPlan> {
+            val feedbackViewModel: PremiumFeedbackViewModel = koinViewModel()
+            val feedbackState by feedbackViewModel.state.collectAsStateWithLifecycle()
+            LaunchedEffect(feedbackViewModel) { feedbackViewModel.open() }
+            MyPlanScreen(
+                feedbackState = feedbackState,
+                onBack = onNavigateBack,
+                onStarsSelected = feedbackViewModel::selectStars,
+                onCommentChange = feedbackViewModel::updateComment,
+                onSubmit = feedbackViewModel::submit,
             )
         }
         composable<SettingsRoute.HelpCenter> {

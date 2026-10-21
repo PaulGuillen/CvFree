@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.WorkspacePremium
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -86,6 +87,7 @@ fun SettingsScreen(
     onRateApp: () -> Unit = {},
     onNavigateToPrivacy: () -> Unit = {},
     isPremium: Boolean = false,
+    onNavigateToMyPlan: () -> Unit = {},
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -150,6 +152,24 @@ fun SettingsScreen(
                         isEditingName = true
                     },
                 )
+            }
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    shadowElevation = 4.dp,
+                ) {
+                    Column(modifier = Modifier.padding(horizontal = 18.dp)) {
+                        SettingsLinkRow(
+                            icon = Icons.Outlined.WorkspacePremium,
+                            title = stringResource(R.string.settings_my_plan),
+                            subtitle = stringResource(R.string.settings_my_plan_subtitle),
+                            value = stringResource(if (isPremium) R.string.settings_plan_premium else R.string.settings_plan_free),
+                            onClick = trackedClick("open_my_plan", onNavigateToMyPlan),
+                        )
+                    }
+                }
             }
             item {
                 SettingsSectionTitle(text = stringResource(R.string.settings_preferences))

@@ -35,6 +35,7 @@ internal fun NavDestination.analyticsScreenName(): String? = when {
     hasRoute<ResumeRoute.Template>() -> "resume_template"
     hasRoute<ResumeRoute.Preview>() -> "resume_preview"
     hasRoute<SettingsRoute.Settings>() -> "settings"
+    hasRoute<SettingsRoute.MyPlan>() -> "my_plan"
     hasRoute<SettingsRoute.HelpCenter>() -> "help_center"
     hasRoute<SettingsRoute.Privacy>() -> "privacy"
     else -> null
