@@ -1,6 +1,7 @@
 # Suscripciones de Google Play sin backend
 
-> Estado actual: la experiencia de usuario está en Free. Mi plan presenta Premium en
+> Estado actual: las variantes Free muestran Free y las variantes Premium Debug muestran
+> Premium de prueba. Mi plan presenta el futuro plan comercial Premium en
 > construcción y recoge opiniones en Firestore. No hay acciones de compra, restauración
 > ni administración de suscripciones en la navegación activa, ni consultas de Billing al
 > entrar en la app. La infraestructura de Billing y las variantes dev/prod se conservan

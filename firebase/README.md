@@ -31,7 +31,8 @@ Referencia: https://firebase.google.com/docs/firestore/manage-data/transactions
 
 ## Opiniones sobre el futuro plan Premium
 
-La pantalla Mi plan muestra Free como plan actual y Premium en construcción. El formulario
+La pantalla Mi plan muestra el plan de la variante: Free o Premium de prueba en Premium Debug.
+El futuro plan comercial Premium aparece en construcción. El formulario
 pregunta por la utilidad de la propuesta (1 a 5 estrellas) y permite un comentario opcional.
 No inicia compras ni suscripciones. La configuración de ambientes dev/prod se mantiene.
 

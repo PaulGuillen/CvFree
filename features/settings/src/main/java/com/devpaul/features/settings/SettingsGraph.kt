@@ -84,6 +84,7 @@ fun NavGraphBuilder.settingsGraph(
             LaunchedEffect(feedbackViewModel) { feedbackViewModel.open() }
             MyPlanScreen(
                 feedbackState = feedbackState,
+                isPremium = isPremium,
                 onBack = onNavigateBack,
                 onStarsSelected = feedbackViewModel::selectStars,
                 onCommentChange = feedbackViewModel::updateComment,

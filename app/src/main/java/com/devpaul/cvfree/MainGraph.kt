@@ -25,6 +25,7 @@ import com.devpaul.cvfree.analytics.analyticsScreenName
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
 import com.devpaul.cvfree.access.FeatureAccessController
+import com.devpaul.cvfree.access.AccessPlan
 import com.devpaul.cvfree.notifications.NotificationHistoryStore
 import com.devpaul.cvfree.notifications.NotificationHistoryScreen
 import com.devpaul.features.auth.authGraph
@@ -210,7 +211,7 @@ fun MainGraph(
             },
         )
         settingsGraph(
-            isPremium = false,
+            isPremium = featureAccess.plan == AccessPlan.Premium,
             onNavigateToMyPlan = {
                 navController.navigate(SettingsRoute.MyPlan) { launchSingleTop = true }
             },

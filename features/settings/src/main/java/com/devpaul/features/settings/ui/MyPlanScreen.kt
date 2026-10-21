@@ -53,6 +53,7 @@ fun MyPlanScreen(
     onCommentChange: (String) -> Unit,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
+    isPremium: Boolean = false,
 ) {
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
@@ -78,8 +79,11 @@ fun MyPlanScreen(
             item {
                 PlanCard(highlighted = true) {
                     Text(stringResource(R.string.plan_current), style = MaterialTheme.typography.labelLarge)
-                    Text(stringResource(R.string.settings_plan_free), style = MaterialTheme.typography.headlineSmall)
-                    Text(stringResource(R.string.plan_all_free))
+                    Text(
+                        stringResource(if (isPremium) R.string.settings_plan_premium else R.string.settings_plan_free),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    Text(stringResource(if (isPremium) R.string.plan_debug_override else R.string.plan_all_free))
                 }
             }
             item {
