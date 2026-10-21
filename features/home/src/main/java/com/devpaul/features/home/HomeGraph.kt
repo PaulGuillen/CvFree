@@ -2,12 +2,14 @@ package com.devpaul.features.home
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeRepository
+import com.devpaul.core.platform.profile.UserProfileUiState
 import com.devpaul.features.home.ui.AllTemplatesScreen
 import com.devpaul.features.home.ui.HomeScreen
 import com.devpaul.features.templates.ui.TemplateExamplePreviewScreen
@@ -16,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 fun NavGraphBuilder.homeGraph(
     repository: ResumeRepository,
-    userName: StateFlow<String>,
+    userProfile: StateFlow<UserProfileUiState>,
     onNavigateToMyCvs: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTemplates: () -> Unit,
@@ -30,13 +32,13 @@ fun NavGraphBuilder.homeGraph(
     ) {
         composable<HomeRoute.Home> {
             val resumes by repository.resumes.collectAsState(initial = emptyList())
-            val currentUserName by userName.collectAsState()
+            val profileState by userProfile.collectAsStateWithLifecycle()
             HomeScreen(
                 onNavigateToMyCvs = onNavigateToMyCvs,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToTemplates = onNavigateToTemplates,
                 onPreviewTemplate = onPreviewTemplate,
-                userName = currentUserName,
+                userProfile = profileState,
                 recentResume = resumes.maxByOrNull(ResumeDocument::updatedAt),
                 onContinueResume = onContinueResume,
                 onNavigateToNotifications = onNavigateToNotifications,

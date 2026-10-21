@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="home_profile_loading">Cargando perfil</string>
     <string name="ui_back_84a715">Volver</string>
 </resources>

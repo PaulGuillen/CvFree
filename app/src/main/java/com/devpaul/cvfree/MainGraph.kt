@@ -168,7 +168,7 @@ fun MainGraph(
                 navController.navigate(HomeRoute.Notifications) { launchSingleTop = true }
             },
             repository = resumeRepository,
-            userName = authSessionViewModel.userName,
+            userProfile = authSessionViewModel.uiState,
             onNavigateToMyCvs = {
                 navController.navigateToMainDestination(ResumeRoute.Graph)
             },
@@ -234,8 +234,7 @@ fun MainGraph(
             onAppearanceSelected = onAppearanceSelected,
             appLanguage = appLanguage,
             onLanguageSelected = onLanguageSelected,
-            userName = authSessionViewModel.userName,
-            userEmail = authSessionViewModel.userEmail,
+            userProfile = authSessionViewModel.uiState,
             onUpdateName = { name -> authSessionViewModel.updateUserName(name)?.let(resources::getString) },
             onNavigateToHome = {
                 navController.navigateToMainDestination(HomeRoute.Graph)

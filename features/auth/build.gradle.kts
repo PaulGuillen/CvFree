@@ -12,4 +12,5 @@ dependencies {
     firebaseImplementation()
     coroutinesPlayServicesImplementation()
     implementation(libs.koin.compose)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

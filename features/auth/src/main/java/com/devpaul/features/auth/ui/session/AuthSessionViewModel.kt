@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.core.domain.result.UseCaseResult
 import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.core.platform.profile.UserProfileUiState
 import com.devpaul.features.auth.domain.usecase.GetCurrentUserUseCase
 import com.devpaul.features.auth.domain.usecase.GetCurrentUserProfileUseCase
 import com.devpaul.features.auth.domain.usecase.SignOutUseCase
@@ -13,6 +14,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 
@@ -23,10 +25,8 @@ class AuthSessionViewModel(
     private val signOutUseCase: SignOutUseCase,
     private val updateUserNameUseCase: UpdateUserNameUseCase,
 ) : ViewModel() {
-    private val _userName = MutableStateFlow("")
-    val userName = _userName.asStateFlow()
-    private val _userEmail = MutableStateFlow("")
-    val userEmail = _userEmail.asStateFlow()
+    private val _uiState = MutableStateFlow(UserProfileUiState())
+    val uiState = _uiState.asStateFlow()
 
     private var loadUserJob: Job? = null
 
@@ -38,6 +38,7 @@ class AuthSessionViewModel(
 
     fun refreshUser() {
         loadUserJob?.cancel()
+        _uiState.value = UserProfileUiState()
         loadUserJob = viewModelScope.launch {
             val user = try {
                 getCurrentUserProfileUseCase()
@@ -47,18 +48,25 @@ class AuthSessionViewModel(
                 AppAnalytics.error("load_user_profile", error)
                 getCurrentUserUseCase()
             }
-            _userName.value = user?.name.orEmpty()
-            _userEmail.value = user?.email.orEmpty()
+            _uiState.value = UserProfileUiState(
+                isLoading = false,
+                name = user?.name.orEmpty().trim(),
+                email = user?.email.orEmpty(),
+            )
         }
     }
 
     suspend fun updateUserName(name: String): Int? {
         loadUserJob?.cancel()
+        _uiState.update { it.copy(isLoading = false) }
         return when (val result = updateUserNameUseCase(name)) {
             is UseCaseResult.Success -> {
                 AppAnalytics.outcome("update_profile_name", "success")
-                _userName.value = result.value.name
-                _userEmail.value = result.value.email
+                _uiState.value = UserProfileUiState(
+                    isLoading = false,
+                    name = result.value.name.trim(),
+                    email = result.value.email,
+                )
                 null
             }
             is UseCaseResult.Error -> {
@@ -70,8 +78,7 @@ class AuthSessionViewModel(
 
     fun logout() {
         loadUserJob?.cancel()
-        _userName.value = ""
-        _userEmail.value = ""
+        _uiState.value = UserProfileUiState(isLoading = false)
         signOutUseCase()
         AppAnalytics.outcome("logout", "success")
     }

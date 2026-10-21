@@ -1,6 +1,5 @@
 package com.devpaul.features.settings
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,6 +15,7 @@ import com.devpaul.features.settings.ui.RatingViewModel
 import com.devpaul.features.settings.ui.components.RatingDialog
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
+import com.devpaul.core.platform.profile.UserProfileUiState
 import com.devpaul.navigation.route.SettingsRoute
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.koinViewModel
@@ -24,8 +24,7 @@ fun NavGraphBuilder.settingsGraph(
     onNavigateToHome: () -> Unit,
     onNavigateToMyCvs: () -> Unit,
     onLogout: () -> Unit,
-    userName: StateFlow<String>,
-    userEmail: StateFlow<String>,
+    userProfile: StateFlow<UserProfileUiState>,
     isPremium: Boolean,
     onUpdateName: suspend (String) -> String?,
     appLanguage: AppLanguage,
@@ -47,14 +46,13 @@ fun NavGraphBuilder.settingsGraph(
         composable<SettingsRoute.Settings> {
             val ratingViewModel: RatingViewModel = koinViewModel()
             val ratingState by ratingViewModel.state.collectAsStateWithLifecycle()
-            val currentUserName by userName.collectAsState()
-            val currentUserEmail by userEmail.collectAsState()
+            val profileState by userProfile.collectAsStateWithLifecycle()
             SettingsScreen(
                 onNavigateToHome = onNavigateToHome,
                 onNavigateToMyCvs = onNavigateToMyCvs,
                 onLogout = onLogout,
-                userName = currentUserName,
-                userEmail = currentUserEmail,
+                userName = profileState.name,
+                userEmail = profileState.email,
                 isPremium = isPremium,
                 onNavigateToMyPlan = onNavigateToMyPlan,
                 onUpdateName = onUpdateName,
