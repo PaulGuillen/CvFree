@@ -9,6 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.devpaul.cvfree"
+        buildConfigField("String", "PREMIUM_PRODUCT_ID", "\"cvfree_premium\"")
+        buildConfigField("String", "PREMIUM_BASE_PLAN_ID", "\"monthly\"")
     }
 
     flavorDimensions += "access"
@@ -52,6 +54,7 @@ dependencies {
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.app.update.ktx)
+    implementation(libs.play.billing)
     implementation(libs.koin.compose)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.config)

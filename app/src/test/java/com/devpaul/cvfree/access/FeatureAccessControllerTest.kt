@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class FeatureAccessControllerTest {
 
@@ -66,6 +67,6 @@ class FeatureAccessControllerTest {
         premium: Boolean,
     ): PremiumEntitlementSource = object : PremiumEntitlementSource {
         override val declaredPlan: AccessPlan = plan
-        override val hasPremiumAccess: Boolean = premium
+        override val hasPremiumAccess = MutableStateFlow(premium)
     }
 }

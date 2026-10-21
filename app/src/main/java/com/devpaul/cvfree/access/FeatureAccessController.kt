@@ -8,6 +8,10 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.core.annotation.Single
 
 enum class AccessPlan {
@@ -34,16 +38,7 @@ internal data class FeatureFlags(
 
 internal interface PremiumEntitlementSource {
     val declaredPlan: AccessPlan
-    val hasPremiumAccess: Boolean
-}
-
-@Single([PremiumEntitlementSource::class])
-internal class BuildVariantPremiumEntitlementSource : PremiumEntitlementSource {
-    override val declaredPlan: AccessPlan = when (BuildConfig.ACCESS_PLAN) {
-        "premium" -> AccessPlan.Premium
-        else -> AccessPlan.Free
-    }
-    override val hasPremiumAccess: Boolean = BuildConfig.PREMIUM_ACCESS_OVERRIDE
+    val hasPremiumAccess: StateFlow<Boolean>
 }
 
 @Single
@@ -51,6 +46,8 @@ internal class FeatureAccessController(
     private val entitlementSource: PremiumEntitlementSource,
 ) {
     private val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var flags = FeatureFlags()
     private val _state = MutableStateFlow(
         resolveFeatureAccess(entitlementSource, FeatureFlags()),
     )
@@ -58,6 +55,11 @@ internal class FeatureAccessController(
     val state: StateFlow<FeatureAccessState> = _state.asStateFlow()
 
     init {
+        scope.launch {
+            entitlementSource.hasPremiumAccess.collect {
+                _state.value = resolveFeatureAccess(entitlementSource, flags)
+            }
+        }
         remoteConfig.setConfigSettingsAsync(
             remoteConfigSettings {
                 minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 0 else 3_600
@@ -76,17 +78,15 @@ internal class FeatureAccessController(
 
     fun refresh() {
         remoteConfig.fetchAndActivate().addOnCompleteListener {
-            _state.value = resolveFeatureAccess(
-                entitlementSource = entitlementSource,
-                flags = FeatureFlags(
-                    aiImportEnabled = remoteConfig.getBoolean(AI_IMPORT_ENABLED),
-                    premiumPaywallEnabled = remoteConfig.getBoolean(PREMIUM_PAYWALL_ENABLED),
-                    freeAiScans = remoteConfig.getLong(FREE_AI_SCANS).toSafeInt(),
-                    premiumMonthlyLimit = remoteConfig.getLong(PREMIUM_MONTHLY_LIMIT).toSafeInt(),
-                    aiModelName = remoteConfig.getString(AI_MODEL_NAME)
-                        .ifBlank { DEFAULT_AI_MODEL },
-                ),
+            flags = FeatureFlags(
+                aiImportEnabled = remoteConfig.getBoolean(AI_IMPORT_ENABLED),
+                premiumPaywallEnabled = remoteConfig.getBoolean(PREMIUM_PAYWALL_ENABLED),
+                freeAiScans = remoteConfig.getLong(FREE_AI_SCANS).toSafeInt(),
+                premiumMonthlyLimit = remoteConfig.getLong(PREMIUM_MONTHLY_LIMIT).toSafeInt(),
+                aiModelName = remoteConfig.getString(AI_MODEL_NAME)
+                    .ifBlank { DEFAULT_AI_MODEL },
             )
+            _state.value = resolveFeatureAccess(entitlementSource, flags)
         }
     }
 }
@@ -97,7 +97,7 @@ internal fun resolveFeatureAccess(
 ): FeatureAccessState = FeatureAccessState(
     plan = entitlementSource.declaredPlan,
     aiResumeImportEnabled = flags.aiImportEnabled &&
-        (!flags.premiumPaywallEnabled || entitlementSource.hasPremiumAccess),
+        (!flags.premiumPaywallEnabled || entitlementSource.hasPremiumAccess.value),
     premiumPaywallEnabled = flags.premiumPaywallEnabled,
     freeAiScans = flags.freeAiScans.coerceAtLeast(0),
     premiumMonthlyLimit = flags.premiumMonthlyLimit.coerceAtLeast(0),
