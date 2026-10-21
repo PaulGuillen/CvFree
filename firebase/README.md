@@ -28,3 +28,22 @@ y eliminaciones del historial deben rechazarse, al igual que valores fuera de 1�
 comentarios de más de 500 caracteres y envíos sin autenticación.
 
 Referencia: https://firebase.google.com/docs/firestore/manage-data/transactions
+
+## Opiniones sobre el futuro plan Premium
+
+La pantalla Mi plan muestra Free como plan actual y Premium en construcción. El formulario
+pregunta por la utilidad de la propuesta (1 a 5 estrellas) y permite un comentario opcional.
+No inicia compras ni suscripciones. La configuración de ambientes dev/prod se mantiene.
+
+Estas respuestas se guardan por separado en `premium_plan_feedback/{uid}` y en
+`premium_plan_feedback/{uid}/submissions/{submissionId}`, con los mismos campos y garantías
+de transacción que las calificaciones. Su límite de 24 horas es independiente de `app_ratings`.
+
+Integra también el bloque de `premium-feedback.rules` dentro del match de documentos de tus
+reglas existentes en cada proyecto Firebase dev/prod. No reemplaces las reglas completas.
+Hasta publicar esas reglas, el formulario puede devolver un error de permisos y conservará
+la opinión para reintentar. La colección se crea automáticamente con el primer envío aceptado.
+
+Comprueba que un usuario autenticado pueda enviar ambas opiniones el mismo día, que no pueda
+leer o modificar las de otro UID y que los duplicados, valores inválidos y envíos sin autenticar
+se rechacen. No se incluyen correo, nombre ni contenido del CV en estas respuestas.

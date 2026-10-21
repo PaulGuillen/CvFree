@@ -29,7 +29,7 @@ data class RatingUiState(
 )
 
 @KoinViewModel
-class RatingViewModel(private val repository: RatingRepository) : ViewModel() {
+open class RatingViewModel(private val repository: RatingRepository) : ViewModel() {
     private val mutableState = MutableStateFlow(RatingUiState())
     val state = mutableState.asStateFlow()
 
