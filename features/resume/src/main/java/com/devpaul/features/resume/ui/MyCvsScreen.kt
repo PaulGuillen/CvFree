@@ -385,7 +385,8 @@ fun MyCvsScreen(
             title = { Text(stringResource(R.string.ui_smart_processing_a52050)) },
             text = {
                 Text(
-                    stringResource(R.string.ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9),
+                    stringResource(R.string.ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9) +
+                        if (importPolicy.isFreePlan) "\n\n" + stringResource(R.string.ai_weekly_free_notice) else "",
                 )
             },
             confirmButton = {

@@ -11,7 +11,7 @@ las reglas usan la hora del servidor para imponer el límite aunque se cambie el
 
 ## Configuración necesaria en Firebase
 
-Este repositorio no contiene las reglas actualmente publicadas ni una configuración de despliegue.
+Este repositorio no contiene las reglas actualmente publicadas ni una configuración para desplegar las reglas completas.
 En cada proyecto Firebase usado por las variantes dev/prod, integra el bloque de `ratings.rules`
 dentro de `service cloud.firestore { match /databases/{database}/documents { ... } }`
 de tus reglas existentes y publícalas desde Firebase Console. Conserva las reglas existentes
@@ -28,6 +28,8 @@ y eliminaciones del historial deben rechazarse, al igual que valores fuera de 1�
 comentarios de más de 500 caracteres y envíos sin autenticación.
 
 Referencia: https://firebase.google.com/docs/firestore/manage-data/transactions
+
+La configuración de Cloud Functions para el cupo semanal de IA se documenta por separado en [AI_QUOTA.md](AI_QUOTA.md). Su despliegue no publica reglas de Firestore.
 
 ## Opiniones sobre el futuro plan Premium
 

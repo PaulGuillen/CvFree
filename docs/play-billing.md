@@ -27,7 +27,7 @@ Solo se ofrece el precio normal del plan mensual. No se seleccionan pruebas grat
 - Las suscripciones canceladas siguen dando acceso mientras Google Play las devuelve como activas. La app abre Google Play para administrar la suscripción y consultar las fechas; BillingClient no proporciona una fecha de vencimiento fiable para mostrarla localmente.
 - Las compras pertenecen a la cuenta de Google Play, no al usuario de Firebase Auth. Cambiar de usuario dentro de la app no transfiere ni aísla la suscripción. Para asociar compras de forma segura a usuarios de Firebase se necesita validación fuera del cliente.
 - Las variantes `devPremiumDebug` y `prodPremiumDebug` conservan la simulación de Premium para desarrollo y la identifican en pantalla. La variante de publicación no puede activar ese override.
-- Remote Config sigue controlando `ai_import_enabled` y `premium_paywall_enabled`. Con el paywall desactivado, Free también puede usar IA; activar una compra no modifica esas reglas ni implementa contadores de consumo.
+- `ai_import_enabled` controla si Android intenta IA. Free dispone de un uso cada 7 días por dispositivo, validado en Cloud Functions; `premium_paywall_enabled` no retira ese cupo. Solo un custom claim Premium confiable omite el límite en el servidor; una compra local o una variante Premium Debug no otorgan ese claim. Consulta [el cupo semanal de IA](../firebase/AI_QUOTA.md).
 -
 ## Límites
 

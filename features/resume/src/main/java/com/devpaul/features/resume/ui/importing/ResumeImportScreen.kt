@@ -2,6 +2,9 @@ package com.devpaul.features.resume.ui.importing
 
 import com.devpaul.core.platform.analytics.trackedClick
 import android.net.Uri
+import android.widget.Toast
+import java.text.DateFormat
+import java.util.Date
 import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -96,7 +99,23 @@ fun ResumeImportScreen(
         stage = ResumeImportStage.Preparing
         AppAnalytics.outcome("import_resume", "started")
         try {
-            ResumePdfImporter.import(context, documentUri, importPolicy) { nextProgress, nextStage ->
+            ResumePdfImporter.import(
+                context,
+                documentUri,
+                importPolicy,
+                onAiSkipped = { nextAvailableAtMillis ->
+                    val message = if (nextAvailableAtMillis != null) {
+                        context.getString(
+                            R.string.ai_weekly_limit_reached,
+                            DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+                                .format(Date(nextAvailableAtMillis)),
+                        )
+                    } else {
+                        context.getString(R.string.ai_unavailable_local_import)
+                    }
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                },
+            ) { nextProgress, nextStage ->
                 progress = nextProgress
                 stage = nextStage
             }

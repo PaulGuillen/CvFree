@@ -203,6 +203,9 @@
     <string name="resume_updated">Actualizado %1$s</string>
     <string name="resume_more_options">Más opciones para %1$s</string>
     <string name="resume_delete_confirmation">¿Seguro que deseas eliminar \"%1$s\"? Esta acción no se puede deshacer.</string>
-    <string name="ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9">Para organizar el currículum, el texto reconocido se enviará de forma segura a Firebase AI Logic. No se enviará el archivo original y podrás revisar cada dato.</string>
+    <string name="ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9">Para organizar el currículum, el texto reconocido se enviará de forma segura a nuestros servicios en Firebase y a Gemini. No se enviará el archivo original y podrás revisar cada dato.</string>
+    <string name="ai_weekly_free_notice">El plan Free incluye una importación con IA cada 7 días por dispositivo, compartida entre escaneo y PDF. Si ya utilizaste tu cupo o la IA no está disponible, continuaremos con la importación sin IA.</string>
+    <string name="ai_weekly_limit_reached">Ya utilizaste la IA en este dispositivo. Disponible nuevamente: %1$s. Continuamos sin IA.</string>
+    <string name="ai_unavailable_local_import">La IA no está disponible en este momento. Continuamos con la importación sin IA.</string>
     <string name="skill_max_length">Usa hasta %1$d caracteres</string>
 </resources>

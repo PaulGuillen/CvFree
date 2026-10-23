@@ -22,7 +22,7 @@ Aplicación Android modular para crear, personalizar y exportar tu currículum p
 - **Coroutines** y **Flow** — operaciones asíncronas y observación de cambios  
 - **Navigation Compose** — grafos y rutas tipadas para los flujos de la aplicación  
 - **Firebase Authentication** y **Cloud Firestore** — autenticación, perfiles y opiniones de usuarios  
-- **Firebase AI Logic / Gemini** — asistencia para interpretar el contenido de CV importados  
+- **Cloud Functions / Gemini** — importación asistida por IA, con un uso cada 7 días por dispositivo en Free  
 - **Firebase Remote Config**, **App Check**, **Analytics** y **Crashlytics** — configuración remota, protección de servicios y seguimiento de la app  
 - **DataStore** y **Kotlin Serialization** — persistencia local de currículums y preferencias  
 - **ML Kit** y **PDFBox Android** — escaneo, reconocimiento de texto y lectura de PDF  
@@ -41,6 +41,8 @@ Aplicación Android modular para crear, personalizar y exportar tu currículum p
 - Conexión a Internet para autenticación y funciones remotas; servicios de Google Play para escaneo con ML Kit  
 
 Abre el proyecto, sincroniza Gradle y selecciona la variante **devFreeDebug** para ejecutar la versión Free de desarrollo.
+
+La importación con IA requiere desplegar el servicio descrito en [Configuración del cupo de IA](firebase/AI_QUOTA.md). Sin ese servicio, la importación continúa localmente sin IA.
 
 ```powershell
 .\gradlew.bat :app:assembleDevFreeDebug

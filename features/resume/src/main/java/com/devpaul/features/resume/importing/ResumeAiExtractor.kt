@@ -1,5 +1,7 @@
 package com.devpaul.features.resume.importing
 
+import android.content.Context
+
 import com.devpaul.core.domain.resume.ResumeContact
 import com.devpaul.core.domain.resume.ResumeCourse
 import com.devpaul.core.domain.resume.ResumeDocument
@@ -10,11 +12,9 @@ import com.devpaul.core.domain.resume.ResumeLanguage
 import com.devpaul.core.domain.resume.ResumeLink
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeReference
-import com.google.firebase.Firebase
-import com.google.firebase.ai.ai
-import com.google.firebase.ai.type.GenerativeBackend
-import com.google.firebase.ai.type.Schema
-import com.google.firebase.ai.type.generationConfig
+import com.google.firebase.functions.FirebaseFunctions
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -26,115 +26,36 @@ internal object ResumeAiExtractor {
         coerceInputValues = true
     }
 
-    private val string = Schema.string()
-
-    private val responseSchema = Schema.obj(
-        mapOf(
-            "contact" to Schema.obj(
-                mapOf(
-                    "name" to string,
-                    "lastName" to string,
-                    "professionalTitle" to string,
-                    "email" to string,
-                    "phone" to string,
-                    "city" to string,
-                    "address" to string,
-                ),
-            ),
-            "experiences" to Schema.array(
-                Schema.obj(
-                    mapOf(
-                        "position" to string,
-                        "company" to string,
-                        "city" to string,
-                        "startYear" to string,
-                        "endYear" to string,
-                        "achievements" to string,
-                    ),
-                ),
-            ),
-            "education" to Schema.array(
-                Schema.obj(
-                    mapOf(
-                        "institution" to string,
-                        "degree" to string,
-                        "city" to string,
-                        "startYear" to string,
-                        "endYear" to string,
-                    ),
-                ),
-            ),
-            "skills" to Schema.array(string),
-            "summary" to string,
-            "courses" to Schema.array(
-                Schema.obj(
-                    mapOf(
-                        "name" to string,
-                        "institution" to string,
-                        "startDate" to string,
-                        "endDate" to string,
-                    ),
-                ),
-            ),
-            "links" to Schema.array(
-                Schema.obj(mapOf("name" to string, "url" to string)),
-            ),
-            "languages" to Schema.array(
-                Schema.obj(mapOf("language" to string, "level" to string)),
-            ),
-            "references" to Schema.array(
-                Schema.obj(
-                    mapOf(
-                        "name" to string,
-                        "company" to string,
-                        "phone" to string,
-                        "email" to string,
-                    ),
-                ),
-            ),
-        ),
-    )
-
     suspend fun enhance(
+        context: Context,
         content: ResumePdfTextContent,
         localDocument: ResumeDocument,
-        modelName: String,
     ): ResumeDocument? {
         val source = content.forAi().take(MAX_SOURCE_LENGTH)
         if (source.length < 80) return null
 
-        val model = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
-            modelName = modelName,
-            generationConfig = generationConfig {
-                temperature = 0.1f
-                responseMimeType = "application/json"
-                responseSchema = ResumeAiExtractor.responseSchema
-            },
-        )
-        val response = model.generateContent(prompt(source, localDocument)).text
-            ?.takeIf(String::isNotBlank)
-            ?: return null
+        val result = FirebaseFunctions.getInstance("us-central1")
+            .getHttpsCallable("enhanceResume")
+            .apply { setTimeout(70, TimeUnit.SECONDS) }
+            .call(
+                mapOf(
+                    "deviceHash" to resumeAiDeviceHash(context),
+                    "source" to source,
+                    "localDraft" to ResumeDocumentCodec.encode(localDocument),
+                ),
+            ).await().data as? Map<*, *> ?: error("Invalid AI response")
+        when (result["status"]) {
+            "limited" -> throw ResumeAiQuotaException(
+                (result["nextAvailableAtMs"] as? Number)?.toLong(),
+            )
+            "busy" -> throw ResumeAiQuotaException(null)
+            "enhanced" -> Unit
+            else -> error("Invalid AI status")
+        }
+        val response = result["resumeJson"] as? String ?: error("Missing AI resume")
         val extracted = json.decodeFromString<AiResume>(response)
         return extracted.mergeWith(localDocument)
     }
-
-    private fun prompt(source: String, localDocument: ResumeDocument): String = """
-        You extract structured facts from resumes in Spanish or English.
-        Return only data explicitly supported by SOURCE. Never invent, translate, summarize, or improve facts.
-        Use empty strings or empty arrays when a value is absent.
-        Keep the original wording, names, capitalization, phone numbers, emails, URLs, dates, and achievement details.
-        The professional title is the explicit occupation near the person's name, not a marketing sentence.
-        Separate work experiences, education records, courses, languages, links, and references correctly.
-        Keep separate achievement bullets joined with newline characters inside achievements.
-        A course or certification must not be classified as formal education.
-        Use LOCAL_DRAFT only as a hint for OCR corrections; SOURCE is authoritative.
-
-        SOURCE:
-        $source
-
-        LOCAL_DRAFT:
-        ${ResumeDocumentCodec.encode(localDocument)}
-    """.trimIndent()
 
     private fun ResumePdfTextContent.forAi(): String = buildString {
         if (headerText.isNotBlank()) {

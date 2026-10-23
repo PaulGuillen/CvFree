@@ -31,7 +31,7 @@ data class FeatureAccessState(
 internal data class FeatureFlags(
     val aiImportEnabled: Boolean = true,
     val premiumPaywallEnabled: Boolean = false,
-    val freeAiScans: Int = 3,
+    val freeAiScans: Int = 1,
     val premiumMonthlyLimit: Int = 30,
     val aiModelName: String = DEFAULT_AI_MODEL,
 )
@@ -69,7 +69,7 @@ internal class FeatureAccessController(
             mapOf(
                 AI_IMPORT_ENABLED to true,
                 PREMIUM_PAYWALL_ENABLED to false,
-                FREE_AI_SCANS to 3L,
+                FREE_AI_SCANS to 1L,
                 PREMIUM_MONTHLY_LIMIT to 30L,
                 AI_MODEL_NAME to DEFAULT_AI_MODEL,
             ),
@@ -96,8 +96,7 @@ internal fun resolveFeatureAccess(
     flags: FeatureFlags,
 ): FeatureAccessState = FeatureAccessState(
     plan = entitlementSource.declaredPlan,
-    aiResumeImportEnabled = flags.aiImportEnabled &&
-        (!flags.premiumPaywallEnabled || entitlementSource.hasPremiumAccess.value),
+    aiResumeImportEnabled = flags.aiImportEnabled,
     premiumPaywallEnabled = flags.premiumPaywallEnabled,
     freeAiScans = flags.freeAiScans.coerceAtLeast(0),
     premiumMonthlyLimit = flags.premiumMonthlyLimit.coerceAtLeast(0),

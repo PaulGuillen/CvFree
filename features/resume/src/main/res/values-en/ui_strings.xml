@@ -203,6 +203,9 @@
     <string name="resume_updated">Updated %1$s</string>
     <string name="resume_more_options">More options for %1$s</string>
     <string name="resume_delete_confirmation">Are you sure you want to delete \"%1$s\"? This action cannot be undone.</string>
-    <string name="ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9">To organize the resume, the recognized text will be sent securely to Firebase AI Logic. The original file will not be sent, and you can review every detail.</string>
+    <string name="ui_to_organize_the_resume_the_recognized_text_will_be_sent_secu_4ee2d9">To organize the resume, the recognized text will be sent securely to our Firebase services and Gemini. The original file will not be sent, and you can review every detail.</string>
+    <string name="ai_weekly_free_notice">The Free plan includes one AI import every 7 days per device, shared between scans and PDFs. If you have used your allowance or AI is unavailable, we will continue importing without AI.</string>
+    <string name="ai_weekly_limit_reached">You have already used AI on this device. Available again: %1$s. Continuing without AI.</string>
+    <string name="ai_unavailable_local_import">AI is unavailable right now. Continuing with local import without AI.</string>
     <string name="skill_max_length">Use up to %1$d characters</string>
 </resources>

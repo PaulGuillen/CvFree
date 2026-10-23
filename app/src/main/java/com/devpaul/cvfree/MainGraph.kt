@@ -98,7 +98,7 @@ fun MainGraph(
     }
     val resumeImportPolicy = ResumeImportPolicy(
         aiEnhancementEnabled = featureAccess.aiResumeImportEnabled,
-        aiModelName = featureAccess.aiModelName,
+        isFreePlan = featureAccess.plan == AccessPlan.Free,
     )
 
     NavHost(

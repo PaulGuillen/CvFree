@@ -23,7 +23,7 @@ class FeatureAccessControllerTest {
     }
 
     @Test
-    fun `free plan falls back to local import when premium paywall is enabled`() {
+    fun `free plan keeps weekly AI access when premium paywall is enabled`() {
         val access = resolveFeatureAccess(
             entitlementSource = entitlement(AccessPlan.Free, premium = false),
             flags = FeatureFlags(
@@ -32,7 +32,7 @@ class FeatureAccessControllerTest {
             ),
         )
 
-        assertFalse(access.aiResumeImportEnabled)
+        assertTrue(access.aiResumeImportEnabled)
     }
 
     @Test
