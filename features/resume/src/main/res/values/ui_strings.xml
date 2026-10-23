@@ -53,7 +53,8 @@
     <string name="ui_systems_engineering_aaa2c6">Ingeniería de Sistemas</string>
     <string name="ui_degree_or_field_of_study_is_required_6836ef">El grado o carrera es obligatorio</string>
     <string name="ui_from_966c7c">Desde</string>
-    <string name="ui_use_yyyy_b4b1bd">Usa AAAA</string>
+    <string name="ui_use_month_year">Usa MM/AAAA (por ejemplo, 07/2026)</string>
+    <string name="ui_month_year_placeholder">MM/AAAA</string>
     <string name="ui_to_ccdaad">Hasta</string>
     <string name="ui_experience_fbb04c">Experiencia</string>
     <string name="ui_tell_us_about_your_work_experience_905d16">Cuéntanos sobre tu experiencia laboral</string>

@@ -242,21 +242,21 @@ private fun CourseEditor(
             value = startDate,
             onValueChange = onStartDateChange,
             label = stringResource(R.string.ui_start_4f70d8),
-            placeholder = "MM/AAAA",
+            placeholder = stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
             maxLength = 7,
             isError = showErrors && !startDate.isValidMonthYearOrBlank(),
-            supportingText = if (showErrors && !startDate.isValidMonthYearOrBlank()) "MM/AAAA" else null,
+            supportingText = if (showErrors && !startDate.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
         )
         BuilderTextField(
             value = endDate,
             onValueChange = onEndDateChange,
             label = stringResource(R.string.ui_end_425106),
-            placeholder = "MM/AAAA",
+            placeholder = stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
             maxLength = 7,
             isError = showErrors && !endDate.isValidMonthYearOrBlank(),
-            supportingText = if (showErrors && !endDate.isValidMonthYearOrBlank()) "MM/AAAA" else null,
+            supportingText = if (showErrors && !endDate.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
         )
     }
     Spacer(Modifier.height(18.dp))

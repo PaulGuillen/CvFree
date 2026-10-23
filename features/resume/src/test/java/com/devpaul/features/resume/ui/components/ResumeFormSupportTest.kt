@@ -28,9 +28,18 @@ class ResumeFormSupportTest {
     }
 
     @Test
-    fun `accepts year and month year course dates`() {
+    fun `accepts optional month year dates and legacy years`() {
+        assertTrue("".isValidMonthYearOrBlank())
         assertTrue("2026".isValidMonthYearOrBlank())
+        assertTrue("07/2026".isValidMonthYearOrBlank())
+        assertTrue("01/2026".isValidMonthYearOrBlank())
+        assertTrue("12/2026".isValidMonthYearOrBlank())
         assertTrue("10/2026".isValidMonthYearOrBlank())
+        assertFalse("00/2026".isValidMonthYearOrBlank())
         assertFalse("13/2026".isValidMonthYearOrBlank())
+        assertFalse("7/2026".isValidMonthYearOrBlank())
+        assertFalse("07/26".isValidMonthYearOrBlank())
+        assertFalse("072026".isValidMonthYearOrBlank())
+        assertFalse("07-2026".isValidMonthYearOrBlank())
     }
 }

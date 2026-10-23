@@ -30,7 +30,7 @@ import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
-import com.devpaul.features.resume.ui.components.isValidYearOrBlank
+import com.devpaul.features.resume.ui.components.isValidMonthYearOrBlank
 import com.devpaul.features.resume.ui.components.replaceById
 
 @Composable
@@ -102,7 +102,7 @@ fun EducationScreen(
     fun saveEditor(): Boolean {
         showErrors = true
         if (institution.isBlank() || degree.isBlank() ||
-            !startYear.isValidYearOrBlank() || !endYear.isValidYearOrBlank()
+            !startYear.isValidMonthYearOrBlank() || !endYear.isValidMonthYearOrBlank()
         ) {
             AppAnalytics.error("validate_education", code = "invalid_fields")
             return false
@@ -162,9 +162,9 @@ fun EducationScreen(
                         city = city,
                         onCityChange = { city = it },
                         startYear = startYear,
-                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                        onStartYearChange = { startYear = it.filter { character -> character.isDigit() || character == '/' } },
                         endYear = endYear,
-                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                        onEndYearChange = { endYear = it.filter { character -> character.isDigit() || character == '/' } },
                         showErrors = showErrors,
                         onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                         onSave = ::saveEditor,
@@ -199,9 +199,9 @@ fun EducationScreen(
                                 city = city,
                                 onCityChange = { city = it },
                                 startYear = startYear,
-                                onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                                onStartYearChange = { startYear = it.filter { character -> character.isDigit() || character == '/' } },
                                 endYear = endYear,
-                                onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                                onEndYearChange = { endYear = it.filter { character -> character.isDigit() || character == '/' } },
                                 showErrors = showErrors,
                         onCancel = { onDraftChange(null); editingId = null; resetEditor() },
                                 onSave = ::saveEditor,
@@ -262,23 +262,23 @@ private fun EducationEditor(
             value = startYear,
             onValueChange = onStartYearChange,
             label = stringResource(R.string.ui_from_966c7c),
-            placeholder = "2017",
+            placeholder = stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
-            maxLength = 4,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = showErrors && !startYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
+            maxLength = 7,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+            isError = showErrors && !startYear.isValidMonthYearOrBlank(),
+            supportingText = if (showErrors && !startYear.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
         )
         BuilderTextField(
             value = endYear,
             onValueChange = onEndYearChange,
             label = stringResource(R.string.ui_to_ccdaad),
-            placeholder = "2022",
+            placeholder = stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
-            maxLength = 4,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = showErrors && !endYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !endYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
+            maxLength = 7,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+            isError = showErrors && !endYear.isValidMonthYearOrBlank(),
+            supportingText = if (showErrors && !endYear.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
         )
     }
     Spacer(Modifier.height(18.dp))

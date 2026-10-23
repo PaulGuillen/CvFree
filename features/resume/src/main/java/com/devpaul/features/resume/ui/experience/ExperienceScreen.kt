@@ -37,7 +37,7 @@ import com.devpaul.features.resume.ui.components.TrackResumeDraft
 import com.devpaul.features.resume.ui.components.BuilderSavedEntryCard
 import com.devpaul.features.resume.ui.components.BuilderTextField
 import com.devpaul.features.resume.ui.components.NewEntryId
-import com.devpaul.features.resume.ui.components.isValidYearOrBlank
+import com.devpaul.features.resume.ui.components.isValidMonthYearOrBlank
 import com.devpaul.features.resume.ui.components.replaceById
 import com.devpaul.features.resume.ui.summary.RichTextEditor
 import com.devpaul.features.resume.ui.summary.RichTextEditorState
@@ -134,7 +134,7 @@ fun ExperienceScreen(
     fun saveEditor(): Boolean {
         showErrors = true
         if (position.isBlank() || company.isBlank() ||
-            !startYear.isValidYearOrBlank() || (!isCurrent && !endYear.isValidYearOrBlank())
+            !startYear.isValidMonthYearOrBlank() || (!isCurrent && !endYear.isValidMonthYearOrBlank())
         ) {
             AppAnalytics.error("validate_experience", code = "invalid_fields")
             return false
@@ -197,9 +197,9 @@ fun ExperienceScreen(
                         city = city,
                         onCityChange = { city = it },
                         startYear = startYear,
-                        onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                        onStartYearChange = { startYear = it.filter { character -> character.isDigit() || character == '/' } },
                         endYear = endYear,
-                        onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                        onEndYearChange = { endYear = it.filter { character -> character.isDigit() || character == '/' } },
                         isCurrent = isCurrent,
                         onIsCurrentChange = { isCurrent = it },
                         achievementsEditor = achievementsEditor,
@@ -239,9 +239,9 @@ fun ExperienceScreen(
                                 city = city,
                                 onCityChange = { city = it },
                                 startYear = startYear,
-                                onStartYearChange = { startYear = it.filter(Char::isDigit) },
+                                onStartYearChange = { startYear = it.filter { character -> character.isDigit() || character == '/' } },
                                 endYear = endYear,
-                                onEndYearChange = { endYear = it.filter(Char::isDigit) },
+                                onEndYearChange = { endYear = it.filter { character -> character.isDigit() || character == '/' } },
                                 isCurrent = isCurrent,
                                 onIsCurrentChange = { isCurrent = it },
                                 achievementsEditor = achievementsEditor,
@@ -308,23 +308,23 @@ private fun ExperienceEditor(
             value = startYear,
             onValueChange = onStartYearChange,
             label = stringResource(R.string.ui_from_966c7c),
-            placeholder = "2021",
+            placeholder = stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
-            maxLength = 4,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = showErrors && !startYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !startYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
+            maxLength = 7,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+            isError = showErrors && !startYear.isValidMonthYearOrBlank(),
+            supportingText = if (showErrors && !startYear.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
         )
         BuilderTextField(
             value = if (isCurrent) stringResource(R.string.ui_present_45d9cf) else endYear,
             onValueChange = onEndYearChange,
             label = stringResource(R.string.ui_to_ccdaad),
-            placeholder = if (isCurrent) stringResource(R.string.ui_present_45d9cf) else "2026",
+            placeholder = if (isCurrent) stringResource(R.string.ui_present_45d9cf) else stringResource(R.string.ui_month_year_placeholder),
             modifier = Modifier.weight(1f),
-            maxLength = 4,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = showErrors && !isCurrent && !endYear.isValidYearOrBlank(),
-            supportingText = if (showErrors && !isCurrent && !endYear.isValidYearOrBlank()) stringResource(R.string.ui_use_yyyy_b4b1bd) else null,
+            maxLength = 7,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+            isError = showErrors && !isCurrent && !endYear.isValidMonthYearOrBlank(),
+            supportingText = if (showErrors && !isCurrent && !endYear.isValidMonthYearOrBlank()) stringResource(R.string.ui_use_month_year) else null,
             enabled = !isCurrent,
         )
     }

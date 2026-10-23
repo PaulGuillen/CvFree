@@ -53,7 +53,8 @@
     <string name="ui_systems_engineering_aaa2c6">Systems Engineering</string>
     <string name="ui_degree_or_field_of_study_is_required_6836ef">Degree or field of study is required</string>
     <string name="ui_from_966c7c">From</string>
-    <string name="ui_use_yyyy_b4b1bd">Use YYYY</string>
+    <string name="ui_use_month_year">Use MM/YYYY (for example, 07/2026)</string>
+    <string name="ui_month_year_placeholder">MM/YYYY</string>
     <string name="ui_to_ccdaad">To</string>
     <string name="ui_experience_fbb04c">Experience</string>
     <string name="ui_tell_us_about_your_work_experience_905d16">Tell us about your work experience</string>
