@@ -65,6 +65,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -97,6 +99,8 @@ import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.features.resume.R
 import com.devpaul.features.resume.importing.ResumeImportPolicy
+import com.devpaul.features.resume.importing.ResumeAiAvailability
+import com.devpaul.features.resume.importing.ResumeAiQuota
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.ResumeTemplateRenderer
@@ -117,7 +121,7 @@ fun MyCvsScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onCreateCv: () -> Unit,
-    onImportPdf: (Uri) -> Unit = {},
+    onImportPdf: (Uri, Boolean) -> Unit = { _, _ -> },
     resumes: List<ResumeDocument> = emptyList(),
     onEditResume: (ResumeDocument) -> Unit = {},
     onViewResume: (ResumeDocument) -> Unit = {},
@@ -131,6 +135,7 @@ fun MyCvsScreen(
     var selectedFilterName by rememberSaveable { mutableStateOf(CvFilter.All.name) }
     var showCreateOptions by rememberSaveable { mutableStateOf(false) }
     var pendingImportAction by remember { mutableStateOf<ImportAction?>(null) }
+    var useAiForPendingImport by rememberSaveable { mutableStateOf(false) }
     var pendingDelete by remember { mutableStateOf<ResumeDocument?>(null) }
     var searchVisible by rememberSaveable { mutableStateOf(false) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
@@ -145,6 +150,13 @@ fun MyCvsScreen(
     val activity = context.findActivity()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val aiQuota by ResumeAiQuota.status.collectAsState()
+    val canUseAi = aiQuota.canUseAi(importPolicy)
+    LaunchedEffect(showCreateOptions, importPolicy.aiEnhancementEnabled) {
+        if (showCreateOptions && importPolicy.aiEnhancementEnabled) {
+            ResumeAiQuota.refresh(context)
+        }
+    }
     fun performQuickAction(action: CvQuickAction, resume: ResumeDocument) {
         pendingQuickActionName = null
         selectedResumeId = resume.id
@@ -192,7 +204,7 @@ fun MyCvsScreen(
                     Intent.FLAG_GRANT_READ_URI_PERMISSION,
                 )
             }.onFailure { AppAnalytics.error("persist_import_permission", it) }
-            onImportPdf(uri)
+            onImportPdf(uri, useAiForPendingImport)
         }
     }
     val scanner = remember {
@@ -214,7 +226,7 @@ fun MyCvsScreen(
                 ?.pdf
                 ?.uri
             if (scannedPdf != null) {
-                onImportPdf(scannedPdf)
+                onImportPdf(scannedPdf, useAiForPendingImport)
             } else {
                 AppAnalytics.error("scan_resume", code = "missing_pdf")
                 coroutineScope.launch {
@@ -245,7 +257,8 @@ fun MyCvsScreen(
             }
     }
 
-    fun launchImport(action: ImportAction) {
+    fun launchImport(action: ImportAction, useAi: Boolean) {
+        useAiForPendingImport = useAi
         showCreateOptions = false
         when (action) {
             ImportAction.Pdf -> pdfPicker.launch(arrayOf("application/pdf"))
@@ -254,10 +267,10 @@ fun MyCvsScreen(
     }
 
     fun requestImport(action: ImportAction) {
-        if (importPolicy.aiEnhancementEnabled) {
+        if (canUseAi) {
             pendingImportAction = action
         } else {
-            launchImport(action)
+            launchImport(action, useAi = false)
         }
     }
     val visibleResumes = resumes
@@ -294,7 +307,10 @@ fun MyCvsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = trackedClick("open_create_options") { showCreateOptions = true },
+                onClick = trackedClick("open_create_options") {
+                    ResumeAiQuota.markChecking()
+                    showCreateOptions = true
+                },
                 modifier = Modifier.size(56.dp),
                 shape = CircleShape,
                 containerColor = Color.Transparent,
@@ -525,6 +541,27 @@ fun MyCvsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
+                if (importPolicy.aiEnhancementEnabled) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = when (aiQuota.availability) {
+                            ResumeAiAvailability.Checking -> stringResource(R.string.ai_quota_checking)
+                            ResumeAiAvailability.Available -> stringResource(
+                                if (importPolicy.isFreePlan) R.string.ai_quota_available_free else R.string.ai_quota_available,
+                            )
+                            ResumeAiAvailability.Limited -> stringResource(
+                                R.string.ai_quota_used_until,
+                                java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT, java.text.DateFormat.SHORT)
+                                    .format(Date(checkNotNull(aiQuota.nextAvailableAtMillis))),
+                            )
+                            ResumeAiAvailability.Busy -> stringResource(R.string.ai_quota_busy)
+                            ResumeAiAvailability.Unavailable -> stringResource(R.string.ai_quota_unverified)
+                        },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
                 CreateResumeOption(
                     icon = Icons.Outlined.EditNote,
@@ -552,7 +589,7 @@ fun MyCvsScreen(
                 CreateResumeOption(
                     icon = Icons.Outlined.UploadFile,
                     title = stringResource(R.string.ui_import_pdf_23e4c6),
-                    description = if (importPolicy.aiEnhancementEnabled) {
+                    description = if (canUseAi) {
                         stringResource(R.string.ui_analyze_and_organize_the_content_with_ai_assistance_7b0063)
                     } else {
                         stringResource(R.string.ui_extract_and_organize_the_content_directly_on_the_device_1ea11b)
@@ -578,7 +615,7 @@ fun MyCvsScreen(
                 TextButton(
                     onClick = trackedClick("confirm_ai_import") {
                         pendingImportAction = null
-                        launchImport(action)
+                        launchImport(action, useAi = true)
                     },
                 ) {
                     Text(stringResource(R.string.ui_continue_b8cb6f))

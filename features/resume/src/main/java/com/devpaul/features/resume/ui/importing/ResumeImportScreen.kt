@@ -103,6 +103,9 @@ fun ResumeImportScreen(
                 context,
                 documentUri,
                 importPolicy,
+                onAiEnhanced = {
+                    Toast.makeText(context, context.getString(R.string.ai_import_enhanced), Toast.LENGTH_LONG).show()
+                },
                 onAiSkipped = { nextAvailableAtMillis ->
                     val message = if (nextAvailableAtMillis != null) {
                         context.getString(

@@ -101,8 +101,8 @@ fun NavGraphBuilder.resumeGraph(
                 draftState.startNew(emptySet())
                 navController.navigate(ResumeRoute.SectionSelection)
             },
-            onImportPdf = { uri ->
-                navController.navigate(ResumeRoute.Importing(uri.toString()))
+            onImportPdf = { uri, useAi ->
+                navController.navigate(ResumeRoute.Importing(uri.toString(), useAi))
             },
             onEditResume = { resume ->
                 draftState.load(resume)
@@ -124,7 +124,7 @@ fun NavGraphBuilder.resumeGraph(
         val route = backStackEntry.toRoute<ResumeRoute.Importing>()
         ResumeImportScreen(
             documentUri = route.uri.toUri(),
-            importPolicy = importPolicy,
+            importPolicy = importPolicy.copy(aiEnhancementEnabled = importPolicy.aiEnhancementEnabled && route.useAi),
             onBack = { navController.popBackStack() },
             onComplete = { importedResume ->
                 draftState.importResume(importedResume)

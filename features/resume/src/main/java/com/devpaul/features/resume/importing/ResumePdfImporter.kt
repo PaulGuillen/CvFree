@@ -23,6 +23,7 @@ internal object ResumePdfImporter {
         uri: Uri,
         policy: ResumeImportPolicy = ResumeImportPolicy(),
         onAiSkipped: (nextAvailableAtMillis: Long?) -> Unit = {},
+        onAiEnhanced: () -> Unit = {},
         onProgress: suspend (progress: Int, stage: ResumeImportStage) -> Unit,
     ): ResumeDocument {
         onProgress(6, ResumeImportStage.Preparing)
@@ -55,7 +56,9 @@ internal object ResumePdfImporter {
         val enhancedDocument = if (policy.aiEnhancementEnabled) {
             onProgress(66, ResumeImportStage.Enhancing)
             try {
-                ResumeAiExtractor.enhance(context, content, document)
+                ResumeAiExtractor.enhance(context, content, document).also { enhanced ->
+                    if (enhanced != null) onAiEnhanced() else onAiSkipped(null)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: ResumeAiQuotaException) {
