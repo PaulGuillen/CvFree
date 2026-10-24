@@ -53,7 +53,7 @@ internal fun ProfileCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
-                modifier = Modifier.size(72.dp),
+                modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primary,
             ) {
@@ -61,11 +61,11 @@ internal fun ProfileCard(
                     Text(
                         text = profileInitials(visibleName),
                         color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = visibleName,
@@ -84,6 +84,7 @@ internal fun ProfileCard(
                 Spacer(modifier = Modifier.height(10.dp))
                 AccountPlanBadge(isPremium = isPremium)
             }
+            Spacer(modifier = Modifier.width(12.dp))
             OutlinedButton(
                 onClick = trackedClick("edit_profile_name", onEdit),
                 contentPadding = PaddingValues(horizontal = 14.dp),
