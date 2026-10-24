@@ -81,61 +81,115 @@ Las variantes combinan los ambientes **dev / prod** con el acceso **Free / Premi
 
 ## 🎨 Diseño y demostración
 
-### 🔐 Autenticación
+Capturas actuales de la app organizadas por flujo. Las imágenes se muestran con una altura de **380 px** para consultar varias pantallas juntas sin ocupar tanto espacio.
 
-Inicio de sesión, creación de cuenta y recuperación de contraseña en tema claro y oscuro.
+### 🚀 Inicio y bienvenida
 
-<p align="center">
-<img width="300" height="668" alt="Inicio de sesión en tema claro" src="docs/screenshots/login-claro.png" />
-<img width="300" height="668" alt="Inicio de sesión en tema oscuro" src="docs/screenshots/login-oscuro.png" />
-
-<img width="300" height="668" alt="Registro en tema claro" src="docs/screenshots/registro-claro.png" />
-<img width="300" height="668" alt="Registro en tema oscuro" src="docs/screenshots/registro-oscuro.png" />
-
-<img width="300" height="668" alt="Recuperación de contraseña en tema claro" src="docs/screenshots/recuperar-claro.png" />
-<img width="300" height="668" alt="Recuperación de contraseña en tema oscuro" src="docs/screenshots/recuperar-oscuro.png" />
-</p>
-
-<br><br>
-
-_Navigation_
-
-Pantalla de inicio, Mis CV, catálogo de plantillas y ajustes de la aplicación.
+Splash con fondo claro e iluminación azul, seguido de los tres pasos de presentación: plantillas, perfil y descarga del CV.
 
 <p align="center">
-<img width="300" height="668" alt="Inicio en tema claro" src="docs/screenshots/inicio-claro.png" />
-<img width="300" height="668" alt="Inicio en tema oscuro" src="docs/screenshots/inicio-oscuro.png" />
-
-<img width="300" height="668" alt="Mis CV en tema claro" src="docs/screenshots/mis-cv-claro.png" />
-<img width="300" height="668" alt="Mis CV en tema oscuro" src="docs/screenshots/mis-cv-oscuro.png" />
-
-<img width="300" height="668" alt="Catálogo de plantillas en tema claro" src="docs/screenshots/plantillas-claro.png" />
-<img width="300" height="668" alt="Catálogo de plantillas en tema oscuro" src="docs/screenshots/plantillas-oscuro.png" />
-
-<img width="300" height="668" alt="Ajustes en tema claro" src="docs/screenshots/ajustes-claro.png" />
-<img width="300" height="668" alt="Ajustes en tema oscuro" src="docs/screenshots/ajustes-oscuro.png" />
+<img height="380" alt="Splash con degradado claro" src="docs/screenshots/splash-claro.png" />
+<img height="380" alt="Onboarding: elige una plantilla profesional" src="docs/screenshots/onboarding-1-claro.png" />
+<img height="380" alt="Onboarding: completa tu perfil" src="docs/screenshots/onboarding-2-claro.png" />
+<img height="380" alt="Onboarding: prepara tu próximo empleo" src="docs/screenshots/onboarding-3-claro.png" />
 </p>
 
-<br><br>
-
-_Creación de currículums_
-
-Crea un CV desde cero, escanea un documento o importa un PDF. Selecciona las secciones que necesitas y consulta el diseño antes de exportarlo.
+<details>
+<summary>Ver los tres pasos de onboarding en modo oscuro</summary>
 
 <p align="center">
-<img width="300" height="668" alt="Opciones para crear e importar un CV en tema claro" src="docs/screenshots/crear-importar-claro.png" />
-<img width="300" height="668" alt="Opciones para crear e importar un CV en tema oscuro" src="docs/screenshots/crear-importar-oscuro.png" />
-
-<img width="300" height="668" alt="Selección de secciones en tema claro" src="docs/screenshots/secciones-claro.png" />
-<img width="300" height="668" alt="Selección de secciones en tema oscuro" src="docs/screenshots/secciones-oscuro.png" />
-
-<img width="300" height="668" alt="Vista previa de la plantilla Budapest en tema claro" src="docs/screenshots/vista-previa-claro.png" />
-<img width="300" height="668" alt="Vista previa de la plantilla Budapest en tema oscuro" src="docs/screenshots/vista-previa-oscuro.png" />
+<img height="380" alt="Onboarding de plantillas en modo oscuro" src="docs/screenshots/onboarding-1-oscuro.png" />
+<img height="380" alt="Onboarding de perfil en modo oscuro" src="docs/screenshots/onboarding-2-oscuro.png" />
+<img height="380" alt="Onboarding de descarga en modo oscuro" src="docs/screenshots/onboarding-3-oscuro.png" />
 </p>
 
-<br><br>
+</details>
 
-_Video avance funcionalidades_
+### 🔐 Acceso y seguridad
+
+Inicio de sesión, creación de cuenta y recuperación de contraseña con selector de idioma. Registro y recuperación comparten la cabecera de seguridad con botón para retroceder.
+
+<p align="center">
+<img height="380" alt="Inicio de sesión en tema claro" src="docs/screenshots/login-claro.png" />
+<img height="380" alt="Crear cuenta en tema claro" src="docs/screenshots/registro-claro.png" />
+<img height="380" alt="Recuperar contraseña en tema claro" src="docs/screenshots/recuperar-claro.png" />
+</p>
+
+<details>
+<summary>Ver las pantallas de autenticación en modo oscuro</summary>
+
+<p align="center">
+<img height="380" alt="Inicio de sesión en tema oscuro" src="docs/screenshots/login-oscuro.png" />
+<img height="380" alt="Crear cuenta en tema oscuro" src="docs/screenshots/registro-oscuro.png" />
+<img height="380" alt="Recuperar contraseña en tema oscuro" src="docs/screenshots/recuperar-oscuro.png" />
+</p>
+
+</details>
+
+### 🏠 Inicio y catálogo de plantillas
+
+Panel de inicio con consejos, plantillas destacadas y actividad reciente. El catálogo permite filtrar, reordenar, seleccionar una tarjeta y abrir su vista previa.
+
+<p align="center">
+<img height="380" alt="Panel de inicio en tema claro" src="docs/screenshots/inicio-claro.png" />
+<img height="380" alt="Panel de inicio en tema oscuro" src="docs/screenshots/inicio-oscuro.png" />
+<img height="380" alt="Galería de plantillas en tema claro" src="docs/screenshots/plantillas-claro.png" />
+<img height="380" alt="Galería de plantillas en tema oscuro" src="docs/screenshots/plantillas-oscuro.png" />
+</p>
+
+### 📂 Gestión de currículums
+
+Mis CV permite alternar entre lista y cuadrícula, buscar documentos, consultar las secciones completadas y marcar un CV como activo.
+
+<p align="center">
+<img height="380" alt="Mis CV en vista de lista y tema claro" src="docs/screenshots/mis-cv-claro.png" />
+<img height="380" alt="Mis CV en vista de lista y tema oscuro" src="docs/screenshots/mis-cv-oscuro.png" />
+<img height="380" alt="Mis CV en cuadrícula y tema claro" src="docs/screenshots/mis-cv-cuadricula-claro.png" />
+<img height="380" alt="Mis CV en cuadrícula y tema oscuro" src="docs/screenshots/mis-cv-cuadricula-oscuro.png" />
+</p>
+
+<details>
+<summary>Ver el selector de CV para las acciones proactivas</summary>
+
+Cuando hay varios documentos, duplicar o cambiar la plantilla solicita elegir el CV al que se aplicará la acción.
+
+<p align="center">
+<img height="380" alt="Selector de documento para duplicar un CV" src="docs/screenshots/seleccionar-cv.png" />
+</p>
+
+</details>
+
+### ⚙️ Perfil y preferencias
+
+Ajustes comparte la cabecera de Inicio y Mis CV, sin iconos de acción a la derecha. Incluye perfil, plan, idioma, apariencia, notificaciones y guardado automático.
+
+<p align="center">
+<img height="380" alt="Ajustes y perfil en tema claro" src="docs/screenshots/ajustes-claro.png" />
+<img height="380" alt="Ajustes y perfil en tema oscuro" src="docs/screenshots/ajustes-oscuro.png" />
+</p>
+
+### 📝 Creación y vista previa
+
+Crea un CV desde cero, escanea un documento o importa un PDF. Selecciona sus secciones y explora la vista previa de Budapest con información de ejemplo.
+
+<p align="center">
+<img height="380" alt="Opciones para crear e importar un CV en tema claro" src="docs/screenshots/crear-importar-claro.png" />
+<img height="380" alt="Selección de secciones del CV en tema claro" src="docs/screenshots/secciones-claro.png" />
+<img height="380" alt="Vista previa de Budapest con datos de ejemplo en tema claro" src="docs/screenshots/vista-previa-claro.png" />
+</p>
+
+<details>
+<summary>Ver el flujo de creación en modo oscuro</summary>
+
+<p align="center">
+<img height="380" alt="Opciones para crear e importar un CV en tema oscuro" src="docs/screenshots/crear-importar-oscuro.png" />
+<img height="380" alt="Selección de secciones del CV en tema oscuro" src="docs/screenshots/secciones-oscuro.png" />
+<img height="380" alt="Vista previa de Budapest con datos de ejemplo en tema oscuro" src="docs/screenshots/vista-previa-oscuro.png" />
+</p>
+
+</details>
+
+### 🎬 Video de funcionalidades
 
 _Video pendiente de agregar._
 
