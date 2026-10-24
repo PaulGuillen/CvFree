@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="register_brand_subtitle">Executive Career Toolkit</string>
+    <string name="register_name_placeholder">Elena Vargas</string>
+    <string name="register_password_hint">Use at least 8 characters. Combine letters and numbers for better security.</string>
+    <string name="login_welcome_subtitle">Sign in to your career toolkit</string>
+    <string name="login_english">English</string>
     <string name="auth_attempt_limit_reached">You reached the limit of 3 attempts in 15 minutes for this action. Try again later.</string>
     <string name="ui_build_your_professional_future_today_6af353">Build your professional future today</string>
     <string name="ui_hide_password_a0e898">Hide password</string>
