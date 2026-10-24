@@ -45,6 +45,15 @@ async function settleQuota(store, reservation, succeeded, now = Date.now) {
   });
 }
 
+async function readQuota({ store, deviceHash, premium, now = Date.now }) {
+  if (premium) return { status: "available" };
+  const reference = store.collection("ai_device_quotas").doc(deviceHash);
+  return store.runTransaction(async (transaction) => {
+    const snapshot = await transaction.get(reference);
+    return availability(snapshot.data(), now());
+  });
+}
+
 async function enhanceWithQuota({ store, deviceHash, premium, generate, now = Date.now }) {
   if (premium) return { status: "enhanced", resumeJson: await generate() };
   const reservation = await reserveQuota(store, deviceHash, now);
@@ -60,4 +69,4 @@ async function enhanceWithQuota({ store, deviceHash, premium, generate, now = Da
   }
 }
 
-module.exports = { WEEK_MS, RESERVATION_MS, availability, enhanceWithQuota, reserveQuota, settleQuota };
+module.exports = { WEEK_MS, RESERVATION_MS, availability, enhanceWithQuota, readQuota, reserveQuota, settleQuota };

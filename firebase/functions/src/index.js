@@ -2,12 +2,34 @@ const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { defineSecret, defineString } = require("firebase-functions/params");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { enhanceWithQuota } = require("./quota");
+const { enhanceWithQuota, readQuota } = require("./quota");
 const { generateResume, validateInput } = require("./resume");
 
 initializeApp();
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const aiModelName = defineString("AI_MODEL_NAME");
+
+exports.getResumeAiQuota = onCall({
+  region: "us-central1",
+  enforceAppCheck: true,
+  timeoutSeconds: 15,
+  maxInstances: 5,
+}, async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Sign in to check AI availability");
+  const deviceHash = request.data?.deviceHash;
+  if (typeof deviceHash !== "string" || !/^[a-f0-9]{64}$/.test(deviceHash)) {
+    throw new HttpsError("invalid-argument", "Invalid device identifier");
+  }
+  try {
+    return await readQuota({
+      store: getFirestore(),
+      deviceHash,
+      premium: request.auth.token.premium === true,
+    });
+  } catch {
+    throw new HttpsError("unavailable", "AI availability could not be verified");
+  }
+});
 
 exports.enhanceResume = onCall({
   region: "us-central1",

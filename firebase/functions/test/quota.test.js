@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { WEEK_MS, RESERVATION_MS, availability, enhanceWithQuota, reserveQuota, settleQuota } = require("../src/quota");
+const { WEEK_MS, RESERVATION_MS, availability, enhanceWithQuota, readQuota, reserveQuota, settleQuota } = require("../src/quota");
 
 function memoryStore() {
   const records = new Map();
@@ -113,4 +113,41 @@ test("an expired request cannot release or consume a newer reservation", async (
   assert.equal(await settleQuota(store, first, false), false);
   assert.equal(await settleQuota(store, first, true), false);
   assert.equal(store.records.get("device").reservationId, second.reservationId);
+});
+
+test("checking availability never consumes a new device allowance", async () => {
+  const store = memoryStore();
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    assert.deepEqual(await readQuota({ store, deviceHash: "device", now: () => 1000 }), { status: "available" });
+  }
+  assert.equal(store.records.size, 0);
+});
+
+test("the status query shows the persisted seven-day deadline without extending it", async () => {
+  const store = memoryStore();
+  await enhanceWithQuota({ store, deviceHash: "device", now: () => 1000, generate: async () => "resume" });
+  assert.deepEqual(await readQuota({ store, deviceHash: "device", now: () => 2000 }), {
+    status: "limited", nextAvailableAtMs: 1000 + WEEK_MS,
+  });
+  assert.deepEqual(await readQuota({ store, deviceHash: "device", now: () => 1000 + WEEK_MS - 1 }), {
+    status: "limited", nextAvailableAtMs: 1000 + WEEK_MS,
+  });
+  assert.deepEqual(await readQuota({ store, deviceHash: "device", now: () => 1000 + WEEK_MS }), { status: "available" });
+  assert.equal(store.records.get("device").lastSuccessAtMs, 1000);
+});
+
+test("checking a busy device does not acquire or replace its reservation", async () => {
+  const store = memoryStore();
+  const reservation = await reserveQuota(store, "device", () => 1000);
+  assert.deepEqual(await readQuota({ store, deviceHash: "device", now: () => 2000 }), {
+    status: "busy", nextAvailableAtMs: 1000 + RESERVATION_MS,
+  });
+  assert.equal(store.records.get("device").reservationId, reservation.reservationId);
+});
+
+test("trusted premium status is available even when the device has a free cooldown", async () => {
+  const store = memoryStore();
+  await enhanceWithQuota({ store, deviceHash: "device", now: () => 1000, generate: async () => "resume" });
+  assert.deepEqual(await readQuota({ store, deviceHash: "device", premium: true, now: () => 2000 }), { status: "available" });
+  assert.equal(store.records.get("device").lastSuccessAtMs, 1000);
 });

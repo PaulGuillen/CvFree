@@ -12,6 +12,10 @@ Firestore guarda en `ai_device_quotas/{deviceHash}` solo `lastSuccessAtMs`, `res
 
 Cuando el cupo está agotado, Android informa la fecha y hora de disponibilidad y continúa con el resultado local. Ante una reserva activa, falta de conexión, servicio sin desplegar, fallo de App Check o error de IA, informa que continúa sin IA. Nunca intenta la llamada directa a Gemini como alternativa al límite.
 
+Al abrir las opciones de importación, Android consulta `getResumeAiQuota`, una función invocable de solo lectura que exige autenticación y App Check. Consultar el estado no consume cupo ni llama a Gemini. La interfaz solo ofrece asistencia de IA cuando el servidor devuelve `available`; distingue comprobación en curso, cupo agotado, reserva activa y servicio no verificable. El plazo mostrado procede del servidor, no del reloj del teléfono.
+
+La decisión de usar IA se conserva durante el selector de archivos o el escáner y se transmite a la ruta de importación. Si se elige continuar sin IA, el importador no envía el texto al servicio aunque el cupo cambie después. Una importación realmente mejorada muestra un aviso de uso de IA; la extracción local y los PDF con datos internos de CvFree no muestran ese aviso ni consumen cupo.
+
 ## Activación en Firebase
 
 Estos archivos preparan un servicio nuevo; no contienen credenciales ni despliegan cambios automáticamente. Se necesita un proyecto con Cloud Functions habilitado, facturación compatible con su despliegue, Firestore y una clave de Gemini API autorizada para el modelo elegido.
@@ -27,6 +31,8 @@ firebase deploy --only functions:resume-ai --project TU_PROJECT_ID
 ```
 
 La CLI solicita `AI_MODEL_NAME` al desplegar. Configura un modelo disponible en tu proyecto que admita `generateContent` y salida JSON estructurada. No copies claves a Android ni al repositorio. `GEMINI_API_KEY` queda en Secret Manager; `AI_MODEL_NAME` es una configuración del servidor. El antiguo parámetro Android `ai_model_name` no selecciona el modelo de esta función.
+
+Despliega ambas funciones del codebase `resume-ai`: `enhanceResume` y `getResumeAiQuota`. Si falta cualquiera de ellas, no se puede confirmar el flujo completo. Una respuesta HTTP 404 en la URL invocable indica que ese endpoint no está disponible; que la importación local termine correctamente no demuestra que se haya utilizado IA.
 
 Si falta Firebase CLI, puede instalarse con `npm install -g firebase-tools` o ejecutarse como `npx firebase-tools`. El runtime desplegado es Node.js 22. Repite el despliegue y la configuración de secretos para cada proyecto dev/prod que corresponda.
 
