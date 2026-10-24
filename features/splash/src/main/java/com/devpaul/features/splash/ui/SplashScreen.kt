@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.core.platform.theme.CvFreeTheme
+import com.devpaul.core.platform.theme.LocalAppDarkTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.features.splash.R
 import kotlinx.coroutines.delay
@@ -65,8 +66,14 @@ fun SplashScreen(
     isPremium: Boolean = false,
     versionName: String = "",
 ) {
+    val darkTheme = LocalAppDarkTheme.current
+    val backgroundColors = if (darkTheme) {
+        listOf(Color(0xFF070E1E), Color(0xFF091B38), Color(0xFF040914))
+    } else {
+        listOf(SplashBackground, Color(0xFFF1F5F9), Color(0xFFE0E7FF))
+    }
     val currentOnFinished by rememberUpdatedState(onFinished)
-    SetStatusBarColor(color = SplashBackground, darkIcons = true)
+    SetStatusBarColor(color = backgroundColors.first(), darkIcons = !darkTheme)
     LaunchedEffect(Unit) {
         delay(SplashDurationMillis)
         currentOnFinished()
@@ -94,13 +101,16 @@ fun SplashScreen(
 
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
-            .background(Brush.verticalGradient(listOf(SplashBackground, Color(0xFFF1F5F9), Color(0xFFE0E7FF))))
+            .background(Brush.verticalGradient(backgroundColors))
             .drawBehind {
                 val radius = size.width * 0.8f
                 listOf(
-                    Offset(size.width * 0.05f, size.height * 0.05f) to Color(0xFFBFDBFE).copy(alpha = 0.4f),
-                    Offset(size.width, size.height * 0.46f) to Color(0xFFC7D2FE).copy(alpha = 0.3f),
-                    Offset(0f, size.height * 0.8f) to Color(0xFFDBEAFE).copy(alpha = 0.5f),
+                    Offset(size.width * 0.05f, size.height * 0.05f) to
+                        if (darkTheme) SplashBlue.copy(alpha = 0.2f) else Color(0xFFBFDBFE).copy(alpha = 0.4f),
+                    Offset(size.width, size.height * 0.46f) to
+                        if (darkTheme) Color(0xFF6366F1).copy(alpha = 0.15f) else Color(0xFFC7D2FE).copy(alpha = 0.3f),
+                    Offset(0f, size.height * 0.8f) to
+                        if (darkTheme) Color(0xFF3B82F6).copy(alpha = 0.1f) else Color(0xFFDBEAFE).copy(alpha = 0.5f),
                 ).forEach { (center, color) ->
                     drawCircle(Brush.radialGradient(listOf(color, Color.Transparent), center, radius), radius, center)
                 }
@@ -119,7 +129,11 @@ fun SplashScreen(
                             .drawBehind {
                                 val radius = size.width * 0.95f
                                 drawCircle(
-                                    Brush.radialGradient(listOf(Color(0xFF60A5FA).copy(alpha = 0.25f), Color.Transparent), center, radius),
+                                    Brush.radialGradient(
+                                        listOf(if (darkTheme) SplashBlue.copy(alpha = 0.4f) else Color(0xFF60A5FA).copy(alpha = 0.25f), Color.Transparent),
+                                        center,
+                                        radius,
+                                    ),
                                     radius,
                                 )
                             },
@@ -141,7 +155,7 @@ fun SplashScreen(
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             "CV Free",
-                            color = Color(0xFF0F172A),
+                            color = if (darkTheme) Color.White else Color(0xFF0F172A),
                             fontSize = 36.sp,
                             lineHeight = 44.sp,
                             fontWeight = FontWeight.ExtraBold,
@@ -165,7 +179,7 @@ fun SplashScreen(
                     Text(
                         stringResource(R.string.splash_tagline),
                         modifier = Modifier.width(270.dp),
-                        color = Color(0xFF475569),
+                        color = if (darkTheme) Color(0xFFCBD5E1) else Color(0xFF475569),
                         fontSize = 14.sp,
                         lineHeight = 23.sp,
                         textAlign = TextAlign.Center,
@@ -173,18 +187,18 @@ fun SplashScreen(
                     Spacer(Modifier.height(if (shortScreen) 16.dp else 24.dp))
                     Surface(
                         shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.9f),
-                        border = BorderStroke(1.dp, Color(0xFFE2E8F0).copy(alpha = 0.9f)),
+                        color = if (darkTheme) Color(0xFF1E293B).copy(alpha = 0.8f) else Color.White.copy(alpha = 0.9f),
+                        border = BorderStroke(1.dp, if (darkTheme) Color(0xFF334155).copy(alpha = 0.6f) else Color(0xFFE2E8F0).copy(alpha = 0.9f)),
                     ) {
                         Row(
                             Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(7.dp),
                         ) {
-                            Box(Modifier.size(6.dp).graphicsLayer { alpha = pulse }.background(Color(0xFF10B981), CircleShape))
+                            Box(Modifier.size(6.dp).graphicsLayer { alpha = pulse }.background(if (darkTheme) Color(0xFF34D399) else Color(0xFF10B981), CircleShape))
                             Text(
                                 stringResource(R.string.splash_badge),
-                                color = Color(0xFF334155),
+                                color = if (darkTheme) Color(0xFFCBD5E1) else Color(0xFF334155),
                                 fontSize = 10.sp,
                                 lineHeight = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -196,21 +210,21 @@ fun SplashScreen(
                     val loadingDescription = stringResource(R.string.splash_loading)
                     Canvas(
                         Modifier.width(144.dp).height(6.dp).clip(CircleShape)
-                            .background(Color(0xFFE2E8F0).copy(alpha = 0.8f))
+                            .background((if (darkTheme) Color(0xFF1E293B) else Color(0xFFE2E8F0)).copy(alpha = 0.8f))
                             .semantics {
                                 contentDescription = loadingDescription
                                 progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
                             },
                     ) {
                         val center = Offset(size.width * (progress + 0.3f), size.height / 2f)
-                        drawRect(Brush.radialGradient(listOf(SplashBlue, Color.Transparent), center, size.width * 0.3f))
+                        drawRect(Brush.radialGradient(listOf(if (darkTheme) Color(0xFF3B82F6) else SplashBlue, Color.Transparent), center, size.width * 0.3f))
                     }
                 }
             }
             Spacer(Modifier.height(16.dp))
             Text(
                 "POWERED BY CV FREE",
-                color = Color(0xFF64748B),
+                color = if (darkTheme) Color(0xFF94A3B8) else Color(0xFF64748B),
                 fontSize = 10.sp,
                 lineHeight = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -220,7 +234,7 @@ fun SplashScreen(
             Text(
                 if (versionName.isBlank()) stringResource(R.string.splash_suite)
                 else stringResource(R.string.splash_version, versionName),
-                color = Color(0xFF94A3B8),
+                color = if (darkTheme) Color(0xFF64748B) else Color(0xFF94A3B8),
                 fontSize = 9.sp,
                 lineHeight = 13.sp,
                 letterSpacing = 0.5.sp,
@@ -232,7 +246,13 @@ fun SplashScreen(
 @Preview(name = "Splash", showBackground = true, widthDp = 412, heightDp = 892)
 @Composable
 private fun SplashScreenPreview() {
-    CvFreeTheme { SplashScreen(onFinished = {}, isPremium = true, versionName = "1.0.7") }
+    CvFreeTheme(darkTheme = false) { SplashScreen(onFinished = {}, isPremium = true, versionName = "1.0.7") }
+}
+
+@Preview(name = "Splash Dark", showBackground = true, widthDp = 412, heightDp = 892)
+@Composable
+private fun SplashScreenDarkPreview() {
+    CvFreeTheme(darkTheme = true) { SplashScreen(onFinished = {}, isPremium = true, versionName = "1.0.7") }
 }
 
 @Preview(name = "Splash compact", showBackground = true, widthDp = 360, heightDp = 600)
