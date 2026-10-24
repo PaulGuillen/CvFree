@@ -55,7 +55,7 @@ import com.devpaul.features.splash.R
 import kotlinx.coroutines.delay
 
 private const val SplashDurationMillis = 1_600L
-private val SplashNavy = Color(0xFF070E1E)
+private val SplashBackground = Color(0xFFF8FAFC)
 private val SplashBlue = Color(0xFF2563EB)
 
 @Composable
@@ -66,7 +66,7 @@ fun SplashScreen(
     versionName: String = "",
 ) {
     val currentOnFinished by rememberUpdatedState(onFinished)
-    SetStatusBarColor(color = SplashNavy, darkIcons = false)
+    SetStatusBarColor(color = SplashBackground, darkIcons = true)
     LaunchedEffect(Unit) {
         delay(SplashDurationMillis)
         currentOnFinished()
@@ -94,13 +94,13 @@ fun SplashScreen(
 
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
-            .background(Brush.verticalGradient(listOf(SplashNavy, Color(0xFF091B38), Color(0xFF040914))))
+            .background(Brush.verticalGradient(listOf(SplashBackground, Color(0xFFF1F5F9), Color(0xFFE0E7FF))))
             .drawBehind {
                 val radius = size.width * 0.8f
                 listOf(
-                    Offset(size.width * 0.05f, size.height * 0.05f) to SplashBlue.copy(alpha = 0.16f),
-                    Offset(size.width, size.height * 0.46f) to Color(0xFF6366F1).copy(alpha = 0.12f),
-                    Offset(0f, size.height * 0.8f) to SplashBlue.copy(alpha = 0.08f),
+                    Offset(size.width * 0.05f, size.height * 0.05f) to Color(0xFFBFDBFE).copy(alpha = 0.4f),
+                    Offset(size.width, size.height * 0.46f) to Color(0xFFC7D2FE).copy(alpha = 0.3f),
+                    Offset(0f, size.height * 0.8f) to Color(0xFFDBEAFE).copy(alpha = 0.5f),
                 ).forEach { (center, color) ->
                     drawCircle(Brush.radialGradient(listOf(color, Color.Transparent), center, radius), radius, center)
                 }
@@ -119,12 +119,13 @@ fun SplashScreen(
                             .drawBehind {
                                 val radius = size.width * 0.95f
                                 drawCircle(
-                                    Brush.radialGradient(listOf(SplashBlue.copy(alpha = 0.35f), Color.Transparent), center, radius),
+                                    Brush.radialGradient(listOf(Color(0xFF60A5FA).copy(alpha = 0.25f), Color.Transparent), center, radius),
                                     radius,
                                 )
                             },
                         shape = RoundedCornerShape(28.dp),
                         color = Color.White,
+                        border = BorderStroke(1.dp, Color(0xFFF1F5F9)),
                         shadowElevation = 16.dp,
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -140,7 +141,7 @@ fun SplashScreen(
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             "CV Free",
-                            color = Color.White,
+                            color = Color(0xFF0F172A),
                             fontSize = 36.sp,
                             lineHeight = 44.sp,
                             fontWeight = FontWeight.ExtraBold,
@@ -164,7 +165,7 @@ fun SplashScreen(
                     Text(
                         stringResource(R.string.splash_tagline),
                         modifier = Modifier.width(270.dp),
-                        color = Color(0xFFCBD5E1),
+                        color = Color(0xFF475569),
                         fontSize = 14.sp,
                         lineHeight = 23.sp,
                         textAlign = TextAlign.Center,
@@ -172,21 +173,21 @@ fun SplashScreen(
                     Spacer(Modifier.height(if (shortScreen) 16.dp else 24.dp))
                     Surface(
                         shape = CircleShape,
-                        color = Color(0xFF1E293B).copy(alpha = 0.8f),
-                        border = BorderStroke(1.dp, Color(0xFF334155).copy(alpha = 0.6f)),
+                        color = Color.White.copy(alpha = 0.9f),
+                        border = BorderStroke(1.dp, Color(0xFFE2E8F0).copy(alpha = 0.9f)),
                     ) {
                         Row(
                             Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(7.dp),
                         ) {
-                            Box(Modifier.size(6.dp).graphicsLayer { alpha = pulse }.background(Color(0xFF34D399), CircleShape))
+                            Box(Modifier.size(6.dp).graphicsLayer { alpha = pulse }.background(Color(0xFF10B981), CircleShape))
                             Text(
                                 stringResource(R.string.splash_badge),
-                                color = Color(0xFFCBD5E1),
+                                color = Color(0xFF334155),
                                 fontSize = 10.sp,
                                 lineHeight = 14.sp,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -194,22 +195,22 @@ fun SplashScreen(
                     Spacer(Modifier.height(if (shortScreen) 24.dp else 36.dp))
                     val loadingDescription = stringResource(R.string.splash_loading)
                     Canvas(
-                        Modifier.width(144.dp).height(4.dp).clip(CircleShape)
-                            .background(Color(0xFF1E293B).copy(alpha = 0.8f))
+                        Modifier.width(144.dp).height(6.dp).clip(CircleShape)
+                            .background(Color(0xFFE2E8F0).copy(alpha = 0.8f))
                             .semantics {
                                 contentDescription = loadingDescription
                                 progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
                             },
                     ) {
                         val center = Offset(size.width * (progress + 0.3f), size.height / 2f)
-                        drawRect(Brush.radialGradient(listOf(Color(0xFF3B82F6), Color.Transparent), center, size.width * 0.3f))
+                        drawRect(Brush.radialGradient(listOf(SplashBlue, Color.Transparent), center, size.width * 0.3f))
                     }
                 }
             }
             Spacer(Modifier.height(16.dp))
             Text(
                 "POWERED BY CV FREE",
-                color = Color(0xFF94A3B8),
+                color = Color(0xFF64748B),
                 fontSize = 10.sp,
                 lineHeight = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -219,7 +220,7 @@ fun SplashScreen(
             Text(
                 if (versionName.isBlank()) stringResource(R.string.splash_suite)
                 else stringResource(R.string.splash_version, versionName),
-                color = Color(0xFF64748B),
+                color = Color(0xFF94A3B8),
                 fontSize = 9.sp,
                 lineHeight = 13.sp,
                 letterSpacing = 0.5.sp,
