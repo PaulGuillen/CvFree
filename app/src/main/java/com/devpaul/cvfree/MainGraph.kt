@@ -106,6 +106,8 @@ fun MainGraph(
         startDestination = SplashRoute.Graph,
     ) {
         splashGraph(
+            isPremium = featureAccess.plan == AccessPlan.Premium,
+            versionName = BuildConfig.VERSION_NAME,
             onFinished = {
                 val destination = if (authSessionViewModel.isAuthenticated()) {
                     HomeRoute.Graph
