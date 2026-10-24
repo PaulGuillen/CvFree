@@ -57,6 +57,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -561,10 +562,14 @@ fun MyCvsScreen(
 
     if (showCreateOptions) {
         TrackAnalyticsView("create_resume_sheet")
-        ModalBottomSheet(onDismissRequest = { showCreateOptions = false }) {
+        ModalBottomSheet(
+            onDismissRequest = { showCreateOptions = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(start = 20.dp, end = 20.dp, bottom = 28.dp),
             ) {
                 Text(
