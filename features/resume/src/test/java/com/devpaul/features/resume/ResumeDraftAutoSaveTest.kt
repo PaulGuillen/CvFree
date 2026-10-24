@@ -21,6 +21,19 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ResumeDraftAutoSaveTest {
+    @Test
+    fun `a restored draft from another account is discarded before automatic saving`() = runTest {
+        val repository = TestResumeRepository().apply { currentOwnerId = "second" }
+        val state = ResumeDraftState(SavedStateHandle(mapOf("resume_draft_owner" to "first")))
+        store.put("draft", state)
+        state.load(ResumeDocument(id = "private", summary = "First account"))
+        state.configureAutoSave(repository, enabled = true)
+        advanceTimeBy(1_000)
+        runCurrent()
+        assertTrue(state.document.summary.isEmpty())
+        assertTrue(repository.writes.isEmpty())
+    }
+
     private val store = ViewModelStore()
 
     @Before

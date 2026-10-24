@@ -82,9 +82,13 @@ fun NavGraphBuilder.resumeGraph(
     ) {
         composable<ResumeRoute.ResumeList> {
         val resumes by repository.resumes.collectAsState(initial = emptyList())
+        val storageState by repository.storageState.collectAsState(initial = com.devpaul.core.domain.resume.ResumeStorageState(isLoading = true))
         val coroutineScope = rememberCoroutineScope()
 
         MyCvsScreen(
+            storageState = storageState,
+            onRetrySync = repository::retrySync,
+            onMigrateLocalResumes = repository::migrateLocalResumes,
             userProfile = userProfile?.collectAsStateWithLifecycle()?.value ?: UserProfileUiState(isLoading = false),
             isPremium = isPremium,
             onNavigateToNotifications = onNavigateToNotifications,

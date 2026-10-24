@@ -17,6 +17,28 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ResumeAutoSaverTest {
     @Test
+    fun `switching accounts prevents a pending draft from being written to the new account`() = runTest {
+        val repository = TestResumeRepository().apply { currentOwnerId = "first" }
+        val saver = ResumeAutoSaver(repository, backgroundScope) {}
+        saver.schedule(ResumeDocument(id = "private", summary = "First account"))
+        repository.currentOwnerId = "second"
+        advanceTimeBy(1_000)
+        runCurrent()
+        assertTrue(repository.writes.isEmpty())
+    }
+
+    @Test
+    fun `switching accounts rejects saves already waiting in the operation queue`() = runTest {
+        val repository = TestResumeRepository().apply { currentOwnerId = "first" }
+        val saver = ResumeAutoSaver(repository, backgroundScope) {}
+        saver.schedule(ResumeDocument(id = "private"))
+        saver.flush()
+        repository.currentOwnerId = "second"
+        runCurrent()
+        assertTrue(repository.writes.isEmpty())
+    }
+
+    @Test
     fun `rapid edits save only the latest draft after a pause`() = runTest {
         val repository = TestResumeRepository()
         val saver = ResumeAutoSaver(repository, backgroundScope) { error("Unexpected save failure") }
@@ -140,6 +162,7 @@ class ResumeAutoSaverTest {
 }
 
 internal class TestResumeRepository : ResumeRepository {
+    override var currentOwnerId: String? = null
     override val resumes = MutableStateFlow<List<ResumeDocument>>(emptyList())
     val writes = mutableListOf<ResumeDocument>()
     var failNextSave = false

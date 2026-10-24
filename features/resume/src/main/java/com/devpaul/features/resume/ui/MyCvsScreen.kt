@@ -94,6 +94,7 @@ import com.devpaul.core.domain.resume.ResumeDocument
 import com.devpaul.core.domain.resume.ResumeContact
 import com.devpaul.core.domain.resume.ResumeEducation
 import com.devpaul.core.domain.resume.ResumeExperience
+import com.devpaul.core.domain.resume.ResumeStorageState
 import com.devpaul.core.platform.theme.CvFreeTheme
 import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.theme.LocalAppDarkTheme
@@ -131,7 +132,12 @@ fun MyCvsScreen(
     onNavigateToNotifications: () -> Unit = {},
     onDuplicateResume: suspend (ResumeDocument) -> Unit = {},
     onChangeTemplate: (ResumeDocument) -> Unit = {},
+    storageState: ResumeStorageState = ResumeStorageState(),
+    onRetrySync: () -> Unit = {},
+    onMigrateLocalResumes: suspend () -> Unit = {},
 ) {
+    var showMigrationConfirmation by remember { mutableStateOf(false) }
+    val migrationError = stringResource(R.string.resume_cloud_migration_error)
     var selectedFilterName by rememberSaveable { mutableStateOf(CvFilter.All.name) }
     var showCreateOptions by rememberSaveable { mutableStateOf(false) }
     var pendingImportAction by remember { mutableStateOf<ImportAction?>(null) }
@@ -150,6 +156,32 @@ fun MyCvsScreen(
     val activity = context.findActivity()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    if (showMigrationConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showMigrationConfirmation = false },
+            title = { Text(stringResource(R.string.resume_cloud_import_local)) },
+            text = { Text(stringResource(R.string.resume_cloud_migration_confirm, userProfile.email)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showMigrationConfirmation = false
+                    coroutineScope.launch {
+                        try {
+                            onMigrateLocalResumes()
+                        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                            throw cancelled
+                        } catch (error: Exception) {
+                            snackbarHostState.showSnackbar(migrationError)
+                        }
+                    }
+                }) { Text(stringResource(R.string.resume_cloud_import_local)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMigrationConfirmation = false }) {
+                    Text(stringResource(R.string.resume_cloud_later))
+                }
+            },
+        )
+    }
     val aiQuota by ResumeAiQuota.status.collectAsState()
     val canUseAi = aiQuota.canUseAi(importPolicy)
     LaunchedEffect(showCreateOptions, importPolicy.aiEnhancementEnabled) {
@@ -350,6 +382,11 @@ fun MyCvsScreen(
                         if (!searchVisible) searchQuery = ""
                     },
                     onNotifications = onNavigateToNotifications,
+                )
+                ResumeStorageBanner(
+                    state = storageState,
+                    onRetry = onRetrySync,
+                    onMigrate = { showMigrationConfirmation = true },
                 )
                 Spacer(Modifier.height(16.dp))
                 if (searchVisible) {

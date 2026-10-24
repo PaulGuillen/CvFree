@@ -29,11 +29,13 @@ internal class ResumeAutoSaver(
     private val operations = Channel<Operation>(Channel.UNLIMITED)
     private var pendingJob: Job? = null
     private var pendingDocument: ResumeDocument? = null
+    private var pendingOwnerId: String? = null
 
     init {
         scope.launch {
             for (operation in operations) {
                 try {
+                    check(operation.ownerId == repository.currentOwnerId) { "Resume account changed" }
                     when (operation) {
                         is Save -> {
                             if (operation.completion != null || enabled) {
@@ -67,6 +69,7 @@ internal class ResumeAutoSaver(
         if (!enabled) return
         pendingJob?.cancel()
         pendingDocument = document
+        pendingOwnerId = repository.currentOwnerId
         pendingJob = scope.launch {
             delay(500)
             flush()
@@ -76,14 +79,14 @@ internal class ResumeAutoSaver(
     fun flush() {
         val document = pendingDocument ?: return
         pendingDocument = null
-        if (enabled) operations.trySend(Save(document))
+        if (enabled) operations.trySend(Save(document, ownerId = pendingOwnerId))
     }
 
     suspend fun save(document: ResumeDocument) {
         pendingJob?.cancel()
         pendingDocument = null
         val completion = CompletableDeferred<Unit>()
-        operations.send(Save(document, completion))
+        operations.send(Save(document, completion, repository.currentOwnerId))
         completion.await()
     }
 
@@ -93,21 +96,24 @@ internal class ResumeAutoSaver(
             pendingDocument = null
         }
         val completion = CompletableDeferred<Unit>()
-        operations.send(Delete(resumeId, completion))
+        operations.send(Delete(resumeId, completion, repository.currentOwnerId))
         completion.await()
     }
 
     private sealed interface Operation {
         val completion: CompletableDeferred<Unit>?
+        val ownerId: String?
     }
 
     private data class Save(
         val document: ResumeDocument,
         override val completion: CompletableDeferred<Unit>? = null,
+        override val ownerId: String? = null,
     ) : Operation
 
     private data class Delete(
         val resumeId: String,
         override val completion: CompletableDeferred<Unit>,
+        override val ownerId: String?,
     ) : Operation
 }

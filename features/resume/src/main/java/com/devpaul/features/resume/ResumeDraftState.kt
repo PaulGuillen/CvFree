@@ -47,6 +47,13 @@ class ResumeDraftState(private val savedStateHandle: SavedStateHandle = SavedSta
         }
 
     fun configureAutoSave(repository: ResumeRepository, enabled: Boolean) {
+        val ownerId = repository.currentOwnerId
+        val previousOwner = savedStateHandle.get<String>(OWNER_KEY)
+        if (ownerId != previousOwner) {
+            autoSaver?.enabled = false
+            reset(defaultResume())
+            savedStateHandle[OWNER_KEY] = ownerId
+        }
         val isFirstConfiguration = autoSaver == null
         val saver = autoSaver ?: ResumeAutoSaver(repository, viewModelScope, onAutoSaved = ::onAutoSaved) {
             autoSaveErrorCount++
@@ -223,6 +230,7 @@ class ResumeDraftState(private val savedStateHandle: SavedStateHandle = SavedSta
     }
 
     private companion object {
+        const val OWNER_KEY = "resume_draft_owner"
         const val DRAFT_KEY = "active_resume_draft"
         const val CHANGES_KEY = "active_resume_has_changes"
         fun defaultResume() = ResumeDocument()
