@@ -6,6 +6,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.Lifecycle
@@ -28,6 +31,8 @@ import com.devpaul.cvfree.access.FeatureAccessController
 import com.devpaul.cvfree.access.AccessPlan
 import com.devpaul.cvfree.notifications.NotificationHistoryStore
 import com.devpaul.cvfree.notifications.NotificationHistoryScreen
+import com.devpaul.cvfree.ui.LogoutConfirmationDialog
+import com.devpaul.cvfree.ui.MainScreenBackHandler
 import com.devpaul.features.auth.authGraph
 import com.devpaul.features.auth.ui.session.AuthSessionViewModel
 import com.devpaul.features.home.homeGraph
@@ -93,7 +98,9 @@ fun MainGraph(
         }
     }
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    var showLogoutConfirmation by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(currentBackStackEntry) {
+        showLogoutConfirmation = false
         currentBackStackEntry?.destination?.analyticsScreenName()?.let(AppAnalytics::screenView)
     }
     val resumeImportPolicy = ResumeImportPolicy(
@@ -257,13 +264,27 @@ fun MainGraph(
             onNavigateToMyCvs = {
                 navController.navigateToMainDestination(ResumeRoute.Graph)
             },
-            onLogout = {
+            onLogout = { showLogoutConfirmation = true },
+        )
+    }
+
+    MainScreenBackHandler(currentBackStackEntry?.destination) {
+        showLogoutConfirmation = true
+    }
+    if (showLogoutConfirmation) {
+        LogoutConfirmationDialog(
+            onDismiss = { showLogoutConfirmation = false },
+            onConfirm = {
+                showLogoutConfirmation = false
                 resumeDraftState.startNew(emptySet())
                 authSessionViewModel.logout()
                 navController.navigate(AuthRoute.Graph) {
-                    popUpTo<HomeRoute.Graph> { inclusive = true }
+                    popUpTo(navController.graph.id) { inclusive = false }
                     launchSingleTop = true
                 }
+                navController.clearBackStack<HomeRoute.Graph>()
+                navController.clearBackStack<ResumeRoute.Graph>()
+                navController.clearBackStack<SettingsRoute.Graph>()
             },
         )
     }
