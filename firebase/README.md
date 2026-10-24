@@ -1,5 +1,8 @@
 # Calificaciones de CV Free
 
+El almacenamiento de currículums por cuenta, la migración de DataStore y las reglas
+de la subcolección `users/{uid}/resumes` se documentan en [RESUMES.md](RESUMES.md).
+
 Firestore guarda la última calificación en `app_ratings/{uid}` y un historial inmutable en
 `app_ratings/{uid}/submissions/{submissionId}`. Ambos documentos se escriben en una sola
 transacción. Los campos son `uid`, `stars` (1–5), `comment` (máximo 500 caracteres),

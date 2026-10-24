@@ -6,7 +6,7 @@ Aplicación Android modular para crear, personalizar y exportar tu currículum p
 - 📎 Secciones opcionales de cursos, enlaces, idiomas y referencias  
 - 🎨 Plantillas profesionales: Budapest, Riga, Praga y Tokio  
 - 📄 Importación desde PDF y escaneo de documentos, con extracción de texto y asistencia de IA según la configuración de acceso  
-- 💾 Guardado local automático y gestión de currículums desde **Mis CV**  
+- 💾 Guardado automático de CV por cuenta en Firestore, con caché sin conexión y migración de CV locales desde **Mis CV**
 - 📤 Vista previa y exportación del currículum en PDF  
 - 🔐 Registro, inicio de sesión y recuperación de contraseña  
 - 🌗 Temas claro y oscuro, idioma español e inglés y preferencias de notificaciones  
@@ -21,10 +21,10 @@ Aplicación Android modular para crear, personalizar y exportar tu currículum p
 - **Koin** con **KSP** — inyección de dependencias entre módulos  
 - **Coroutines** y **Flow** — operaciones asíncronas y observación de cambios  
 - **Navigation Compose** — grafos y rutas tipadas para los flujos de la aplicación  
-- **Firebase Authentication** y **Cloud Firestore** — autenticación, perfiles y opiniones de usuarios  
+- **Firebase Authentication** y **Cloud Firestore** — autenticación, currículums por cuenta, perfiles y opiniones de usuarios
 - **Cloud Functions / Gemini** — importación asistida por IA, con un uso cada 7 días por dispositivo en Free  
 - **Firebase Remote Config**, **App Check**, **Analytics** y **Crashlytics** — configuración remota, protección de servicios y seguimiento de la app  
-- **DataStore** y **Kotlin Serialization** — persistencia local de currículums y preferencias  
+- **DataStore** y **Kotlin Serialization** — preferencias, migración del almacenamiento antiguo y serialización de currículums
 - **ML Kit** y **PDFBox Android** — escaneo, reconocimiento de texto y lectura de PDF  
 - **Modularización** — funcionalidades independientes y módulos `core-*`, `navigation` y `session`  
 
@@ -43,6 +43,8 @@ Aplicación Android modular para crear, personalizar y exportar tu currículum p
 Abre el proyecto, sincroniza Gradle y selecciona la variante **devFreeDebug** para ejecutar la versión Free de desarrollo.
 
 La importación con IA requiere desplegar el servicio descrito en [Configuración del cupo de IA](firebase/AI_QUOTA.md). Sin ese servicio, la importación continúa localmente sin IA.
+
+El guardado de CV en la nube requiere integrar y publicar las [reglas de currículums](firebase/RESUMES.md) en Firestore. No utiliza Cloud Storage: solo se sincronizan los datos editables y el PDF se genera al exportar.
 
 ```powershell
 .\gradlew.bat :app:assembleDevFreeDebug
