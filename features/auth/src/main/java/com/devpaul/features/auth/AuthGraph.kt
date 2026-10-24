@@ -1,6 +1,7 @@
 package com.devpaul.features.auth
 
 import androidx.compose.ui.platform.LocalResources
+import com.devpaul.core.platform.locale.AppLanguage
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -31,6 +32,9 @@ fun NavGraphBuilder.authGraph(
     onBackToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    isPremium: Boolean = false,
+    appLanguage: AppLanguage = AppLanguage.Spanish,
+    onLanguageSelected: (AppLanguage) -> Unit = {},
 ) {
     navigation<AuthRoute.Graph>(
         startDestination = AuthRoute.Login,
@@ -48,6 +52,9 @@ fun NavGraphBuilder.authGraph(
                 },
             ) { uiState, onIntent ->
                 LoginScreen(
+                    isPremium = isPremium,
+                    appLanguage = appLanguage,
+                    onLanguageSelected = onLanguageSelected,
                     onLogin = { email, password ->
                         onIntent(LoginUiIntent.Login(email, password))
                     },

@@ -129,6 +129,9 @@ fun MainGraph(
             },
         )
         authGraph(
+            isPremium = featureAccess.plan == AccessPlan.Premium,
+            appLanguage = appLanguage,
+            onLanguageSelected = onLanguageSelected,
             onAuthenticated = {
                 authSessionViewModel.refreshUser()
                 navController.navigate(HomeRoute.Graph) {
