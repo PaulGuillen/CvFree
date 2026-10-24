@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="onboarding_step_by_step">Paso a paso</string>
+    <string name="onboarding_ready_to_share">Listo para compartir</string>
+    <string name="onboarding_progress">Paso %1$d de %2$d</string>
     <string name="ui_skip_2e5178">Saltar</string>
     <string name="ui_get_started_8b1222">Empezar</string>
     <string name="ui_next_c4d83a">Siguiente</string>

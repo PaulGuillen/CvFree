@@ -14,6 +14,8 @@ internal data class OnboardingPage(
     @StringRes val firstFeature: Int,
     val secondFeatureIcon: ImageVector,
     @StringRes val secondFeature: Int,
+    val badgeIcon: ImageVector,
+    @StringRes val badge: Int,
 )
 
 internal val onboardingPages = listOf(
@@ -25,6 +27,8 @@ internal val onboardingPages = listOf(
         firstFeature = R.string.ui_customizable_designs_7da30c,
         secondFeatureIcon = Icons.Outlined.PictureAsPdf,
         secondFeature = R.string.ui_high_quality_pdf_95ca8f,
+        badgeIcon = Icons.Outlined.Star,
+        badge = R.string.ui_recommended_fef9d9,
     ),
     OnboardingPage(
         icon = Icons.Outlined.Edit,
@@ -34,6 +38,8 @@ internal val onboardingPages = listOf(
         firstFeature = R.string.ui_easy_editing_917c49,
         secondFeatureIcon = Icons.Outlined.VerifiedUser,
         secondFeature = R.string.ui_protected_data_35294e,
+        badgeIcon = Icons.Outlined.CheckCircle,
+        badge = R.string.onboarding_step_by_step,
     ),
     OnboardingPage(
         icon = Icons.Outlined.Download,
@@ -43,5 +49,7 @@ internal val onboardingPages = listOf(
         firstFeature = R.string.ui_professional_result_b29d95,
         secondFeatureIcon = Icons.Outlined.Download,
         secondFeature = R.string.ui_instant_download_ba9628,
+        badgeIcon = Icons.Outlined.Download,
+        badge = R.string.onboarding_ready_to_share,
     ),
 )
