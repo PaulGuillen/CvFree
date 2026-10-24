@@ -3,6 +3,10 @@ package com.devpaul.features.resume
 import com.devpaul.features.resume.R
 
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.devpaul.core.platform.profile.UserProfileUiState
+import kotlinx.coroutines.flow.StateFlow
+import java.util.UUID
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +46,9 @@ fun NavGraphBuilder.resumeGraph(
     onNavigateToHome: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onResumeSaved: () -> Unit,
+    userProfile: StateFlow<UserProfileUiState>? = null,
+    isPremium: Boolean = false,
+    onNavigateToNotifications: () -> Unit = {},
 ) {
     fun selectedSections() = draftState.document.optionalSections
 
@@ -78,6 +85,16 @@ fun NavGraphBuilder.resumeGraph(
         val coroutineScope = rememberCoroutineScope()
 
         MyCvsScreen(
+            userProfile = userProfile?.collectAsStateWithLifecycle()?.value ?: UserProfileUiState(isLoading = false),
+            isPremium = isPremium,
+            onNavigateToNotifications = onNavigateToNotifications,
+            onDuplicateResume = { resume ->
+                repository.save(resume.copy(id = UUID.randomUUID().toString(), updatedAt = System.currentTimeMillis()))
+            },
+            onChangeTemplate = { resume ->
+                draftState.load(resume)
+                navController.navigate(ResumeRoute.Template)
+            },
             resumes = resumes,
             importPolicy = importPolicy,
             onCreateCv = {

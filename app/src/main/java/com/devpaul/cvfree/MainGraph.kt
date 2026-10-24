@@ -203,6 +203,11 @@ fun MainGraph(
             )
         }
         resumeGraph(
+            userProfile = authSessionViewModel.uiState,
+            isPremium = featureAccess.plan == AccessPlan.Premium,
+            onNavigateToNotifications = {
+                navController.navigate(HomeRoute.Notifications) { launchSingleTop = true }
+            },
             onResumeSaved = onResumeSaved,
             navController = navController,
             repository = resumeRepository,
