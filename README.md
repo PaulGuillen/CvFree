@@ -85,7 +85,9 @@ Capturas actuales de la app organizadas por flujo. Las imágenes se muestran con
 
 ### 🚀 Inicio y bienvenida
 
-Splash con fondo claro e iluminación azul, seguido de los tres pasos de presentación: plantillas, perfil y descarga del CV.
+Splash con iluminación azul y fondos adaptados al tema, seguido de los tres pasos de presentación: plantillas, perfil y descarga del CV.
+
+**Modo claro**
 
 <p align="center">
 <img height="380" alt="Splash con degradado claro" src="docs/screenshots/splash-claro.png" />
@@ -94,20 +96,20 @@ Splash con fondo claro e iluminación azul, seguido de los tres pasos de present
 <img height="380" alt="Onboarding: prepara tu próximo empleo" src="docs/screenshots/onboarding-3-claro.png" />
 </p>
 
-<details>
-<summary>Ver los tres pasos de onboarding en modo oscuro</summary>
+**Modo oscuro**
 
 <p align="center">
+<img height="380" alt="Splash con degradado azul marino en modo oscuro" src="docs/screenshots/splash-oscuro.png" />
 <img height="380" alt="Onboarding de plantillas en modo oscuro" src="docs/screenshots/onboarding-1-oscuro.png" />
 <img height="380" alt="Onboarding de perfil en modo oscuro" src="docs/screenshots/onboarding-2-oscuro.png" />
 <img height="380" alt="Onboarding de descarga en modo oscuro" src="docs/screenshots/onboarding-3-oscuro.png" />
 </p>
 
-</details>
-
 ### 🔐 Acceso y seguridad
 
 Inicio de sesión, creación de cuenta y recuperación de contraseña con selector de idioma. Registro y recuperación comparten la cabecera de seguridad con botón para retroceder.
+
+**Modo claro**
 
 <p align="center">
 <img height="380" alt="Inicio de sesión en tema claro" src="docs/screenshots/login-claro.png" />
@@ -115,16 +117,13 @@ Inicio de sesión, creación de cuenta y recuperación de contraseña con select
 <img height="380" alt="Recuperar contraseña en tema claro" src="docs/screenshots/recuperar-claro.png" />
 </p>
 
-<details>
-<summary>Ver las pantallas de autenticación en modo oscuro</summary>
+**Modo oscuro**
 
 <p align="center">
 <img height="380" alt="Inicio de sesión en tema oscuro" src="docs/screenshots/login-oscuro.png" />
 <img height="380" alt="Crear cuenta en tema oscuro" src="docs/screenshots/registro-oscuro.png" />
 <img height="380" alt="Recuperar contraseña en tema oscuro" src="docs/screenshots/recuperar-oscuro.png" />
 </p>
-
-</details>
 
 ### 🏠 Inicio y catálogo de plantillas
 
