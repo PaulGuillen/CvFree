@@ -2,9 +2,9 @@
     <string name="home_notifications">Notifications</string>
     <string name="home_greeting">Hello.</string>
     <string name="home_greeting_name">Hello, %1$s.</string>
-    <string name="home_question">What would you like to achieve today?</string>
+    <string name="home_question">Which career goal shall we work on today?</string>
     <string name="home_achievement_title">Quantify your achievements</string>
-    <string name="home_achievement_description">Improve your content and stand out to recruiters in seconds.</string>
+    <string name="home_achievement_description">Turn responsibilities into measurable results and highlight your achievements to recruiters.</string>
     <string name="home_featured_templates">Featured templates</string>
     <string name="home_view_all">View all</string>
     <string name="home_recent_activity">Recent activity</string>

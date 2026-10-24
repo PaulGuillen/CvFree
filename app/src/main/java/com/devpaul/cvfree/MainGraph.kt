@@ -164,6 +164,11 @@ fun MainGraph(
             },
         )
         homeGraph(
+            isPremium = featureAccess.plan == AccessPlan.Premium,
+            onPreviewResume = { resume ->
+                resumeDraftState.load(resume)
+                navController.navigate(ResumeRoute.Preview)
+            },
             onNavigateToNotifications = {
                 navController.navigate(HomeRoute.Notifications) { launchSingleTop = true }
             },

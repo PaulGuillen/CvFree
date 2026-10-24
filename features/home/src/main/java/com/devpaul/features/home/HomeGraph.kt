@@ -26,6 +26,8 @@ fun NavGraphBuilder.homeGraph(
     onNavigateBack: () -> Unit,
     onContinueResume: (ResumeDocument) -> Unit,
     onNavigateToNotifications: () -> Unit,
+    isPremium: Boolean = false,
+    onPreviewResume: (ResumeDocument) -> Unit = { onNavigateToMyCvs() },
 ) {
     navigation<HomeRoute.Graph>(
         startDestination = HomeRoute.Home,
@@ -42,6 +44,8 @@ fun NavGraphBuilder.homeGraph(
                 recentResume = resumes.maxByOrNull(ResumeDocument::updatedAt),
                 onContinueResume = onContinueResume,
                 onNavigateToNotifications = onNavigateToNotifications,
+                isPremium = isPremium,
+                onPreviewResume = onPreviewResume,
             )
         }
         composable<HomeRoute.Templates> {
