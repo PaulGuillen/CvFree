@@ -46,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.designsystem.component.CvBottomNavigation
+import com.devpaul.core.designsystem.component.CvAppHeader
+import com.devpaul.core.platform.profile.UserProfileUiState
 import com.devpaul.core.designsystem.component.CvMainDestination
 import com.devpaul.core.platform.locale.AppLanguage
 import com.devpaul.core.platform.theme.AppAppearance
@@ -88,6 +90,7 @@ fun SettingsScreen(
     onNavigateToPrivacy: () -> Unit = {},
     isPremium: Boolean = false,
     onNavigateToMyPlan: () -> Unit = {},
+    isProfileLoading: Boolean = false,
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -128,13 +131,18 @@ fun SettingsScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(
                 start = 20.dp,
-                top = 24.dp,
+                top = 12.dp,
                 end = 20.dp,
                 bottom = 32.dp,
             ),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
+                CvAppHeader(
+                    profile = UserProfileUiState(isLoading = isProfileLoading, name = userName, email = userEmail),
+                    isPremium = isPremium,
+                )
+                Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.settings_title),
                     color = MaterialTheme.colorScheme.primary,

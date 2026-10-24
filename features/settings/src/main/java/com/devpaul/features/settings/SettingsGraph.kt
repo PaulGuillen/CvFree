@@ -53,6 +53,7 @@ fun NavGraphBuilder.settingsGraph(
                 onLogout = onLogout,
                 userName = profileState.name,
                 userEmail = profileState.email,
+                isProfileLoading = profileState.isLoading,
                 isPremium = isPremium,
                 onNavigateToMyPlan = onNavigateToMyPlan,
                 onUpdateName = onUpdateName,
