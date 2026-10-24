@@ -113,6 +113,9 @@ fun NavGraphBuilder.authGraph(
                 },
             ) { uiState, onIntent ->
                 ForgotPasswordScreen(
+                    isPremium = isPremium,
+                    appLanguage = appLanguage,
+                    onLanguageSelected = onLanguageSelected,
                     uiState = uiState,
                     onSend = { email -> onIntent(ForgotPasswordUiIntent.Send(email)) },
                     onInputChanged = { onIntent(ForgotPasswordUiIntent.ClearError) },
