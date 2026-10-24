@@ -84,6 +84,9 @@ fun NavGraphBuilder.authGraph(
                 },
             ) { uiState, onIntent ->
                 RegisterScreen(
+                    isPremium = isPremium,
+                    appLanguage = appLanguage,
+                    onLanguageSelected = onLanguageSelected,
                     onRegister = { name, email, password ->
                         onIntent(RegisterUiIntent.Register(name, email, password))
                     },
