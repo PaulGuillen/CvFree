@@ -32,7 +32,6 @@ firebaseAnalytics = "22.5.0"
 firebaseAuth = "23.2.1"
 firebaseFirestore = "25.1.4"
 firebaseMessaging = "24.1.2"
-firebaseStorage = "21.0.2"
 composeBom = "2026.02.01"
 androidx-fragment = "1.9.0"
 appUpdateKtx = "2.1.0"
@@ -120,7 +119,6 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestore" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessaging" }
-firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorage" }
 firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
 firebase-functions = { group = "com.google.firebase", name = "firebase-functions" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }

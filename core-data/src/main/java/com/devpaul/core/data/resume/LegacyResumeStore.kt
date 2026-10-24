@@ -1,7 +1,6 @@
 package com.devpaul.core.data.resume
 
 import android.content.Context
-import com.devpaul.core.platform.analytics.AppAnalytics
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -14,49 +13,43 @@ import com.devpaul.core.domain.resume.ResumeLanguage
 import com.devpaul.core.domain.resume.ResumeLink
 import com.devpaul.core.domain.resume.ResumeOptionalSection
 import com.devpaul.core.domain.resume.ResumeReference
-import com.devpaul.core.domain.resume.ResumeRepository
 import com.devpaul.core.domain.resume.ResumeParagraphStyle
 import com.devpaul.core.domain.resume.ResumeTextAlignment
 import com.devpaul.core.domain.resume.ResumeTextFormatting
 import com.devpaul.core.domain.resume.ResumeTextSpan
 import com.devpaul.core.domain.resume.newResumeEntryId
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.koin.core.annotation.Single
 
 private val Context.resumeDataStore by preferencesDataStore(name = "saved_resumes")
 private val resumesKey = stringPreferencesKey("resumes_json")
+private val migrationOwnerKey = stringPreferencesKey("migration_owner_uid")
 
-@Single
-class DataStoreResumeRepository(
+class LegacyResumeStore(
     private val context: Context,
-) : ResumeRepository {
+) : LegacyResumeSource {
 
     private val json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
     }
 
-    override val resumes: Flow<List<ResumeDocument>> = context.resumeDataStore.data
-        .map { preferences -> decode(preferences[resumesKey]) }
-        .catch {
-            AppAnalytics.error("load_resumes", it)
-            emit(emptyList())
-        }
+    override suspend fun read(): List<ResumeDocument> =
+        decode(context.resumeDataStore.data.first()[resumesKey])
 
-    override suspend fun save(resume: ResumeDocument) {
+    override suspend fun ownerUid(): String? = context.resumeDataStore.data.first()[migrationOwnerKey]
+
+    override suspend fun claim(uid: String) {
         context.resumeDataStore.edit { preferences ->
-            val current = decode(preferences[resumesKey])
-            val updated = listOf(resume) + current.filterNot { it.id == resume.id }
-            preferences[resumesKey] = json.encodeToString(updated.map(StoredResume::fromDomain))
+            val owner = preferences[migrationOwnerKey]
+            check(owner == null || owner == uid) { "Local resumes belong to another migration owner" }
+            preferences[migrationOwnerKey] = uid
         }
     }
 
-    override suspend fun delete(resumeId: String) {
+    override suspend fun remove(resumeId: String) {
         context.resumeDataStore.edit { preferences ->
             val updated = decode(preferences[resumesKey]).filterNot { it.id == resumeId }
             preferences[resumesKey] = json.encodeToString(updated.map(StoredResume::fromDomain))
@@ -67,9 +60,7 @@ class DataStoreResumeRepository(
         if (value.isNullOrBlank()) {
             emptyList()
         } else {
-            runCatching {
-                json.decodeFromString<List<StoredResume>>(value).map(StoredResume::toDomain)
-            }.onFailure { AppAnalytics.error("decode_resumes", it) }.getOrDefault(emptyList())
+            json.decodeFromString<List<StoredResume>>(value).map(StoredResume::toDomain)
         }
 }
 

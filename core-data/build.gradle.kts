@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.kotlinx.coroutines.test)
     implementation(project(":core-domain"))
     implementation(project(":core-platform"))
     implementation(project(":session"))
