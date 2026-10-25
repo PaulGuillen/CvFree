@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="login_version">Version %1$s</string>
     <string name="register_brand_subtitle">Executive Career Toolkit</string>
     <string name="register_name_placeholder">Elena Vargas</string>
     <string name="register_password_hint">Use at least 8 characters. Combine letters and numbers for better security.</string>

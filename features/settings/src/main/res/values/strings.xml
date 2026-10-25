@@ -26,7 +26,7 @@
     <string name="settings_privacy">Privacidad</string>
     <string name="settings_privacy_subtitle">Política y tratamiento de datos</string>
     <string name="settings_logout">Cerrar sesión</string>
-    <string name="settings_version">CV Free · Versión 1.0.0</string>
+    <string name="settings_version">CV Free · Versión %1$s</string>
     <string name="settings_edit">Editar</string>
     <string name="settings_edit_name">Editar nombre</string>
     <string name="settings_name">Nombre</string>

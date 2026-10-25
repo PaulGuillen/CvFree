@@ -63,6 +63,7 @@ fun LoginScreen(
     isPremium: Boolean = false,
     appLanguage: AppLanguage = AppLanguage.Spanish,
     onLanguageSelected: (AppLanguage) -> Unit = {},
+    versionName: String = "",
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -187,6 +188,15 @@ fun LoginScreen(
             }
             Spacer(Modifier.height(24.dp))
             LoginFooter(appLanguage = appLanguage, onLanguageSelected = onLanguageSelected, enabled = !uiState.isLoading)
+            if (versionName.isNotBlank()) {
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.login_version, versionName),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

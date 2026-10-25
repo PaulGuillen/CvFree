@@ -39,6 +39,7 @@ fun NavGraphBuilder.settingsGraph(
     onNavigateToPrivacy: () -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMyPlan: () -> Unit,
+    versionName: String = "",
 ) {
     navigation<SettingsRoute.Graph>(
         startDestination = SettingsRoute.Settings,
@@ -48,6 +49,7 @@ fun NavGraphBuilder.settingsGraph(
             val ratingState by ratingViewModel.state.collectAsStateWithLifecycle()
             val profileState by userProfile.collectAsStateWithLifecycle()
             SettingsScreen(
+                versionName = versionName,
                 onNavigateToHome = onNavigateToHome,
                 onNavigateToMyCvs = onNavigateToMyCvs,
                 onLogout = onLogout,

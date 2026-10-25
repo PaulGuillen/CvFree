@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="login_version">Versión %1$s</string>
     <string name="register_brand_subtitle">Suite de Empleabilidad Ejecutiva</string>
     <string name="register_name_placeholder">Elena Vargas</string>
     <string name="register_password_hint">Usa al menos 8 caracteres. Combina letras y números para mayor seguridad.</string>

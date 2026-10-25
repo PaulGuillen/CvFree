@@ -35,6 +35,7 @@ fun NavGraphBuilder.authGraph(
     isPremium: Boolean = false,
     appLanguage: AppLanguage = AppLanguage.Spanish,
     onLanguageSelected: (AppLanguage) -> Unit = {},
+    versionName: String = "",
 ) {
     navigation<AuthRoute.Graph>(
         startDestination = AuthRoute.Login,
@@ -52,6 +53,7 @@ fun NavGraphBuilder.authGraph(
                 },
             ) { uiState, onIntent ->
                 LoginScreen(
+                    versionName = versionName,
                     isPremium = isPremium,
                     appLanguage = appLanguage,
                     onLanguageSelected = onLanguageSelected,

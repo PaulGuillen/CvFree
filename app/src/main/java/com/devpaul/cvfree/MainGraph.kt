@@ -136,6 +136,7 @@ fun MainGraph(
             },
         )
         authGraph(
+            versionName = BuildConfig.VERSION_NAME,
             isPremium = featureAccess.plan == AccessPlan.Premium,
             appLanguage = appLanguage,
             onLanguageSelected = onLanguageSelected,
@@ -233,6 +234,7 @@ fun MainGraph(
             },
         )
         settingsGraph(
+            versionName = BuildConfig.VERSION_NAME,
             isPremium = featureAccess.plan == AccessPlan.Premium,
             onNavigateToMyPlan = {
                 navController.navigate(SettingsRoute.MyPlan) { launchSingleTop = true }

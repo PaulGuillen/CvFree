@@ -91,6 +91,7 @@ fun SettingsScreen(
     isPremium: Boolean = false,
     onNavigateToMyPlan: () -> Unit = {},
     isProfileLoading: Boolean = false,
+    versionName: String = "",
 ) {
     var isEditingName by rememberSaveable { mutableStateOf(false) }
     var editedName by rememberSaveable { mutableStateOf("") }
@@ -277,7 +278,7 @@ fun SettingsScreen(
                 }
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
-                    text = stringResource(R.string.settings_version),
+                    text = stringResource(R.string.settings_version, versionName),
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
