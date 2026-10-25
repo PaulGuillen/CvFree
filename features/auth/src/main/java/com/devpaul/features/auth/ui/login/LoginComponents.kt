@@ -1,6 +1,7 @@
 package com.devpaul.features.auth.ui.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -79,17 +80,14 @@ internal fun LoginBrandHeader(
         Surface(
             modifier = Modifier.size(if (compact) 66.dp else 74.dp),
             shape = RoundedCornerShape(if (compact) 18.dp else 24.dp),
-            color = LoginBlue,
+            color = Color.Transparent,
             shadowElevation = 10.dp,
         ) {
-            Box(Modifier.background(Brush.verticalGradient(listOf(LoginBlue, LoginDeepBlue))), contentAlignment = Alignment.Center) {
-                Box(
-                    Modifier.align(Alignment.TopCenter).padding(top = 4.dp)
-                        .width(52.dp).height(10.dp)
-                        .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.2f), Color.Transparent)), CircleShape),
-                )
-                Icon(painterResource(R.drawable.login_document), null, Modifier.size(if (compact) 32.dp else 36.dp), tint = Color.Unspecified)
-            }
+            Image(
+                painter = painterResource(com.devpaul.core.designsystem.R.drawable.app_logo),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+            )
         }
         Spacer(Modifier.height(if (compact) 10.dp else 16.dp))
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
