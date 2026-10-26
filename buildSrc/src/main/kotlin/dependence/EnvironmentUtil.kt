@@ -5,8 +5,8 @@ import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.ProductFlavor
 
 private const val DIMENSION_ENVIRONMENT = "environment"
-private const val PROD_VERSION_CODE = 2
-private const val PROD_VERSION_NAME = "1.0.1"
+private const val PROD_VERSION_CODE = 3
+private const val PROD_VERSION_NAME = "1.0.2"
 private const val DEV_VERSION_CODE = 1
 private const val DEV_VERSION_NAME = "1.0.0"
 
