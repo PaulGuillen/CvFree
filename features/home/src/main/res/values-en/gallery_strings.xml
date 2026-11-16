@@ -14,4 +14,5 @@
     <string name="gallery_sort_name">Name: A–Z</string>
     <string name="gallery_empty">No templates in this category.</string>
     <string name="gallery_tip">Explore the previews and choose the design that best presents your experience. Always review the content before exporting your resume.</string>
+    <string name="gallery_new_templates">New</string>
 </resources>

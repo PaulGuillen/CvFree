@@ -81,6 +81,11 @@ fun ResumeTemplateDocument(
             ResumeTemplateRenderer.Riga -> RigaTemplate(resume)
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialTemplate(resume)
             ResumeTemplateRenderer.TokyoCompact -> TokyoCompactTemplate(resume)
+            ResumeTemplateRenderer.LimaProfessional -> ProfessionalTemplate(resume, ResumeTemplateRenderer.LimaProfessional)
+            ResumeTemplateRenderer.CambridgeClassic -> ProfessionalTemplate(resume, ResumeTemplateRenderer.CambridgeClassic)
+            ResumeTemplateRenderer.ViennaEditorial,
+            ResumeTemplateRenderer.OsloCompact,
+            ResumeTemplateRenderer.BerlinStructured -> EditorialTemplate(resume, ResumeTemplateCatalog.find(resume.templateName).renderer)
         }
     }
 }

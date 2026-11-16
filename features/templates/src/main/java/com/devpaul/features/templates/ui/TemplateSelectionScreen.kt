@@ -207,6 +207,11 @@ fun TemplateThumbnail(
             ResumeTemplateRenderer.Riga -> RigaThumbnail()
             ResumeTemplateRenderer.PragueEditorial -> PragueEditorialThumbnail()
             ResumeTemplateRenderer.TokyoCompact -> TokyoCompactThumbnail()
+            ResumeTemplateRenderer.LimaProfessional,
+            ResumeTemplateRenderer.CambridgeClassic,
+            ResumeTemplateRenderer.ViennaEditorial,
+            ResumeTemplateRenderer.OsloCompact,
+            ResumeTemplateRenderer.BerlinStructured -> ProfessionalTemplateThumbnail(template.renderer, Modifier.fillMaxSize())
         }
     }
 }

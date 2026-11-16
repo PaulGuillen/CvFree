@@ -39,4 +39,14 @@
     <string name="template_prague_description">Diseño sobrio con encabezado dividido y secciones estructuradas.</string>
     <string name="template_tokyo_name">Tokio</string>
     <string name="template_tokyo_description">Formato compacto de una columna con secciones resaltadas en azul claro.</string>
+    <string name="template_cambridge_name">Cambridge</string>
+    <string name="template_cambridge_description">Clásica de una columna, tipografía serif y divisores discretos.</string>
+    <string name="template_berlin_name">Berlín</string>
+    <string name="template_berlin_description">Cabecera dividida, títulos en el margen izquierdo y contenido a la derecha.</string>
+    <string name="template_vienna_name">Viena</string>
+    <string name="template_vienna_description">Dos columnas equilibradas con línea central y cabecera editorial.</string>
+    <string name="template_oslo_name">Oslo</string>
+    <string name="template_oslo_description">Nombre amplio y columna lateral estrecha para formación y habilidades.</string>
+    <string name="template_lima_name">Lima</string>
+    <string name="template_lima_description">Una columna con títulos centrados, líneas y guía vertical en la experiencia.</string>
 </resources>

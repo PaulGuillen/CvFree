@@ -7,6 +7,26 @@ import org.junit.Test
 class PdfPageSlicesTest {
 
     @Test
+    fun `short resume stays on one page`() {
+        assertEquals(listOf(PdfPageSlice(0, 60)), calculatePageSlices(60, 100) { 0 })
+    }
+
+    @Test
+    fun `exact page multiple does not add an empty page`() {
+        assertEquals(
+            listOf(PdfPageSlice(0, 100), PdfPageSlice(100, 200)),
+            calculatePageSlices(200, 100) { 0 },
+        )
+    }
+
+    @Test
+    fun `prefers a gap over a row crossing text on a solid sidebar`() {
+        val slices = calculatePageSlices(180, 100) { row -> if (row in 88..92) 1 else 30 }
+        assertEquals(PdfPageSlice(0, 92), slices.first())
+        assertEquals(PdfPageSlice(92, 180), slices.last())
+    }
+
+    @Test
     fun `uses a quiet row before the hard page boundary`() {
         val slices = calculatePageSlices(
             contentHeight = 180,

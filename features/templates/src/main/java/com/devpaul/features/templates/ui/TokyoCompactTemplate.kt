@@ -54,6 +54,7 @@ internal fun TokyoCompactTemplate(resume: ResumeDocument) {
         val showLinks = ResumeOptionalSection.Links in resume.optionalSections && resume.links.isNotEmpty()
         if (showLinks) {
             Spacer(Modifier.height(14.dp))
+            TokyoSectionTitle(stringResource(R.string.ui_links_d38518))
             TokyoLinks(resume)
         }
 

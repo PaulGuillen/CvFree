@@ -14,4 +14,5 @@
     <string name="gallery_sort_name">Nombre: A–Z</string>
     <string name="gallery_empty">No hay plantillas en esta categoría.</string>
     <string name="gallery_tip">Explora las vistas previas y elige el diseño que mejor presente tu experiencia. Revisa siempre el contenido antes de exportar tu CV.</string>
+    <string name="gallery_new_templates">Nuevas</string>
 </resources>

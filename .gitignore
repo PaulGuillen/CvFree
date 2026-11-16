@@ -247,6 +247,7 @@ fabric.properties
 *.apk
 *.aab
 **/output-metadata.json
+**/release/baselineProfiles/
 
 # Kotlin compiler sessions
 .kotlin/

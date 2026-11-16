@@ -39,4 +39,14 @@
     <string name="template_prague_description">Clean design with a split header and structured sections.</string>
     <string name="template_tokyo_name">Tokyo</string>
     <string name="template_tokyo_description">Compact single-column format with light-blue highlighted sections.</string>
+    <string name="template_cambridge_name">Cambridge</string>
+    <string name="template_cambridge_description">Classic single column with serif typography and subtle rules.</string>
+    <string name="template_berlin_name">Berlin</string>
+    <string name="template_berlin_description">Split header, section labels in a left rail and content on the right.</string>
+    <string name="template_vienna_name">Vienna</string>
+    <string name="template_vienna_description">Balanced columns with a central rule and editorial header.</string>
+    <string name="template_oslo_name">Oslo</string>
+    <string name="template_oslo_description">Large name header and narrow qualifications sidebar.</string>
+    <string name="template_lima_name">Lima</string>
+    <string name="template_lima_description">Single column with centered headings, rules and a vertical experience guide.</string>
 </resources>

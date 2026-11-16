@@ -105,6 +105,7 @@ import com.devpaul.features.resume.importing.ResumeAiAvailability
 import com.devpaul.features.resume.importing.ResumeAiQuota
 import com.devpaul.features.resume.ui.model.CvFilter
 import com.devpaul.features.templates.ResumeTemplateCatalog
+import com.devpaul.features.templates.ui.ProfessionalTemplateThumbnail
 import com.devpaul.features.templates.ResumeTemplateRenderer
 import com.devpaul.features.templates.ui.localizedName
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
@@ -446,6 +447,18 @@ fun MyCvsScreen(
                 }
             }
 
+            if (resumes.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(14.dp))
+                    CvsQuickActions(
+                        enabled = !isDuplicating,
+                        onDuplicate = { requestQuickAction(CvQuickAction.Duplicate) },
+                        onTemplate = { requestQuickAction(CvQuickAction.Template) },
+                        resumeName = resumes.singleOrNull()?.displayName,
+                    )
+                }
+            }
+
             if (visibleResumes.isEmpty()) {
                 item {
                     if (resumes.isNotEmpty()) {
@@ -495,17 +508,6 @@ fun MyCvsScreen(
                         onEdit = { onEditResume(resume) },
                         onView = { onViewResume(resume) },
                         onDelete = { pendingDelete = resume },
-                    )
-                }
-            }
-            if (resumes.isNotEmpty()) {
-                item {
-                    Spacer(Modifier.height(14.dp))
-                    CvsQuickActions(
-                        enabled = !isDuplicating,
-                        onDuplicate = { requestQuickAction(CvQuickAction.Duplicate) },
-                        onTemplate = { requestQuickAction(CvQuickAction.Template) },
-                        resumeName = resumes.singleOrNull()?.displayName,
                     )
                 }
             }
@@ -948,7 +950,9 @@ private fun ResumeThumbnail(renderer: ResumeTemplateRenderer) {
         color = MaterialTheme.colorScheme.surfaceVariant,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
     ) {
-        if (renderer == ResumeTemplateRenderer.TokyoCompact) {
+        if (renderer in setOf(ResumeTemplateRenderer.LimaProfessional, ResumeTemplateRenderer.CambridgeClassic, ResumeTemplateRenderer.BerlinStructured, ResumeTemplateRenderer.ViennaEditorial, ResumeTemplateRenderer.OsloCompact)) {
+            ProfessionalTemplateThumbnail(renderer, Modifier.fillMaxSize())
+        } else if (renderer == ResumeTemplateRenderer.TokyoCompact) {
             TokyoResumeThumbnail()
         } else if (renderer == ResumeTemplateRenderer.PragueEditorial) {
             PragueResumeThumbnail()

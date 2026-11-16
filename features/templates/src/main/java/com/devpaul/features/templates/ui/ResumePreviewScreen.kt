@@ -1,11 +1,11 @@
 package com.devpaul.features.templates.ui
 
-import com.devpaul.core.platform.analytics.trackedClick
-import com.devpaul.core.platform.analytics.AppAnalytics
-import timber.log.Timber
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,12 +36,16 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -49,21 +53,29 @@ import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.devpaul.core.domain.resume.ResumeDocument
+import com.devpaul.core.platform.analytics.AppAnalytics
+import com.devpaul.core.platform.analytics.trackedClick
 import com.devpaul.core.platform.theme.CvFreeTheme
-import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.core.platform.theme.LocalAppDarkTheme
+import com.devpaul.core.platform.theme.SetStatusBarColor
 import com.devpaul.features.templates.R
 import com.devpaul.features.templates.ResumeTemplateCatalog
 import com.devpaul.features.templates.pdf.ResumePdfExporter
+import com.devpaul.features.templates.pdf.ResumePdfFormat
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun ResumePreviewScreen(
@@ -77,7 +89,10 @@ fun ResumePreviewScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val previewGraphicsLayer = rememberGraphicsLayer()
+    val previewScrollState = rememberScrollState()
     var isExporting by remember { mutableStateOf(false) }
+    var showPdfFormatDialog by rememberSaveable { mutableStateOf(false) }
+    var pdfFormat by rememberSaveable { mutableStateOf(ResumePdfFormat.A4) }
     var isSaving by remember { mutableStateOf(false) }
     var pendingPreview by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
     val pdfSavedMessage = stringResource(R.string.ui_pdf_saved_successfully_e80449)
@@ -88,6 +103,7 @@ fun ResumePreviewScreen(
         contract = ActivityResultContracts.CreateDocument("application/pdf"),
     ) { destination ->
         if (destination == null) {
+            pendingPreview?.recycle()
             pendingPreview = null
             isExporting = false
             return@rememberLauncherForActivityResult
@@ -95,8 +111,9 @@ fun ResumePreviewScreen(
         scope.launch {
             val exportResult = runCatching {
                 val bitmap = checkNotNull(pendingPreview) { previewCaptureError }
-                ResumePdfExporter.export(context, destination, bitmap, resume)
+                ResumePdfExporter.export(context, destination, bitmap, resume, pdfFormat)
             }
+            pendingPreview?.recycle()
             pendingPreview = null
             isExporting = false
             if (exportResult.isSuccess) {
@@ -111,6 +128,22 @@ fun ResumePreviewScreen(
                 snackbarHostState.showSnackbar(pdfGenerationError)
             }
         }
+    }
+    if (showPdfFormatDialog) {
+        PdfFormatDialog(
+            selectedFormat = pdfFormat,
+            onSelectFormat = { pdfFormat = it },
+            onDismiss = {
+                showPdfFormatDialog = false
+                pendingPreview?.recycle()
+                pendingPreview = null
+            },
+            onDownload = {
+                showPdfFormatDialog = false
+                isExporting = true
+                createPdf.launch(ResumePdfExporter.suggestedFileName(resume))
+            },
+        )
     }
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
@@ -127,7 +160,7 @@ fun ResumePreviewScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(previewScrollState),
             ) {
                 Text(
                     text = stringResource(R.string.ui_your_resume_is_ready_0d5cd6),
@@ -138,6 +171,7 @@ fun ResumePreviewScreen(
                 ScaledResumeDocument(
                     resume = resume,
                     captureLayer = previewGraphicsLayer,
+                    scrollState = previewScrollState,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .fillMaxWidth(),
@@ -150,6 +184,7 @@ fun ResumePreviewScreen(
             ) {
                 OutlinedButton(
                     onClick = trackedClick("download_pdf") {
+                        pdfFormat = ResumePdfFormat.A4
                         isExporting = true
                         scope.launch {
                             runCatching {
@@ -158,7 +193,8 @@ fun ResumePreviewScreen(
                                     ?: error("No se pudo convertir la vista previa")
                             }.onSuccess { bitmap ->
                                 pendingPreview = bitmap
-                                createPdf.launch(ResumePdfExporter.suggestedFileName(resume))
+                                isExporting = false
+                                showPdfFormatDialog = true
                             }.onFailure { error ->
                                 isExporting = false
                                 AppAnalytics.error("capture_resume_preview", error)
@@ -224,6 +260,7 @@ fun TemplateExamplePreviewScreen(
 ) {
     val template = ResumeTemplateCatalog.find(templateId)
     val exampleResume = rememberPreviewDocument(template.id)
+    val previewScrollState = rememberScrollState()
     val background = MaterialTheme.colorScheme.background
     SetStatusBarColor(background, darkIcons = !LocalAppDarkTheme.current)
 
@@ -241,7 +278,7 @@ fun TemplateExamplePreviewScreen(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(previewScrollState),
         ) {
             Text(
                 text = stringResource(R.string.ui_preview_with_sample_information_ab7559),
@@ -251,6 +288,7 @@ fun TemplateExamplePreviewScreen(
             )
             ScaledResumeDocument(
                 resume = exampleResume,
+                scrollState = previewScrollState,
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .fillMaxWidth(),
@@ -261,14 +299,31 @@ fun TemplateExamplePreviewScreen(
 }
 
 @Composable
-private fun ScaledResumeDocument(
+internal fun ScaledResumeDocument(
     resume: ResumeDocument,
     captureLayer: GraphicsLayer? = null,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
     val designWidth = with(LocalDensity.current) { RESUME_DESIGN_WIDTH_DP.dp.roundToPx() }
+    var zoom by remember(resume.id, resume.templateName) { mutableFloatStateOf(1f) }
+    var horizontalOffset by remember(resume.id, resume.templateName) { mutableFloatStateOf(0f) }
+    var viewportWidth by remember { mutableIntStateOf(0) }
+    val transformState = rememberTransformableState { zoomChange, panChange, _ ->
+        val nextZoom = (zoom * zoomChange).coerceIn(1f, 4f)
+        val ratio = nextZoom / zoom
+        horizontalOffset = ((horizontalOffset - viewportWidth / 2f) * ratio + viewportWidth / 2f + panChange.x)
+            .coerceIn(-viewportWidth * (nextZoom - 1f), 0f)
+        zoom = nextZoom
+        scrollState.dispatchRawDelta(-panChange.y)
+    }
+    val zoomDescription = stringResource(R.string.preview_zoom_percent, (zoom * 100).roundToInt())
     Layout(
-        modifier = modifier,
+        modifier = modifier
+            .clipToBounds()
+            .onSizeChanged { viewportWidth = it.width }
+            .semantics { stateDescription = zoomDescription }
+            .transformable(state = transformState, canPan = { zoom > 1f }, lockRotationOnZoomPan = true),
         content = {
             val documentModifier = if (captureLayer == null) {
                 Modifier.fillMaxWidth()
@@ -297,10 +352,11 @@ private fun ScaledResumeDocument(
                 maxHeight = Constraints.Infinity,
             ),
         )
-        val scale = availableWidth.toFloat() / designWidth
+        val scale = availableWidth.toFloat() / designWidth * zoom
         val scaledHeight = ceil(placeable.height * scale).toInt()
         layout(availableWidth, scaledHeight) {
             placeable.placeWithLayer(0, 0) {
+                translationX = horizontalOffset.coerceIn(-availableWidth * (zoom - 1f), 0f)
                 scaleX = scale
                 scaleY = scale
                 transformOrigin = TransformOrigin(0f, 0f)

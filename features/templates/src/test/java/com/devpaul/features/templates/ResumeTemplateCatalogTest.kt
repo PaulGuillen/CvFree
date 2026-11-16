@@ -80,6 +80,24 @@ class ResumeTemplateCatalogTest {
     }
 
     @Test
+    fun `catalog identifiers and names resolve without collisions`() {
+        val templates = ResumeTemplateCatalog.templates
+        assertEquals(templates.size, templates.map { it.id }.distinct().size)
+        assertEquals(templates.size, templates.map { it.renderer }.distinct().size)
+        templates.forEach { template ->
+            assertEquals(template, ResumeTemplateCatalog.find(template.id))
+            assertEquals(template, ResumeTemplateCatalog.find(template.displayName))
+        }
+        assertEquals(ResumeTemplateRenderer.CambridgeClassic, ResumeTemplateCatalog.find("cambridge_classic").renderer)
+        assertEquals(9, templates.size)
+        assertEquals(ResumeTemplateRenderer.LimaProfessional, ResumeTemplateCatalog.find("lima_professional").renderer)
+        assertEquals(ResumeTemplateRenderer.ViennaEditorial, ResumeTemplateCatalog.find("vienna_editorial").renderer)
+        assertEquals(ResumeTemplateRenderer.OsloCompact, ResumeTemplateCatalog.find("oslo_compact").renderer)
+        assertEquals(false, templates.any { it.id == "london_executive" || it.id == "zurich_minimal" })
+        assertEquals(ResumeTemplateRenderer.BerlinStructured, ResumeTemplateCatalog.find("berlin_structured").renderer)
+    }
+
+    @Test
     fun `creates a portable pdf file name`() {
         val resume = ResumeDocument(
             contact = ResumeContact(name = "Paúl", lastName = "Acuña Ramos"),

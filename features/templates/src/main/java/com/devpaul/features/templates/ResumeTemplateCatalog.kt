@@ -7,6 +7,7 @@ data class ResumeTemplateDefinition(
     val hasSidebar: Boolean,
     val renderer: ResumeTemplateRenderer,
     val legacyIdentifiers: Set<String> = emptySet(),
+    val isNew: Boolean = false,
 )
 
 enum class ResumeTemplateRenderer {
@@ -14,6 +15,11 @@ enum class ResumeTemplateRenderer {
     Riga,
     PragueEditorial,
     TokyoCompact,
+    CambridgeClassic,
+    BerlinStructured,
+    ViennaEditorial,
+    OsloCompact,
+    LimaProfessional,
 }
 
 object ResumeTemplateCatalog {
@@ -21,6 +27,14 @@ object ResumeTemplateCatalog {
     const val RIGA_ID = "riga"
     const val PRAGUE_EDITORIAL_ID = "prague_editorial"
     const val TOKYO_COMPACT_ID = "tokyo_compact"
+
+    const val CAMBRIDGE_CLASSIC_ID = "cambridge_classic"
+    const val BERLIN_STRUCTURED_ID = "berlin_structured"
+
+    const val VIENNA_EDITORIAL_ID = "vienna_editorial"
+    const val OSLO_COMPACT_ID = "oslo_compact"
+
+    const val LIMA_PROFESSIONAL_ID = "lima_professional"
 
     val templates: List<ResumeTemplateDefinition> = listOf(
         ResumeTemplateDefinition(
@@ -54,6 +68,46 @@ object ResumeTemplateCatalog {
             hasSidebar = false,
             renderer = ResumeTemplateRenderer.TokyoCompact,
             legacyIdentifiers = setOf("Tokyo"),
+        ),
+        ResumeTemplateDefinition(
+            id = CAMBRIDGE_CLASSIC_ID,
+            displayName = "Cambridge",
+            description = "Clásica de una columna, tipografía serif y divisores discretos.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.CambridgeClassic,
+            isNew = true,
+        ),
+        ResumeTemplateDefinition(
+            id = BERLIN_STRUCTURED_ID,
+            displayName = "Berlín",
+            description = "Cabecera dividida, títulos en el margen izquierdo y contenido a la derecha.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.BerlinStructured,
+            isNew = true,
+        ),
+        ResumeTemplateDefinition(
+            id = VIENNA_EDITORIAL_ID,
+            displayName = "Viena",
+            description = "Dos columnas equilibradas con una línea central y cabecera editorial.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.ViennaEditorial,
+            isNew = true,
+        ),
+        ResumeTemplateDefinition(
+            id = OSLO_COMPACT_ID,
+            displayName = "Oslo",
+            description = "Cabecera amplia y columna lateral estrecha para formación y habilidades.",
+            hasSidebar = true,
+            renderer = ResumeTemplateRenderer.OsloCompact,
+            isNew = true,
+        ),
+        ResumeTemplateDefinition(
+            id = LIMA_PROFESSIONAL_ID,
+            displayName = "Lima",
+            description = "Una columna con títulos centrados, líneas y guía vertical en la experiencia.",
+            hasSidebar = false,
+            renderer = ResumeTemplateRenderer.LimaProfessional,
+            isNew = true,
         ),
     )
 

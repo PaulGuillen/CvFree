@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.dp
 import com.devpaul.features.templates.ResumeTemplateRenderer
+import com.devpaul.features.templates.ui.ProfessionalTemplateThumbnail
 
 private val PreviewInk = Color(0xFF29303B)
 private val PreviewMuted = Color(0xFF94A3B8)
@@ -24,6 +25,10 @@ private val PreviewBlue = Color(0xFF2563EB)
 
 @Composable
 internal fun CatalogTemplateThumbnail(renderer: ResumeTemplateRenderer, modifier: Modifier = Modifier) {
+    if (renderer in setOf(ResumeTemplateRenderer.LimaProfessional, ResumeTemplateRenderer.CambridgeClassic, ResumeTemplateRenderer.BerlinStructured, ResumeTemplateRenderer.ViennaEditorial, ResumeTemplateRenderer.OsloCompact)) {
+        ProfessionalTemplateThumbnail(renderer, modifier)
+        return
+    }
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -33,6 +38,11 @@ internal fun CatalogTemplateThumbnail(renderer: ResumeTemplateRenderer, modifier
         Canvas(Modifier.fillMaxSize()) {
             scale(scaleX = size.width / 100f, scaleY = size.height / 136f, pivot = Offset.Zero) {
                 when (renderer) {
+                    ResumeTemplateRenderer.LimaProfessional,
+                    ResumeTemplateRenderer.CambridgeClassic,
+                    ResumeTemplateRenderer.ViennaEditorial,
+                    ResumeTemplateRenderer.OsloCompact,
+                    ResumeTemplateRenderer.BerlinStructured -> Unit
                     ResumeTemplateRenderer.Budapest -> {
                         drawRect(PreviewInk, size = Size(30f, 136f))
                         drawCircle(Color(0xFF556171), radius = 7f, center = Offset(15f, 14f))

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pdf_format_title">¿Cómo quieres descargar tu CV?</string>
+    <string name="pdf_format_a4">A4 para imprimir</string>
+    <string name="pdf_format_a4_description">Páginas de 210 × 297 mm con márgenes.</string>
+    <string name="pdf_format_continuous">Página continua</string>
+    <string name="pdf_format_continuous_description">Todo tu CV en una sola página larga para compartir.</string>
+    <string name="pdf_format_cancel">Cancelar</string>
+    <string name="preview_zoom_percent">%1$d%%</string>
+</resources>

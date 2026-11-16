@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -81,10 +82,10 @@ private enum class GalleryFilter(val label: Int) {
 
     fun includes(template: ResumeTemplateDefinition): Boolean = when (this) {
         All -> true
-        Executive -> template.renderer in setOf(ResumeTemplateRenderer.Budapest, ResumeTemplateRenderer.PragueEditorial)
-        Minimal -> template.renderer == ResumeTemplateRenderer.Riga
-        Tech -> template.renderer == ResumeTemplateRenderer.TokyoCompact
-        TwoColumns -> template.renderer != ResumeTemplateRenderer.TokyoCompact
+        Executive -> template.renderer in setOf(ResumeTemplateRenderer.LimaProfessional, ResumeTemplateRenderer.Budapest, ResumeTemplateRenderer.PragueEditorial, ResumeTemplateRenderer.ViennaEditorial)
+        Minimal -> template.renderer in setOf(ResumeTemplateRenderer.LimaProfessional, ResumeTemplateRenderer.Riga, ResumeTemplateRenderer.CambridgeClassic, ResumeTemplateRenderer.BerlinStructured)
+        Tech -> template.renderer in setOf(ResumeTemplateRenderer.TokyoCompact, ResumeTemplateRenderer.BerlinStructured, ResumeTemplateRenderer.OsloCompact)
+        TwoColumns -> template.renderer in setOf(ResumeTemplateRenderer.Budapest, ResumeTemplateRenderer.Riga, ResumeTemplateRenderer.PragueEditorial, ResumeTemplateRenderer.ViennaEditorial, ResumeTemplateRenderer.OsloCompact)
     }
 }
 
@@ -210,20 +211,41 @@ fun AllTemplatesScreen(
                     }
                 }
             }
-            items(filteredTemplates, key = ResumeTemplateDefinition::id) { template ->
-                AllTemplateCard(
-                    template = template,
-                    highlighted = selectedTemplateId == template.id,
-                    onSelect = trackedClick("select_template") {
-                        selectedTemplateId = template.id
-                        AppAnalytics.selection("select_template", template.id)
-                    },
-                    onClick = trackedClick("preview_template") {
-                        selectedTemplateId = template.id
-                        AppAnalytics.selection("preview_template", template.id)
-                        onPreviewTemplate(template.id)
-                    },
-                )
+            listOf(false, true).forEach { newTemplates ->
+                val sectionTemplates = filteredTemplates.filter { it.isNew == newTemplates }
+                if (newTemplates && sectionTemplates.isNotEmpty()) {
+                    item(key = "new_templates_heading", span = { GridItemSpan(maxLineSpan) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).semantics { heading() },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            HorizontalDivider(Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
+                            Text(
+                                stringResource(R.string.gallery_new_templates),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            HorizontalDivider(Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
+                        }
+                    }
+                }
+                items(sectionTemplates, key = ResumeTemplateDefinition::id) { template ->
+                    AllTemplateCard(
+                        template = template,
+                        highlighted = selectedTemplateId == template.id,
+                        onSelect = trackedClick("select_template") {
+                            selectedTemplateId = template.id
+                            AppAnalytics.selection("select_template", template.id)
+                        },
+                        onClick = trackedClick("preview_template") {
+                            selectedTemplateId = template.id
+                            AppAnalytics.selection("preview_template", template.id)
+                            onPreviewTemplate(template.id)
+                        },
+                    )
+                }
             }
             if (filteredTemplates.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {

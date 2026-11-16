@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pdf_format_title">How would you like to download your CV?</string>
+    <string name="pdf_format_a4">A4 for printing</string>
+    <string name="pdf_format_a4_description">210 × 297 mm pages with margins.</string>
+    <string name="pdf_format_continuous">Continuous page</string>
+    <string name="pdf_format_continuous_description">Your entire CV on one long page for sharing.</string>
+    <string name="pdf_format_cancel">Cancel</string>
+    <string name="preview_zoom_percent">%1$d%%</string>
+</resources>
